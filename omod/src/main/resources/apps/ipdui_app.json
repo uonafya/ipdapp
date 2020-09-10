@@ -1,0 +1,19 @@
+
+[
+  {
+    "id": "ipdApp",        // unique id for this app, unique across all apps, typically starts with your module id
+    "description": "App for managing lab operations",        // plain text or a message code (not displayed to end-users)
+    "order":6,
+    "extensions": [
+      {
+        "id": "ipdapp.ipdappHomepageLink",
+        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+        "type": "link",
+        "label": "IPD",        // text or message code (this is shown to the user)
+        "url": "ipdapp/chooseIpdWard.page",        // clicking on the app icon goes to this link
+        "icon": "icon-signin",        // see the uicommons style guide icons
+        "requiredPrivilege": "App: coreapps.activeVisits"        // require this privilege to show the link
+      }
+    ]
+  }
+]

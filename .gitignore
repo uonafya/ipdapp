@@ -1,0 +1,12 @@
+.idea/
+.metadata/
+.git/
+.project
+.settings/
+**/.project
+**/.settings
+**/target
+**/*.iml
+**/bin
+**/*.classpath
+
