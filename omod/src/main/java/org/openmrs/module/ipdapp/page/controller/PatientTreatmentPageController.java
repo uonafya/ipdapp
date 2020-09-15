@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 /**
- * Created by Dennys Henry on 9/25/2016.
+ *
  */
 public class PatientTreatmentPageController {
     public void get(@RequestParam("patientId") Patient patient,

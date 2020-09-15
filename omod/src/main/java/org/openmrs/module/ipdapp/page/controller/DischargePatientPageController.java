@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by Francis on 1/27/2016.
+ *
  */
 public class DischargePatientPageController {
     public void get(@RequestParam("patientId") Patient patient,

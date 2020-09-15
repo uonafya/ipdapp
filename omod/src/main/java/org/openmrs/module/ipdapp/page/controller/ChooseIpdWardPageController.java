@@ -12,7 +12,7 @@ import org.openmrs.ui.framework.page.PageModel;
 import java.util.*;
 
 /**
- * Created by ngarivictor on 1/12/2016.
+ * .
  */
 public class ChooseIpdWardPageController {
     public void get(PageModel model) {

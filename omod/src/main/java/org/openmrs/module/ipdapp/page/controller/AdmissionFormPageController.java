@@ -3,17 +3,34 @@ package org.openmrs.module.ipdapp.page.controller;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.openmrs.*;
+import org.openmrs.Concept;
+import org.openmrs.ConceptAnswer;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
+import org.openmrs.Location;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.PersonAddress;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
+import org.openmrs.Provider;
+import org.openmrs.Role;
+import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.BillingService;
 import org.openmrs.module.hospitalcore.HospitalCoreService;
 import org.openmrs.module.hospitalcore.IpdService;
 import org.openmrs.module.hospitalcore.PatientDashboardService;
-import org.openmrs.module.hospitalcore.model.*;
+import org.openmrs.module.hospitalcore.model.BillableService;
+import org.openmrs.module.hospitalcore.model.IndoorPatientServiceBill;
+import org.openmrs.module.hospitalcore.model.IndoorPatientServiceBillItem;
+import org.openmrs.module.hospitalcore.model.IpdPatientAdmission;
+import org.openmrs.module.hospitalcore.model.IpdPatientAdmissionLog;
+import org.openmrs.module.hospitalcore.model.IpdPatientAdmitted;
+import org.openmrs.module.hospitalcore.model.PatientSearch;
 import org.openmrs.module.hospitalcore.util.ConceptAnswerComparator;
 import org.openmrs.module.hospitalcore.util.HospitalCoreConstants;
 import org.openmrs.module.hospitalcore.util.Money;
-import org.openmrs.module.hospitalcore.util.PatientUtils;
 import org.openmrs.module.ipdapp.utils.IpdConstants;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageModel;
@@ -21,10 +38,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Created by ngarivictor on 1/25/2016.
+ *
  */
 public class AdmissionFormPageController {
     public void get(@RequestParam(value = "admissionId", required = false) Integer admissionId, //If that tab is active we will set that tab active when page load.

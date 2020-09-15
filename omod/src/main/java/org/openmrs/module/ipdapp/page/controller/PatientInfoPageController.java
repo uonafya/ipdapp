@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by Francis on 1/7/2016.
+ *
  */
 public class PatientInfoPageController {
     public void get(@RequestParam(value = "search",required = true) String search, PageModel model) {

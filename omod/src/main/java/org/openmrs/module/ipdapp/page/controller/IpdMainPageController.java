@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.*;
 
 /**
- * Created by ngarivictor on 04/01/2016.
+ *
  */
 public class IpdMainPageController {
     public void get(
