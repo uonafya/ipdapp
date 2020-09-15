@@ -1,7 +1,7 @@
 package org.openmrs.module.ipdapp.model;
 
 /**
- * Created by Francis on 1/12/2016.
+ *
  */
 import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;

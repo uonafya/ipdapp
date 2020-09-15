@@ -6,7 +6,7 @@ import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 
 /**
- * Created by Francis on 1/25/2016.
+ *
  */
 public class Diagnosis {
     public Diagnosis(Concept concept) {

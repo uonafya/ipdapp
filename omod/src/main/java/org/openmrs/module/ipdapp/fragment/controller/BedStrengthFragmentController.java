@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by USER on 1/28/2016.
+ *
  */
 public class BedStrengthFragmentController {
     public SimpleObject getBedStrength(@RequestParam(value="wardId",required=false) Integer wardId,

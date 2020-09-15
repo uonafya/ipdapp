@@ -14,7 +14,7 @@ import org.openmrs.api.ConceptService;
 
 import java.util.Date;
 /**
- * Created by Francis on 1/13/2016.
+ *
  */
 public class Investigation {
     public Investigation(Integer id, String label) {

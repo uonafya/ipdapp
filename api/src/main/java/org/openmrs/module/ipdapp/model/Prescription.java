@@ -1,7 +1,7 @@
 package org.openmrs.module.ipdapp.model;
 
 /**
- * Created by Francis on 1/27/2016.
+ *
  */
 public class Prescription {
     private String name;

@@ -1,7 +1,7 @@
 package org.openmrs.module.ipdapp.utils;
 
 /**
- * Created by Francis on 1/6/2016.
+ *
  */
 public class IpdConstants {
     public static String PROPERTY_IPDWARD = "patientdashboard.IPDRootConcept";

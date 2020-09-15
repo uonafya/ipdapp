@@ -33,7 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created by Francis on 1/12/2016.
+ *
  */
 public class PatientInfoFragmentController {
     private static Logger log = LoggerFactory.getLogger(PatientInfoFragmentController.class);

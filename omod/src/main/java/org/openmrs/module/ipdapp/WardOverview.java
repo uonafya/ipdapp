@@ -3,7 +3,7 @@ package org.openmrs.module.ipdapp;
 import org.openmrs.Concept;
 
 /**
- * Created by daugm on 9/16/2016.
+ *
  */
 public class WardOverview {
     private int bedCount;
