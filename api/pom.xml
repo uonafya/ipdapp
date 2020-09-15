@@ -50,6 +50,13 @@
 			<artifactId>hospitalcore-api</artifactId>
 
 		</dependency>
+		<dependency>
+
+			<groupId>org.openmrs.module</groupId>
+
+			<artifactId>kenyacore-api</artifactId>
+
+		</dependency>
 				
 		<!-- End OpenMRS modules -->
 		
