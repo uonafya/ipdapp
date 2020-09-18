@@ -1,5 +1,17 @@
-<% ui.decorateWith("appui", "standardEmrPage", [title: "In Patient Wards"]) %>
-
+<%
+	ui.decorateWith("appui", "standardEmrPage", [title: "IPD Ward"])
+	ui.includeJavascript("ehrconfigs", "jquery-1.12.4.min.js")
+	ui.includeJavascript("ehrconfigs", "jquery-ui-1.9.2.custom.min.js")
+	ui.includeJavascript("ehrconfigs", "underscore-min.js")
+	ui.includeJavascript("ehrconfigs", "knockout-2.2.1.js")
+	ui.includeJavascript("ehrconfigs", "emr.js")
+	ui.includeCss("ehrconfigs", "styleguide/jquery-ui-1.9.2.custom.min.css")
+	// toastmessage plugin: https://github.com/akquinet/jquery-toastmessage-plugin/wiki
+	ui.includeJavascript("ehrconfigs", "jquery.toastmessage.js")
+	ui.includeCss("ehrconfigs", "styleguide/jquery.toastmessage.css")
+	// simplemodal plugin: http://www.ericmmartin.com/projects/simplemodal/
+	ui.includeJavascript("ehrconfigs", "jquery.simplemodal.1.4.4.min.js")
+%>
 <style>
 	ul.select.wards li {
 		border: 1px solid #efefef;

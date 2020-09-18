@@ -3,7 +3,7 @@
 	ui.includeJavascript("ehrcashier", "moment.js")
 	
 	ui.includeCss("uicommons", "datatables/dataTables_jui.css")
-    ui.includeJavascript("patientqueueapp", "jquery.dataTables.min.js")
+    ui.includeJavascript("ehrcashier", "jquery.dataTables.min.js")
 %>
     
 <script>

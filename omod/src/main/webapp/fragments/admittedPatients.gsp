@@ -4,7 +4,7 @@
 	var admittedPatientsResultsData = [];
 	
 	var getAdmittedPatients = function(){
-		admittedPatientsTableObject.find('td.dataTables_empty').html('<span><img class="search-spinner" src="'+emr.resourceLink('uicommons', 'images/spinner.gif')+'" /></span>');
+		admittedPatientsTableObject.find('td.dataTables_empty').html('<span><img class="search-spinner" src="'+ui.resourceLink('uicommons', 'images/spinner.gif')+'" /></span>');
 		var requestData = {
 			ipdWard:		'${ipdWard.id}',
 			fromDate:		jq('#outsFrom-field').val(),
