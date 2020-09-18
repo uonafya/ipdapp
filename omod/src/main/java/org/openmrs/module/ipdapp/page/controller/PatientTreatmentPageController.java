@@ -6,6 +6,8 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.InventoryCommonService;
 import org.openmrs.module.hospitalcore.IpdService;
 import org.openmrs.module.hospitalcore.model.IpdPatientAdmitted;
+import org.openmrs.module.ipdapp.utils.IpdConstants;
+import org.openmrs.module.kenyaui.annotation.AppPage;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -14,6 +16,7 @@ import java.util.List;
 /**
  *
  */
+@AppPage(IpdConstants.APP_IPD_APP)
 public class PatientTreatmentPageController {
     public void get(@RequestParam("patientId") Patient patient,
                     PageModel model) {

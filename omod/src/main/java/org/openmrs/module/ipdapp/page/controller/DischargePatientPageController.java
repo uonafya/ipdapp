@@ -11,6 +11,7 @@ import org.openmrs.module.hospitalcore.model.IpdPatientVitalStatistics;
 import org.openmrs.module.hospitalcore.util.ConceptAnswerComparator;
 import org.openmrs.module.hospitalcore.util.HospitalCoreConstants;
 import org.openmrs.module.ipdapp.utils.IpdConstants;
+import org.openmrs.module.kenyaui.annotation.AppPage;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -21,6 +22,7 @@ import java.util.List;
 /**
  *
  */
+@AppPage(IpdConstants.APP_IPD_APP)
 public class DischargePatientPageController {
     public void get(@RequestParam("patientId") Patient patient,
                     PageModel model) {

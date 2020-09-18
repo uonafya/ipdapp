@@ -7,6 +7,8 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.IpdService;
 import org.openmrs.module.hospitalcore.model.IpdPatientAdmission;
 import org.openmrs.module.hospitalcore.model.IpdPatientAdmitted;
+import org.openmrs.module.ipdapp.utils.IpdConstants;
+import org.openmrs.module.kenyaui.annotation.AppPage;
 import org.openmrs.ui.framework.Model;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -18,6 +20,7 @@ import java.util.Map;
 /**
  *
  */
+@AppPage(IpdConstants.APP_IPD_APP)
 public class PatientsAdmissionPageController {
 
     //@RequestMapping(value = "/module/ipd/patientsForAdmission.htm", method = RequestMethod.GET)

@@ -7,6 +7,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.IpdService;
 import org.openmrs.module.ipdapp.WardOverview;
 import org.openmrs.module.ipdapp.utils.IpdConstants;
+import org.openmrs.module.kenyaui.annotation.AppPage;
 import org.openmrs.ui.framework.page.PageModel;
 
 import java.util.*;
@@ -14,6 +15,7 @@ import java.util.*;
 /**
  * .
  */
+@AppPage(IpdConstants.APP_IPD_APP)
 public class ChooseIpdWardPageController {
     public void get(PageModel model) {
         Concept ipdConcept = Context.getConceptService().getConceptByName(Context.getAdministrationService().getGlobalProperty(IpdConstants.PROPERTY_IPDWARD));

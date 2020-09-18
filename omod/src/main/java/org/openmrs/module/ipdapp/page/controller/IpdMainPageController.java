@@ -8,6 +8,7 @@ import org.openmrs.module.hospitalcore.util.ConceptAnswerComparator;
 import org.openmrs.module.hospitalcore.util.HospitalCoreConstants;
 import org.openmrs.module.ipdapp.utils.IpdConstants;
 import org.openmrs.module.ipdapp.utils.IpdUtils;
+import org.openmrs.module.kenyaui.annotation.AppPage;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import java.util.*;
 /**
  *
  */
+@AppPage(IpdConstants.APP_IPD_APP)
 public class IpdMainPageController {
     public void get(
             @RequestParam(value = "searchPatient", required = false) String searchPatient,//patient name or patient identifier
