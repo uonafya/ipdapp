@@ -51,7 +51,7 @@
                             jq().toastmessage('showErrorToast', "Error:" + err);
                         })
         });
-        var adddrugdialog = emr.setupConfirmationDialog({
+        var adddrugdialog = ui.setupConfirmationDialog({
             selector: '#addDrugDialog',
             actions: {
                 confirm: function() {
