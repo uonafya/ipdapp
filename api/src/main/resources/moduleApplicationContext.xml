@@ -20,7 +20,7 @@
 	<!-- Add here beans related to the API context -->
 
 	<bean id="ipdapp.app.ipdapp" factory-bean="kenyacore.appFactoryBean" factory-method="createInstance">
-		<constructor-arg value="ipdapp.ipd" />
+		<constructor-arg value="ipdapp.home" />
 		<constructor-arg value="IPD" />
 		<constructor-arg value="ipdapp/chooseIpdWard.page" />
 		<constructor-arg value="ipdapp:apps/ipd.png" />

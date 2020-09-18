@@ -1,11 +1,5 @@
 <% ui.decorateWith("appui", "standardEmrPage", [title: "In Patient Wards"]) %>
 
-<script>
-	jq(function () {
-		console.log('${ wardOverviewList }');
-	});
-</script>
-
 <style>
 	ul.select.wards li {
 		border: 1px solid #efefef;
