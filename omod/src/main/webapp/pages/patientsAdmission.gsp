@@ -4,6 +4,7 @@
 	
 	ui.includeCss("uicommons", "datatables/dataTables_jui.css")
     ui.includeJavascript("ehrcashier", "jquery.dataTables.min.js")
+	ui.includeCss("ehrconfigs", "referenceapplication.css")
 %>
     
 <script>
