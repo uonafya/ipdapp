@@ -3,7 +3,7 @@
 	ui.includeJavascript("ehrconfigs", "jquery-1.12.4.min.js")
 	ui.includeJavascript("ehrconfigs", "jquery-ui-1.9.2.custom.min.js")
 	ui.includeJavascript("ehrconfigs", "underscore-min.js")
-	ui.includeJavascript("ehrconfigs", "knockout-2.2.1.js")
+	ui.includeJavascript("ehrconfigs", "knockout-3.4.0.js")
 	ui.includeJavascript("ehrconfigs", "emr.js")
 	ui.includeCss("ehrconfigs", "jquery-ui-1.9.2.custom.min.css")
 	// toastmessage plugin: https://github.com/akquinet/jquery-toastmessage-plugin/wiki
@@ -90,7 +90,7 @@
 				</div>
 				
 				<div class="ward-summary">
-					<i class="icon-bed small"></i><span class="small">${it.bedCount} Beds</span><br/>
+					<i class="icon-bed small"></i>${it.bedCount} Beds</span><br/>
 					<i class="icon-user small"></i>${it.patientCount} Patients				
 				</div>
 				<div class="desc">${it.wardConcept.name}</div>
