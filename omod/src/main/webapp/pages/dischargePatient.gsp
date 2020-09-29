@@ -1,5 +1,5 @@
 <%
-    ui.decorateWith("appui", "standardEmrPage", [title: "Discharge Patient"])
+	ui.decorateWith("kenyaemr", "standardPage")
     ui.includeJavascript("uicommons", "datetimepicker/bootstrap-datetimepicker.min.js")
     ui.includeJavascript("uicommons", "handlebars/handlebars.min.js", Integer.MAX_VALUE - 1)
     ui.includeJavascript("uicommons", "navigator/validators.js", Integer.MAX_VALUE - 19)
@@ -9,7 +9,6 @@
     ui.includeJavascript("uicommons", "navigator/navigatorTemplates.js", Integer.MAX_VALUE - 21)
     ui.includeJavascript("uicommons", "navigator/exitHandlers.js", Integer.MAX_VALUE - 22)
 
-	ui.includeJavascript("ehrconfigs", "jquery-1.12.4.min.js")
 	ui.includeJavascript("ehrconfigs", "jquery-ui-1.9.2.custom.min.js")
 	ui.includeJavascript("ehrconfigs", "underscore-min.js")
 	ui.includeJavascript("ehrconfigs", "knockout-3.4.0.js")
@@ -516,7 +515,7 @@
 <div class="example">
 	<ul id="breadcrumbs">
 		<li>
-			<a href="${ui.pageLink('referenceapplication','home')}">
+			<a href="${ui.pageLink('kenyaemr','userHome')}">
 			<i class="icon-home small"></i></a>
 		</li>
 		
