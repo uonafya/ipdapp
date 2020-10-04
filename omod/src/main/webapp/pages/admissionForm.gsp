@@ -62,14 +62,189 @@
                 }
             }
         });
-        jq("#bedButton").on("click", function(e) {
+        jq("#fileNumber").on("click", function(e) {
             adddrugdialog.show();
+        });
+        var selectBedDialog = emr.setupConfirmationDialog({
+            selector: '#selectBedDialog',
+            actions: {
+                confirm: function() {
+
+                },
+                cancel: function() {
+                    selectBedDialog.close();
+                }
+            }
+        });
+        jq("#bedNumber").on("click", function(e) {
+            selectBedDialog.show();
         });
     });
 
 
 
 </script>
+<style>
+.toast-item {
+    background-color: #222;
+}
+.morebuttons{
+    display: inline;
+    float: left;
+    margin-left: 20px;
+}
+.tableelement{
+    width: auto;
+    min-width: 10px;
+}
+.vitalstatisticselements{
+    float:left;
+    margin-left:10px;
+    margin-bottom: 10px;
+}
+.vitalstatisticselements textarea{
+    height: 23px;
+    width: 183px;
+}
+.selecticon{
+    float: right;
+    vertical-align: middle;
+    font-size: x-large;
+}
+.selectp{
+    min-width: 450px;
+    border-bottom: solid;
+    border-bottom-width: 1px;
+    padding-left: 5px;
+    margin-top:20px;
+}
+.selectdiv{
+    width: 450px;
+    margin-top:10px;
+}
+#breadcrumbs a, #breadcrumbs a:link, #breadcrumbs a:visited {
+    text-decoration: none;
+}
+.name {
+    color: #f26522;
+}
+.new-patient-header .demographics .gender-age {
+    font-size: 14px;
+    margin-left: -55px;
+    margin-top: 12px;
+}
+.new-patient-header .demographics .gender-age span {
+    border-bottom: 1px none #ddd;
+}
+.new-patient-header .identifiers {
+    margin-top: 5px;
+}
+.tag {
+    padding: 2px 10px;
+}
+.tad {
+    background: #666 none repeat scroll 0 0;
+    border-radius: 1px;
+    color: white;
+    display: inline;
+    font-size: 0.8em;
+    padding: 2px 10px;
+}
+.status-container {
+    padding: 5px 10px 5px 5px;
+}
+.catg {
+    color: #363463;
+    margin: 25px 10px 0 0;
+}
+#tabs {
+    background: #f9f9f9 none repeat scroll 0 0;
+    padding: 10px;
+}
+#tab-container{
+    background: #f9f9f9 none repeat scroll 0 0;
+    margin-top: 3px;
+}
+.ui-tabs .ui-tabs-panel {
+    background: #fff none repeat scroll 0 0;
+    padding-top: 0;
+}
+.col12{
+    display: inline-block;
+    float: left;
+    width: 50%;
+}
+.col13{
+    display: inline-block;
+    float: left;
+    width: auto;
+}
+.col15 {
+    display: inline-block;
+    float: left;
+    max-width: 22%;
+    min-width: 22%;
+}
+.col16 {
+    display: inline-block;
+    float: left;
+    width: 78%;
+}
+.dashboard .action-section {
+    background: white none repeat scroll 0 0;
+    border: 1px solid #ddd;
+    margin-top: 35px;
+}
+.dashboard .info-body label {
+    display: inline-block;
+    font-size: 90%;
+    margin-bottom: 6px;
+    margin-left: 5px;
+    width: 115px;
+}
+.dashboard .info-body span {
+    color: #000;
+    font-size: 0.9em;
+}
+.zero-em{
+    font-size: 0em!important;
+}
+.dashboard .info-header h3 {
+    color: #f26522;
+}
+.daily-vitals label{
+    float: left;
+}
+.daily-vitals span {
+    display: block;
+    overflow: hidden;
+    padding-right:10px;
+}
+.daily-vitals input,
+.daily-vitals select,
+.daily-vitals textarea{
+    width: 100%;
+    resize: none;
+}
+.ui-widget-content a.right {
+    cursor: pointer;
+    font-size: 16px;
+}
+.ui-widget-content a.right:hover,
+.ui-widget-content a.right:hover i {
+    color: #3399ff;
+    text-decoration: none;
+}
+form input:focus, form select:focus, form textarea:focus, form ul.select:focus, .form input:focus, .form select:focus, .form textarea:focus, .form ul.select:focus{
+    outline: 0px none #007fff;
+    box-shadow: 0 0 2px 0 #888;
+}
+.dashboard .action-section a:not(.button) {
+    cursor: pointer;
+}
+</style>
+
+
 <div class="clear"></div>
 <div class="container">
     <div class="example">
@@ -112,7 +287,7 @@
                 <span class="status active"></span>
                 Visit Status
             </div>
-            <div class="tag">Admitted</div>
+            <div class="tag">Admission in process</div>
         </div>
 
         <div class="identifiers">
@@ -130,191 +305,5 @@
 
 
 <ul style=" margin-top: 10px;" class="grid"></ul>
-<div class="patient-header new-patient-header">
-    <div>
 
-        <form method="post" action = "admissionForm.page?ipdWard=100126282">
-            <div style="float: left;">
-                <div>
-                    <div>
-                        <input type="hidden" name="id" value="39">
-                        Admitted Ward:<br/>
-                        <span class="select-arrow">
-                            <select required  name="admittedWard" id="admittedWard"  style="width: 250px;">
-                                <option value="">Select Ward</option>
-
-
-                                <option title="CHILD WARD"   value="100126282">
-                                    CHILD WARD
-                                </option>
-
-                                <option title="FEMALE MEDICAL WARD"   value="5327">
-                                    FEMALE MEDICAL WARD
-                                </option>
-
-                                <option title="FEMALE SURGICAL WARD"   value="5329">
-                                    FEMALE SURGICAL WARD
-                                </option>
-
-                                <option title="MALE MEDICAL WARD"   value="5328">
-                                    MALE MEDICAL WARD
-                                </option>
-
-                                <option title="MALE SURGICAL WARD"   value="5330">
-                                    MALE SURGICAL WARD
-                                </option>
-
-                                <option title="MATERNITY WARD"   value="100126264">
-                                    MATERNITY WARD
-                                </option>
-
-                                <option title="PSYCHIATRIC WARD"   value="5331">
-                                    PSYCHIATRIC WARD
-                                </option>
-
-
-                            </select>
-                        </span>
-                    </div>
-                    <div style="margin-right: 100px; ">
-                        <ul ></ul>
-                        Doctor on Call: <br/>
-                        <span class="select-arrow">
-                            <select required name="treatingDoctor" id="treatingDoctor"  style="width: 250px; >
-                            <option value="please select ...">Select Doctor On Call</option>
-
-
-                            <option title="Testing"   value="75">
-                                Testing
-                            </option>
-
-                            <option title="Kitioko"   value="74">
-                                Kitioko
-                            </option>
-
-                            <option title="Cognitive"   value="73">
-                                Cognitive
-                            </option>
-
-                            <option title="Blablala"   value="72">
-                                Blablala
-                            </option>
-
-                            <option title="WageBill"   value="70">
-                                WageBill
-                            </option>
-
-                            <option title="Bomber"   value="42">
-                                Bomber
-                            </option>
-
-                            <option title="Gasoline"   value="59">
-                                Gasoline
-                            </option>
-
-                            <option title="Bomber"   value="64">
-                                Bomber
-                            </option>
-
-                            <option title="Matatu"   value="37">
-                                Matatu
-                            </option>
-
-                            <option title="Testing"   value="61">
-                                Testing
-                            </option>
-
-                            <option title="Wenger"   value="62">
-                                Wenger
-                            </option>
-
-                            <option title="Gasoline"   value="63">
-                                Gasoline
-                            </option>
-
-                            <option title="Testing"   value="65">
-                                Testing
-                            </option>
-
-                            <option title="Kichaka"   value="47">
-                                Kichaka
-                            </option>
-
-                            <option title="WageBill"   value="48">
-                                WageBill
-                            </option>
-
-                            <option title="Wenger"   value="68">
-                                Wenger
-                            </option>
-
-                            <option title="Bomber"   value="53">
-                                Bomber
-                            </option>
-
-                            <option title="Wenger"   value="66">
-                                Wenger
-                            </option>
-
-                            <option title="Matatu"   value="51">
-                                Matatu
-                            </option>
-
-                            <option title="Kitioko"   value="55">
-                                Kitioko
-                            </option>
-
-                            <option title="Blablala"   value="67">
-                                Blablala
-                            </option>
-
-
-                        </select>
-                        </span>
-                    </div>
-                </div>
-                <div>
-                    <div style="width: 250px;">
-                        <label for="FileNo" >File Number:</label>
-                        <input id="FileNo" type="text" name="fileNumber" style="min-width: 250px;" placeholder="Enter File Number">
-                    </div>
-                    <div style="width: 250px;">
-                        <label for="BedNo" style="width: 100px; display: inline-block;">Bed Number:</label>
-                        <input id="BedNo" type="text" name="bedNumber" style="min-width: 250px;" placeholder="Select Bed number">
-                    </div>
-                </div>
-                <a style="display: none" class="button" id="bedButton"> bed</a>
-            </div>
-
-            <div><ul style="margin-top: 10px;"></ul>
-                Comments:
-                <textarea placeholder="Enter Comments" name="comments" style="min-width: 450px; min-height: 100px;"></textarea>
-            </div>
-            <ul style=" margin-top: 30px; margin-bottom: 30px;"></ul>
-            <div style="width: 100%" align="center">
-                <div style="width: 50%">
-                    <input type="reset" class="button cancel" style="float: left" value="Reset">
-                    <input id="testdubmit" type="submit" value="submit" class="button confirm" style="float: right">
-
-                </div>
-            </div>
-        </form>
-
-        <div id="addDrugDialog" class="dialog">
-            <div class="dialog-header">
-                <i class="icon-folder-open"></i>
-                <h3>bednumber</h3>
-            </div>
-            <div class="dialog-content">
-                <ul>
-                    <div id="dump-bed"></div>
-
-                </ul>
-                <span class="button confirm right" > Confirm </span>
-                <span class="button cancel"> Cancel </span>
-            </div>
-        </div>
-    </div>
-
-
-</div>
+${ui.includeFragment("ipdapp", "patientAdmissionInfo")}
