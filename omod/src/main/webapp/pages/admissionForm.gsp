@@ -14,6 +14,24 @@
         return dataToParse;
     }
 
+    function validateCheck(checkAlert,maxPatientOnBed){
+        if(document.forms["transferForm"] != undefined)
+        {
+            document.forms["transferForm"]["bedNumber"].value=checkAlert;
+            jq("#bedsTable").hide();
+        }
+        else {
+            var mpob=parseInt(maxPatientOnBed);
+            if(mpob>2){
+                alert("This bed already has 3 patients admitted. Please select another bed.");
+                return false;
+            }
+            else{
+                document.forms["admissionForm"]["bedNumber"].value=checkAlert;
+                jq("#bedsTable").hide();
+            }
+        }
+    }
     jq(function() {
 
         jq("#admittedWard").on("change",function () {
@@ -23,29 +41,46 @@
                 wardId: currentID
             })
                 .success(function(data) {
-
-                    jq('#dump-bed').html('');
-
-                    dta = JSON.stringify(data);
-
-                    for (var key in data) {
-                        if (data.hasOwnProperty(key)) {
-                            var val = data[key];
-
-                            for(var i in val){
-                                if(val.hasOwnProperty(i)){
-                                    var j = val[i];
-
-                                    pasteBed += ' Bed No. ' + i + ' People: ' + j;
-                                }
-                            }
-
+                    console.log(data);
+                    var bedStrengthMap = data.bedStrengthMap;
+                    console.log(bedStrengthMap);
+                    var count = 0;
+                    var size = data.size;
+                    var bedCount = 0;
+                    var bedOccupied = 0;
+                    var bedMax = data.bedMax;
+                    for (var i = 1; i <= bedMax ; i++) {
+                        bedCount =  bedCount + 1;
+                        if(bedStrengthMap[bedCount] != null && bedStrengthMap[bedCount] > 0){
+                            bedOccupied = bedOccupied + 1;
                         }
                     }
 
+                    // jq("#bedsBody").empty();
+                    jq("#bedsBody tr").remove();
+                    var sString = "";
 
-                    jq('#dump-bed').html(pasteBed);
+                    for (var i = 1; i <= size; i++) {
+                        sString +='<tr>';
+                        for (var j = 0; j <= size ; j++) {
+                            count = count + 1;
+                            if(bedStrengthMap[count] != null){
+                                if(bedStrengthMap[count] > 0 && bedOccupied < bedMax){
+                                    sString+= '<td><input id="validate" name="validateName" style="background-color:red; font-size: 9px !important;" class="f2" value="' + count + '/'+ bedStrengthMap[count] +'" readonly="readonly" />';
+                                }else if(bedStrengthMap[count] > 0 && bedOccupied >= bedMax){
+                                    sString+= `<td><input id="validate" name="validateName" style="background-color:red; font-size: 9px !important;" class="f2" value="`+ count + `/`+ bedStrengthMap[count] +`" readonly="readonly" onclick="javascript:return validateCheck(` + count + `,` + bedStrengthMap[count] + `);" />`;
+                                }else{
+                                    sString+=`<td style="background-color:green; font-size: 8px !important;" class="f2" ><input id="validate" name="validateName" style="background-color:green"  class="f2" value="`+ count + `/`+ bedStrengthMap[count] +`" readonly="readonly" onclick="javascript:return validateCheck(` + count + `,` + bedStrengthMap[count] + `);" />`;
+                                }
+                            }else{
 
+                            }
+                        }
+                        sString +='</tr>';
+                    }
+
+                    jq("#bedsBody").append(sString);
+                    dta = JSON.stringify(data);
                 })
                 .error(function(xhr, status, err) {
                     jq().toastmessage('showErrorToast', "Error:" + err);
@@ -77,7 +112,9 @@
             }
         });
         jq("#bedNumber").on("click", function(e) {
-            selectBedDialog.show();
+            //display the bed selection div
+            jq("#bedsTable").show();
+
         });
     });
 
@@ -85,6 +122,12 @@
 
 </script>
 <style>
+
+.f2:hover {
+    background-color: #00CC00;
+    box-shadow: 0 0 11px rgba(33,33,33,.2);
+    cursor: pointer;
+}
 .toast-item {
     background-color: #222;
 }
@@ -277,7 +320,7 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
                     <em>gender</em>
                 </span>
                 <span id="agename">${admission.patient.age} years (${ui.formatDatePretty(admission.patient.birthdate)})
-                    <em>age</em>
+                    <em>surname</em>
                 </span>
 
             </h1>
