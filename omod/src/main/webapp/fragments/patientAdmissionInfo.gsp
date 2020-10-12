@@ -1,3 +1,37 @@
+<script>
+
+    function validateAdmission() {
+        var admittedward = document.forms["admissionForm"]["admittedWard"].value;
+        var treatingdoctor = document.forms["admissionForm"]["treatingDoctor"].value;
+        var bednumber = document.forms["admissionForm"]["bedNumber"].value;
+
+        if (admittedward == null || admittedward == "") {
+            alert("Please select admitted Ward");
+            return false;
+        }
+
+        if (treatingdoctor == null || treatingdoctor == "") {
+            alert("Please select Doctor on Call");
+            return false;
+        }
+        if (bednumber == null || bednumber == "") {
+            alert("Please enter bed Number");
+            return false;
+        }
+        if (bednumber != null) {
+            var checkMaxBed = parseInt(document.forms["BedStrength"]["bedMax"].value);
+            if (isNaN(bednumber)) {
+                alert("Please enter bed number in correct format");
+                return false;
+            }
+            if (bednumber > checkMaxBed) {
+                alert("Please enter correct bed number");
+                return false;
+            }
+        }
+
+    }
+</script>
 <div class="dashboard">
     <div class="info-section" style="width: 99%;">
         <div class="info-header">
@@ -7,7 +41,7 @@
         </div>
 
         <div class="info-body">
-            <form method="post" id="admissionForm" action="admissionForm.page?ipdWard=100126282">
+            <form method="post" id="admissionForm" onsubmit="return validateAdmission();">
                 <div style="float: left">
                     <img src="${ui.resourceLink('ipdapp', 'images/patient-transfer.png')}"
                          style="border-right: 1px solid #eee; height: 185px; margin-right: 10px; padding: 5px 15px 0 5px;"/>
@@ -23,10 +57,15 @@
                                 <% if (listIpd != null && listIpd != "") { %>
                                 <% listIpd.each { ipd -> %>
 
+                                <% if(ipd.answerConcept.id.toString() == ipdWard.toString()){ %>
+                                <option title="${ipd.answerConcept.name}" value="${ipd.answerConcept.id}" selected>
+                                    ${ipd.answerConcept.name}
+                                </option>
+                                <% } else {%>
                                 <option title="${ipd.answerConcept.name}" value="${ipd.answerConcept.id}">
                                     ${ipd.answerConcept.name}
                                 </option>
-
+                                <% } %>
                                 <% } %>
                                 <% } %>
                             </select>
@@ -82,7 +121,7 @@
                                 <i class="icon-hospital"></i>
                                 Admit
                             </a>
-                            <a type="submit" class="button cancel">
+                            <a type="button" class="button cancel" id="cancelButton" href='${ui.pageLink("ipdapp", "patientsAdmission", [ipdWard: ipdWard ])}'>
                                 <i class="icon-remove "></i>
                                 Cancel
                             </a>

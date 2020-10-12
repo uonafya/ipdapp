@@ -14,6 +14,8 @@
         return dataToParse;
     }
 
+
+
     function validateCheck(checkAlert,maxPatientOnBed){
         if(document.forms["transferForm"] != undefined)
         {
@@ -32,8 +34,102 @@
             }
         }
     }
+
+    function validate() {
+        var admittedward = document.forms["admissionForm"]["admittedWard"].value;
+        var treatingdoctor = document.forms["admissionForm"]["treatingDoctor"].value;
+        var bednumber = document.forms["admissionForm"]["bedNumber"].value;
+
+        if (admittedward == null || admittedward == "") {
+            alert("Please select admitted Ward");
+            return false;
+        }
+
+        if (treatingdoctor == null || treatingdoctor == "") {
+            alert("Please select Doctor on Call");
+            return false;
+        }
+        if (bednumber == null || bednumber == "") {
+            alert("Please enter bed Number");
+            return false;
+        }
+        if (bednumber != null) {
+            var checkMaxBed = parseInt(document.forms["admissionForm"]["bedMax"].value);
+            if (isNaN(bednumber)) {
+                alert("Please enter bed number in correct format");
+                return false;
+            }
+            if (bednumber > checkMaxBed) {
+                alert("Please enter correct bed number");
+                return false;
+            }
+        }
+        document.getElementById("admissionForm").submit();
+
+    }
     jq(function() {
 
+
+
+        jq("#admitButton").on("click",function () {
+            //    reDirect to the admission list
+            validate();
+        });
+
+        function preloadBeds(wardId) {
+            jq.getJSON('${ ui.actionLink("ipdapp", "BedStrength", "getBedStrength")  }',{
+                wardId: wardId
+            })
+                .success(function(data) {
+                    console.log(data);
+                    var bedStrengthMap = data.bedStrengthMap;
+                    console.log(bedStrengthMap);
+                    var count = 0;
+                    var size = data.size;
+                    var bedCount = 0;
+                    var bedOccupied = 0;
+                    var bedMax = data.bedMax;
+                    jq("#bedMax").val(bedMax);
+                    jq("#size").val(size);
+                    for (var i = 1; i <= bedMax ; i++) {
+                        bedCount =  bedCount + 1;
+                        if(bedStrengthMap[bedCount] != null && bedStrengthMap[bedCount] > 0){
+                            bedOccupied = bedOccupied + 1;
+                        }
+                    }
+
+                    // jq("#bedsBody").empty();
+                    jq("#bedsBody tr").remove();
+                    var sString = "";
+
+                    for (var i = 1; i <= size; i++) {
+                        sString +='<tr>';
+                        for (var j = 0; j <= size ; j++) {
+                            count = count + 1;
+                            if(bedStrengthMap[count] != null){
+                                if(bedStrengthMap[count] > 0 && bedOccupied < bedMax){
+                                    sString+= '<td><input id="validate" name="validateName" style="background-color:red; font-size: 9px !important;" class="f2" value="' + count + '/'+ bedStrengthMap[count] +'" readonly="readonly" />';
+                                }else if(bedStrengthMap[count] > 0 && bedOccupied >= bedMax){
+                                    sString+= `<td><input id="validate" name="validateName" style="background-color:red; font-size: 9px !important;" class="f2" value="`+ count + `/`+ bedStrengthMap[count] +`" readonly="readonly" onclick="javascript:return validateCheck(` + count + `,` + bedStrengthMap[count] + `);" />`;
+                                }else{
+                                    sString+=`<td style="background-color:green; font-size: 8px !important;" class="f2" ><input id="validate" name="validateName" style="background-color:green"  class="f2" value="`+ count + `/`+ bedStrengthMap[count] +`" readonly="readonly" onclick="javascript:return validateCheck(` + count + `,` + bedStrengthMap[count] + `);" />`;
+                                }
+                            }else{
+
+                            }
+                        }
+                        sString +='</tr>';
+                    }
+
+                    jq("#bedsBody").append(sString);
+                    dta = JSON.stringify(data);
+                })
+                .error(function(xhr, status, err) {
+                    jq().toastmessage('showErrorToast', "Error:" + err);
+                })
+        }
+
+        preloadBeds(${ipdWard});
         jq("#admittedWard").on("change",function () {
             var currentID = jq(this).val();
 
@@ -49,6 +145,8 @@
                     var bedCount = 0;
                     var bedOccupied = 0;
                     var bedMax = data.bedMax;
+                    jq("#bedMax").val(bedMax);
+                    jq("#size").val(size);
                     for (var i = 1; i <= bedMax ; i++) {
                         bedCount =  bedCount + 1;
                         if(bedStrengthMap[bedCount] != null && bedStrengthMap[bedCount] > 0){
