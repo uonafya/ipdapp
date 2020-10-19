@@ -1,17 +1,10 @@
 <%
-	ui.decorateWith("kenyaemr", "standardPage")
-    ui.includeJavascript("uicommons", "datetimepicker/bootstrap-datetimepicker.min.js")
-	ui.includeJavascript("ehrconfigs", "jquery-ui-1.9.2.custom.min.js")
-	ui.includeJavascript("ehrconfigs", "underscore-min.js")
-	ui.includeJavascript("ehrconfigs", "knockout-3.4.0.js")
-	ui.includeJavascript("ehrconfigs", "emr.js")
-	ui.includeCss("ehrconfigs", "jquery-ui-1.9.2.custom.min.css")
-	// toastmessage plugin: https://github.com/akquinet/jquery-toastmessage-plugin/wiki
-	ui.includeJavascript("ehrconfigs", "jquery.toastmessage.js")
-	ui.includeCss("ehrconfigs", "jquery.toastmessage.css")
-	// simplemodal plugin: http://www.ericmmartin.com/projects/simplemodal/
-	ui.includeJavascript("ehrconfigs", "jquery.simplemodal.1.4.4.min.js")
-	ui.includeCss("ehrconfigs", "referenceapplication.css")
+	ui.decorateWith("appui", "standardEmrPage", [title: "Patient Details"])
+	ui.includeJavascript("uicommons", "datetimepicker/bootstrap-datetimepicker.min.js")
+	ui.includeJavascript("patientdashboardapp", "jq.print.js")
+	ui.includeJavascript("patientdashboardapp", "jq.slimscroll.js")
+
+	ui.includeCss("patientdashboardapp", "patientdashboardapp.css");
 %>
 
 <script>
@@ -21,29 +14,29 @@
 		}
 		return dataToParse;
 	}
-		
-    jq(function() {
-        jq("#tabs").tabs();
-		
+
+	jq(function() {
+		jq("#tabs").tabs();
+
 		jq('.update-vitals').click(function(){
 			if (jq('.update-vitals i').attr('class').indexOf('icon-chevron-right') >= 0){
 				jq('.update-vitals i').removeClass('icon-chevron-right');
 				jq('.update-vitals i').addClass('icon-chevron-down');
-				
-				jq('.update-vitals span').text('Cancel Edit');				
+
+				jq('.update-vitals span').text('Cancel Edit');
 				jq('.vitals-edit-page').show(200);
 			}
 			else{
 				jq('.update-vitals i').removeClass('icon-chevron-down');
 				jq('.update-vitals i').addClass('icon-chevron-right');
-				
+
 				jq('.update-vitals span').text('Update Vitals');
 				jq('.vitals-edit-page').hide(300);
-				
+
 				jq('#vitalStatisticsForm')[0].reset();
 			}
 		});
-		
+
 		var requestType = localStorage.getItem('requestType');
 		if(requestType=="discharge"){
 			jq().toastmessage('showSuccessToast', "Patient discharge request sent!");
@@ -53,328 +46,332 @@
 		}
 		localStorage.removeItem('requestType');
 
-        jq("#transferButton").click(function(event){
-            var transferForm = jq("#transferForm");
-            var transferFormData = {
-                'admittedId': jq('#transferAdmittedID').val(),
-                'toWard': jq('#transferIpdWard').val(),
-                'doctor': jq('#transferDoctor').val(),
-                'bedNumber': jq('#transferBedNumber').val(),
-                'comments': jq('#transferComment').val(),
-            };
-			
+		jq("#transferButton").click(function(event){
+			var transferForm = jq("#transferForm");
+			var transferFormData = {
+				'admittedId': jq('#transferAdmittedID').val(),
+				'toWard': jq('#transferIpdWard').val(),
+				'doctor': jq('#transferDoctor').val(),
+				'bedNumber': jq('#transferBedNumber').val(),
+				'comments': jq('#transferComment').val(),
+			};
+
 			if (transferFormData.toWard == ""){
 				jq().toastmessage('showErrorToast', "Please specify Destination Ward");
 				return false;
 			}
-			
-			if (transferFormData.bedNumber == ""){
-				jq().toastmessage('showErrorToast', "Please specify Destination Bed Number");
-				return false;
-			}
-			
+
 			if (transferFormData.bedNumber == ""){
 				jq().toastmessage('showErrorToast', "Please specify Destination Bed Number");
 				return false;
 			}
 
-            transferForm.submit(
-                    jq.getJSON('${ ui.actionLink("ipdapp", "PatientInfo", "transferPatient") }',transferFormData)
-                            .success(function(data) {
-                                jq().toastmessage('showSuccessToast', "Patient has been successfully transferred");
+			if (transferFormData.bedNumber == ""){
+				jq().toastmessage('showErrorToast', "Please specify Destination Bed Number");
+				return false;
+			}
+
+			transferForm.submit(
+					jq.getJSON('${ ui.actionLink("ipdapp", "PatientInfo", "transferPatient") }',transferFormData)
+							.success(function(data) {
+								jq().toastmessage('showSuccessToast', "Patient has been successfully transferred");
 								window.location.href = "patientsAdmission.page?ipdWard=${patientInformation.admittedWard}";
 
-                            })
-                            .error(function(xhr, status, err) {
-                                jq().toastmessage('showErrorToast', "Error:" + err);
-                            })
-            );
+							})
+							.error(function(xhr, status, err) {
+								jq().toastmessage('showErrorToast', "Error:" + err);
+							})
+			);
 
-        });
+		});
 
-        jq("#vitalStatisticsButton").click(function(event){
-            var vitalStatisticsForm = jq("#vitalStatisticsForm");
-            var vitalStatisticsFormData = {
-                'admittedId': jq('#vitalStatisticsAdmittedID').val(),
-                'patientId': jq('#vitalStatisticsPatientID').val(),
-                'bloodPressure': jq('#vitalStatisticsBloodPressure').val(),
-                'pulseRate': jq('#vitalStatisticsPulseRate').val(),
-                'temperature': jq('#vitalStatisticsTemperature').val(),
-                'dietAdvised': jq('#vitalStatisticsDietAdvised').val(),
-                'notes': jq('#vitalStatisticsComment').val(),
-                'ipdWard': jq('#vitalStatisticsIPDWard').val(),
-            };
-            vitalStatisticsForm.submit(
-                    jq.getJSON('${ ui.actionLink("ipdapp", "PatientInfo", "saveVitalStatistics") }',vitalStatisticsFormData)
-                            .success(function(data) {
-                                location.reload();
-                            })
-                            .error(function(xhr, status, err) {
-                                jq().toastmessage('showErrorToast', "Error:" + err);
-                            })
-            );
-        });
-
-
-        //dicharge patient send post information
-        jq("#dischargeSubmit").click(function(event){
-            var dischargeForm = jq("#dischargeForm");
-
-            //fetch the selected discharge diagnoses and store in an array
-            var selectedDiag = new Array;
-
-            jq("#selectedDiagnosisList option").each  ( function() {
-                selectedDiag.push ( jq(this).val() );
-            });
-
-            //get the list of selected procedures and store them in an array
-            var selectedDischargeProcedureList = new Array;
-
-            jq("#selectedDischargeProcedureList option").each  ( function() {
-                selectedDischargeProcedureList.push ( jq(this).val() );
-            });
+		jq("#vitalStatisticsButton").click(function(event){
+			var vitalStatisticsForm = jq("#vitalStatisticsForm");
+			var vitalStatisticsFormData = {
+				'admittedId': jq('#vitalStatisticsAdmittedID').val(),
+				'patientId': jq('#vitalStatisticsPatientID').val(),
+				'bloodPressure': jq('#vitalStatisticsBloodPressure').val(),
+				'pulseRate': jq('#vitalStatisticsPulseRate').val(),
+				'temperature': jq('#vitalStatisticsTemperature').val(),
+				'dietAdvised': jq('#vitalStatisticsDietAdvised').val(),
+				'notes': jq('#vitalStatisticsComment').val(),
+				'ipdWard': jq('#vitalStatisticsIPDWard').val(),
+			};
+			vitalStatisticsForm.submit(
+					jq.getJSON('${ ui.actionLink("ipdapp", "PatientInfo", "saveVitalStatistics") }',vitalStatisticsFormData)
+							.success(function(data) {
+								location.reload();
+							})
+							.error(function(xhr, status, err) {
+								jq().toastmessage('showErrorToast', "Error:" + err);
+							})
+			);
+		});
 
 
+		//dicharge patient send post information
+		jq("#dischargeSubmit").click(function(event){
+			var dischargeForm = jq("#dischargeForm");
 
-            var dischargeFormData = {
-                'dischargeAdmittedID': jq('#dischargeAdmittedID').val(),
-                'patientId': jq('#dischargePatientID').val(),
-                'selectedDiagnosisList': selectedDiag,
-                'selectedDischargeProcedureList': selectedDischargeProcedureList,
-                'dischargeOutcomes': jq('#dischargeOutcomes').val(),
-                'otherDischargeInstructions': jq('#otherDischargeInstructions').val(),
-            };
+			//fetch the selected discharge diagnoses and store in an array
+			var selectedDiag = new Array;
 
-            dischargeForm.submit(
-                    jq.getJSON('${ ui.actionLink("ipdapp", "PatientInfo", "dischargePatient") }',dischargeFormData)
-                            .success(function(data) {
-                                jq().toastmessage('showNoticeToast', "Discharge form  submitted");
-                            })
-                            .error(function(xhr, status, err) {
-                                jq().toastmessage('showErrorToast', "Error:" + err);
-                            })
-            );
+			jq("#selectedDiagnosisList option").each  ( function() {
+				selectedDiag.push ( jq(this).val() );
+			});
 
-        });
-    });
+			//get the list of selected procedures and store them in an array
+			var selectedDischargeProcedureList = new Array;
 
-    //reqeust for discharge
-    function requestForDischarge(id, ipdWard, obStatus) {
-        var dischargeData = {
-            'id': id,
-            'ipdWard': ipdWard,
-            'obStatus':obStatus
-        };
+			jq("#selectedDischargeProcedureList option").each  ( function() {
+				selectedDischargeProcedureList.push ( jq(this).val() );
+			});
 
-        jq.getJSON('${ ui.actionLink("ipdapp", "patientInfo", "requestForDischarge") }', dischargeData)
-                .success(function (data) {
-                    localStorage.setItem('requestType',"discharge");
-                    location.reload();
-                })
-                .error(function (xhr, status, err) {
-                    jq().toastmessage('showErrorToast', "AJAX error!" + err);
-                })
-    }
-    //Abscond
-    function abscond(id, ipdWard, obStatus) {
-        var abscondData = {
-            'id': id,
-            'ipdWard': ipdWard,
-            'obStatus':obStatus
-        };
 
-        jq.getJSON('${ ui.actionLink("ipdapp", "patientInfo", "requestForDischarge") }', abscondData)
-                .success(function (data) {
-                    localStorage.setItem('requestType',"abscond");
-                    location.reload();
-                })
-                .error(function (xhr, status, err) {
-                    jq().toastmessage('showErrorToast', "AJAX error!" + err);
-                })
-    }
-	
+
+			var dischargeFormData = {
+				'dischargeAdmittedID': jq('#dischargeAdmittedID').val(),
+				'patientId': jq('#dischargePatientID').val(),
+				'selectedDiagnosisList': selectedDiag,
+				'selectedDischargeProcedureList': selectedDischargeProcedureList,
+				'dischargeOutcomes': jq('#dischargeOutcomes').val(),
+				'otherDischargeInstructions': jq('#otherDischargeInstructions').val(),
+			};
+
+			dischargeForm.submit(
+					jq.getJSON('${ ui.actionLink("ipdapp", "PatientInfo", "dischargePatient") }',dischargeFormData)
+							.success(function(data) {
+								jq().toastmessage('showNoticeToast', "Discharge form  submitted");
+							})
+							.error(function(xhr, status, err) {
+								jq().toastmessage('showErrorToast', "Error:" + err);
+							})
+			);
+
+		});
+	});
+
+	//reqeust for discharge
+	function requestForDischarge(id, ipdWard, obStatus) {
+		var dischargeData = {
+			'id': id,
+			'ipdWard': ipdWard,
+			'obStatus':obStatus
+		};
+
+		jq.getJSON('${ ui.actionLink("ipdapp", "patientInfo", "requestForDischarge") }', dischargeData)
+				.success(function (data) {
+					localStorage.setItem('requestType',"discharge");
+					location.reload();
+				})
+				.error(function (xhr, status, err) {
+					jq().toastmessage('showErrorToast', "AJAX error!" + err);
+				})
+	}
+	//Abscond
+	function abscond(id, ipdWard, obStatus) {
+		var abscondData = {
+			'id': id,
+			'ipdWard': ipdWard,
+			'obStatus':obStatus
+		};
+
+		jq.getJSON('${ ui.actionLink("ipdapp", "patientInfo", "requestForDischarge") }', abscondData)
+				.success(function (data) {
+					localStorage.setItem('requestType',"abscond");
+					location.reload();
+				})
+				.error(function (xhr, status, err) {
+					jq().toastmessage('showErrorToast', "AJAX error!" + err);
+				})
+	}
+
 	function selectTab(tabIdnt){
 		jq('#tabs').tabs('select', tabIdnt);
 	}
 </script>
 
 <style>
-	.toast-item {
-        background-color: #222;
-    }
-	.morebuttons{
-		display: inline;
-		float: left;
-		margin-left: 20px;
-	}
-	.tableelement{
-		width: auto;
-		min-width: 10px;
-	}
-	.vitalstatisticselements{
-		float:left;
-		margin-left:10px;
-		margin-bottom: 10px;
-	}
-	.vitalstatisticselements textarea{
-		height: 23px;
-		width: 183px;
-	}
-	.selecticon{
-		float: right;
-		vertical-align: middle;
-		font-size: x-large;
-	}
-	.selectp{
-		min-width: 450px;
-		border-bottom: solid;
-		border-bottom-width: 1px;
-		padding-left: 5px;
-		margin-top:20px;
-	}
-	.selectdiv{
-		width: 450px;
-		margin-top:10px;
-	}
-	#breadcrumbs a, #breadcrumbs a:link, #breadcrumbs a:visited {
-		text-decoration: none;
-	}
-	.name {
-		color: #f26522;
-	}
-	.new-patient-header .demographics .gender-age {
-		font-size: 14px;
-		margin-left: -55px;
-		margin-top: 12px;
-	}
-	.new-patient-header .demographics .gender-age span {
-		border-bottom: 1px none #ddd;
-	}
-	.new-patient-header .identifiers {
-		margin-top: 5px;
-	}
-	.tag {
-		padding: 2px 10px;
-	}
-	.tad {
-		background: #666 none repeat scroll 0 0;
-		border-radius: 1px;
-		color: white;
-		display: inline;
-		font-size: 0.8em;
-		padding: 2px 10px;
-	}
-	.status-container {
-		padding: 5px 10px 5px 5px;
-	}
-	.catg {
-		color: #363463;
-		margin: 25px 10px 0 0;
-	}
-	#tabs {
-		background: #f9f9f9 none repeat scroll 0 0;
-		padding: 10px;
-	}
-	#tab-container{
-		background: #f9f9f9 none repeat scroll 0 0;
-		margin-top: 3px;
-	}
-	.ui-tabs .ui-tabs-panel {
-		background: #fff none repeat scroll 0 0;
-		padding-top: 0;
-	}
-	.col12{
-		display: inline-block;
-		float: left;
-		width: 50%;
-	}
-	.col13{
-		display: inline-block;
-		float: left;
-		width: auto;
-	}
-	.col15 {
-		display: inline-block;
-		float: left;
-		max-width: 22%;
-		min-width: 22%;
-	}
-	.col16 {
-		display: inline-block;
-		float: left;
-		width: 78%;
-	}
-	.dashboard .action-section {
-		background: white none repeat scroll 0 0;
-		border: 1px solid #ddd;
-		margin-top: 35px;
-	}	
-	.dashboard .info-body label {
-		display: inline-block;
-		font-size: 90%;
-		margin-bottom: 6px;
-		margin-left: 5px;
-		width: 115px;
-	}
-	.dashboard .info-body span {
-		color: #000;
-		font-size: 0.9em;
-	}
-	.zero-em{
-		font-size: 0em!important;
-	}	
-	.dashboard .info-header h3 {
-		color: #f26522;
-	}
-	.daily-vitals label{
-		float: left;		
-	}
-	.daily-vitals span {
-		display: block;
-		overflow: hidden;
-		padding-right:10px;
-	}	
-	.daily-vitals input,
-	.daily-vitals select,
-	.daily-vitals textarea{
-		width: 100%;
-		resize: none;
-	}
-	.ui-widget-content a.right {
-		cursor: pointer;
-		font-size: 16px;
-	}
-	.ui-widget-content a.right:hover,
-	.ui-widget-content a.right:hover i {
-		color: #3399ff;
-		text-decoration: none;
-	}
-	form input:focus, form select:focus, form textarea:focus, form ul.select:focus, .form input:focus, .form select:focus, .form textarea:focus, .form ul.select:focus{
-		outline: 0px none #007fff;
-		box-shadow: 0 0 2px 0 #888;
-	}	
-	.dashboard .action-section a:not(.button) {
-		cursor: pointer;
-	}
+
+#person-detail{
+	display: none;
+}
+.toast-item {
+	background-color: #222;
+}
+.morebuttons{
+	display: inline;
+	float: left;
+	margin-left: 20px;
+}
+.tableelement{
+	width: auto;
+	min-width: 10px;
+}
+.vitalstatisticselements{
+	float:left;
+	margin-left:10px;
+	margin-bottom: 10px;
+}
+.vitalstatisticselements textarea{
+	height: 23px;
+	width: 183px;
+}
+.selecticon{
+	float: right;
+	vertical-align: middle;
+	font-size: x-large;
+}
+.selectp{
+	min-width: 450px;
+	border-bottom: solid;
+	border-bottom-width: 1px;
+	padding-left: 5px;
+	margin-top:20px;
+}
+.selectdiv{
+	width: 450px;
+	margin-top:10px;
+}
+#breadcrumbs a, #breadcrumbs a:link, #breadcrumbs a:visited {
+	text-decoration: none;
+}
+.name {
+	color: #f26522;
+}
+.new-patient-header .demographics .gender-age {
+	font-size: 14px;
+	margin-left: -55px;
+	margin-top: 12px;
+}
+.new-patient-header .demographics .gender-age span {
+	border-bottom: 1px none #ddd;
+}
+.new-patient-header .identifiers {
+	margin-top: 5px;
+}
+.tag {
+	padding: 2px 10px;
+}
+.tad {
+	background: #666 none repeat scroll 0 0;
+	border-radius: 1px;
+	color: white;
+	display: inline;
+	font-size: 0.8em;
+	padding: 2px 10px;
+}
+.status-container {
+	padding: 5px 10px 5px 5px;
+}
+.catg {
+	color: #363463;
+	margin: 25px 10px 0 0;
+}
+#tabs {
+	background: #f9f9f9 none repeat scroll 0 0;
+	padding: 10px;
+}
+#tab-container{
+	background: #f9f9f9 none repeat scroll 0 0;
+	margin-top: 3px;
+}
+.ui-tabs .ui-tabs-panel {
+	background: #fff none repeat scroll 0 0;
+	padding-top: 0;
+}
+.col12{
+	display: inline-block;
+	float: left;
+	width: 50%;
+}
+.col13{
+	display: inline-block;
+	float: left;
+	width: auto;
+}
+.col15 {
+	display: inline-block;
+	float: left;
+	max-width: 22%;
+	min-width: 22%;
+}
+.col16 {
+	display: inline-block;
+	float: left;
+	width: 78%;
+}
+.dashboard .action-section {
+	background: white none repeat scroll 0 0;
+	border: 1px solid #ddd;
+	margin-top: 35px;
+}
+.dashboard .info-body label {
+	display: inline-block;
+	font-size: 90%;
+	margin-bottom: 6px;
+	margin-left: 5px;
+	width: 115px;
+}
+.dashboard .info-body span {
+	color: #000;
+	font-size: 0.9em;
+}
+.zero-em{
+	font-size: 0em!important;
+}
+.dashboard .info-header h3 {
+	color: #f26522;
+}
+.daily-vitals label{
+	float: left;
+}
+.daily-vitals span {
+	display: block;
+	overflow: hidden;
+	padding-right:10px;
+}
+.daily-vitals input,
+.daily-vitals select,
+.daily-vitals textarea{
+	width: 100%;
+	resize: none;
+}
+.ui-widget-content a.right {
+	cursor: pointer;
+	font-size: 16px;
+}
+.ui-widget-content a.right:hover,
+.ui-widget-content a.right:hover i {
+	color: #3399ff;
+	text-decoration: none;
+}
+form input:focus, form select:focus, form textarea:focus, form ul.select:focus, .form input:focus, .form select:focus, .form textarea:focus, .form ul.select:focus{
+	outline: 0px none #007fff;
+	box-shadow: 0 0 2px 0 #888;
+}
+.dashboard .action-section a:not(.button) {
+	cursor: pointer;
+}
 </style>
 
 <div class="example">
 	<ul id="breadcrumbs">
 		<li>
-			<a href="${ui.pageLink('kenyaemr','userHome')}">
-			<i class="icon-home small"></i></a>
+			<a href="${ui.pageLink('referenceapplication','home')}">
+				<i class="icon-home small"></i></a>
 		</li>
-		
+
 		<li>
 			<i class="icon-chevron-right link"></i>
 			<a href="chooseIpdWard.page">IPD Wards</a>
 		</li>
-		
+
 		<li>
 			<i class="icon-chevron-right link"></i>
 			<a href="patientsAdmission.page?ipdWard=${patientInformation.admittedWard}">${patientInformation.admittedWard.name}</a>
 		</li>
-		
+
 		<li>
 			<i class="icon-chevron-right link"></i>
 			Details
@@ -387,20 +384,20 @@
 		<h1 class="name">
 			<span id="surname">${patient.familyName},<em>surname</em></span>
 			<span id="othname">${patient.givenName} ${patient.middleName?patient.middleName:''}&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<em>other names</em></span>
-			
+
 			<span class="gender-age">
 				<span>
 					<% if (patient.gender == "F") { %>
-						Female
+					Female
 					<% } else { %>
-						Male
+					Male
 					<% } %>
-					</span>
+				</span>
 				<span id="agename">${patient.age} years (${ui.formatDatePretty(patient.birthdate)}) </span>
-				
+
 			</span>
 		</h1>
-		
+
 		<br/>
 		<div id="stacont" class="status-container">
 			<span class="status active"></span>
@@ -414,27 +411,38 @@
 		<em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Patient ID</em>
 		<span>${patient.getPatientIdentifier()}</span>
 		<br>
-		
+
 		<div class="catg">
 			<i class="icon-tags small" style="font-size: 16px"></i><small>Category:</small> ${patient.getAttribute(14)}
 		</div>
 	</div>
-	<div class="clear"></div>	
+	<div class="clear"></div>
 </div>
 
 <div id="tab-container">
 	<div id="tabs">
 		<ul>
 			<li class="tabs1"><a href="#tabs-1">Patient Details</a></li>
-			<li class="tabs2"><a href="#tabs-2">Transfer</a></li>
+			<li class="tabs2"><a href="#tabs-2">Clinical History</a></li>
+			<li class="tabs3"><a href="#tabs-3">Lab Reports</a></li>
+			<li class="tabs4"><a href="#tabs-4">Transfer</a></li>
 		</ul>
-		
+
 		<div id="tabs-1">
 			${ui.includeFragment("ipdapp", "patientInfoDetails")}
-		</div>		
-		
+		</div>
+
 		<div id="tabs-2">
+			${ ui.includeFragment("ipdapp", "visitSummary", [patientId: patient.patientId]) }
+		</div>
+		<div id="tabs-3">
+			${ ui.includeFragment("ipdapp", "investigations", [patientId: patient.patientId]) }
+		</div>
+
+		<div id="tabs-4">
 			${ui.includeFragment("ipdapp", "patientInfoTransfer")}
 		</div>
+
+
 	</div>
 </div>
