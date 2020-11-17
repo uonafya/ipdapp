@@ -1,4 +1,4 @@
-package org.openmrs.module.ipdapp.page.controller;
+package org.openmrs.module.ipdapp.fragment.controller;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -26,7 +26,7 @@ import java.util.*;
 /**
  * Created by ngarivictor on 1/25/2016.
  */
-public class AdmissionFormPageController {
+public class PatientAdmissionFragmentController {
     public void get(@RequestParam(value = "admissionId", required = false) Integer admissionId, //If that tab is active we will set that tab active when page load.
                     PageModel model,
                     @RequestParam(value = "ipdWard") String ipdWard
