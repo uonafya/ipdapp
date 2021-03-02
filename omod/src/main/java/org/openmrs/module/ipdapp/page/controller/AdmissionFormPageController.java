@@ -70,10 +70,9 @@ public class AdmissionFormPageController {
 
         if (admission != null) {
             PersonAddress add = admission.getPatient().getPersonAddress();
-            String address = add.getAddress1();
             //ghansham 25-june-2013 issue no # 1924 Change in the address format
-            String district = add.getCountyDistrict();
-            String upazila = add.getCityVillage();
+            //String district = add.getCountyDistrict();
+            //String upazila = add.getCityVillage();
             String pname = add.getPerson().getGivenName();
 
             String doctorRoleProps = Context.getAdministrationService().getGlobalProperty(IpdConstants.PROPERTY_NAME_DOCTOR_ROLE);
@@ -101,10 +100,10 @@ public class AdmissionFormPageController {
             PersonAttribute fileNumber = admission.getPatient().getAttribute("File Number");
 
             model.addAttribute("admission", admission);
-            model.addAttribute("address", StringUtils.isNotBlank(address) ? address : "");
+            model.addAttribute("address", StringUtils.isNotBlank(add.getCityVillage()) ? add.getCityVillage() : "");
             //  issue no # 1924 Change in the address format
-            model.addAttribute("district", district);
-            model.addAttribute("upazila", upazila);
+            //model.addAttribute("district", district);
+            //model.addAttribute("upazila", upazila);
             model.addAttribute("name", pname);
             //added condition 21/7/16 (Throws bug since person attribute is null
             String relationNameattrStr = "";
