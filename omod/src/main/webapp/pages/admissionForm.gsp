@@ -30,7 +30,7 @@ ui.includeCss("ehrconfigs", "jquery.toastmessage.css")
 
 
     function validateCheck(checkAlert,maxPatientOnBed){
-        if(document.forms["transferForm"] != undefined)
+        if(document.forms["transferForm"] !== undefined)
         {
             document.forms["transferForm"]["bedNumber"].value=checkAlert;
             jq("#bedsTable").hide();
@@ -53,16 +53,16 @@ ui.includeCss("ehrconfigs", "jquery.toastmessage.css")
         var treatingdoctor = document.forms["admissionForm"]["treatingDoctor"].value;
         var bednumber = document.forms["admissionForm"]["bedNumber"].value;
 
-        if (admittedward == null || admittedward == "") {
+        if (admittedward == null || admittedward === "") {
             alert("Please select admitted Ward");
             return false;
         }
 
-        if (treatingdoctor == null || treatingdoctor == "") {
+        if (treatingdoctor == null || treatingdoctor === "") {
             alert("Please select Doctor on Call");
             return false;
         }
-        if (bednumber == null || bednumber == "") {
+        if (bednumber == null || bednumber === "") {
             alert("Please enter bed Number");
             return false;
         }
@@ -450,7 +450,7 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
             <br>
 
             <div class="catg" style="margin-top: 10px; margin-right: 10px;">
-                <i class="icon-tags small" style="font-size: 16px"></i><small>Category:</small> ${admission.patient.getAttribute(14)}
+                <i class="icon-tags small" style="font-size: 16px"></i><small>Category:</small> ${admission.patient.getAttribute(53)}
             </div>
         </div>
         <div class="clear"></div>
