@@ -72,9 +72,16 @@ public class AdmissionFormPageController {
             PersonAddress add = admission.getPatient().getPersonAddress();
             //String address = add.getAddress1();
             //ghansham 25-june-2013 issue no # 1924 Change in the address format
-            String district = add.getCountyDistrict();
-            String upazila = add.getCityVillage();
-            String pname = add.getPerson().getGivenName();
+            //String district = add.getCountyDistrict();
+            //String upazila = add.getCityVillage();
+            String pname = "";
+            String address = "";
+            if(add != null) {
+                pname = add.getPerson().getGivenName();
+                if(add.getCityVillage() != null) {
+                    address = add.getCityVillage();
+                }
+            }
 
             String doctorRoleProps = Context.getAdministrationService().getGlobalProperty(IpdConstants.PROPERTY_NAME_DOCTOR_ROLE);
             Role doctorRole = Context.getUserService().getRole(doctorRoleProps);
@@ -101,10 +108,10 @@ public class AdmissionFormPageController {
             PersonAttribute fileNumber = admission.getPatient().getAttribute("File Number");
 
             model.addAttribute("admission", admission);
-            model.addAttribute("address", StringUtils.isNotBlank(add.getCityVillage()) ? add.getCityVillage() : "");
+            model.addAttribute("address", StringUtils.isNotBlank(address) ? address : "");
             //  issue no # 1924 Change in the address format
-            model.addAttribute("district", district);
-            model.addAttribute("upazila", upazila);
+            model.addAttribute("district", "district");
+            model.addAttribute("upazila", "upazila");
             model.addAttribute("name", pname);
             //added condition 21/7/16 (Throws bug since person attribute is null
             String relationNameattrStr = "";
@@ -320,13 +327,13 @@ public class AdmissionFormPageController {
             model.addAttribute("message", e.getMessage());
         }
 
-        PersonAttribute contactNumber = admission.getPatient().getAttribute("Phone Number");
+        //PersonAttribute contactNumber = admission.getPatient().getAttribute("Phone Number");
 
-        PersonAttribute emailAddress = admission.getPatient().getAttribute("Patient E-mail Address");
+        //PersonAttribute emailAddress = admission.getPatient().getAttribute("Patient E-mail Address");
 
 
         /*patient is accepted into the ward*/
-        Boolean accepted = this.accept(admission.getId());
+        boolean accepted = this.accept(admission.getId());
 
         if(accepted){
             Map<String,Object> params=new HashMap<String, Object>();
