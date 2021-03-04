@@ -6,6 +6,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;
 import org.openmrs.Encounter;
+import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Obs;
@@ -16,6 +17,7 @@ import org.openmrs.PersonAttributeType;
 import org.openmrs.Provider;
 import org.openmrs.Role;
 import org.openmrs.User;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.BillingService;
 import org.openmrs.module.hospitalcore.HospitalCoreService;
@@ -32,7 +34,9 @@ import org.openmrs.module.hospitalcore.util.ConceptAnswerComparator;
 import org.openmrs.module.hospitalcore.util.HospitalCoreConstants;
 import org.openmrs.module.hospitalcore.util.Money;
 import org.openmrs.module.ipdapp.utils.IpdConstants;
+import org.openmrs.module.kenyaemr.api.KenyaEmrService;
 import org.openmrs.module.kenyaui.annotation.AppPage;
+import org.openmrs.module.kenyaui.wrapper.KenyaEMRObsWrapper;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -131,6 +135,7 @@ public class AdmissionFormPageController {
                        @RequestParam(value = "ipdWard", required = false) String ipdWard,
                        @RequestParam(value = "ipdWardString", required = false) String ipdWardString, //ipdWard multiselect
                        @RequestParam(value = "tab", required = false) Integer tab,
+                       @RequestParam(value = "admissionId", required = false) Integer admissionId,
                        UiUtils uiUtils) {
         IpdService ipdService = (IpdService) Context.getService(IpdService.class);
         int id = NumberUtils.toInt(request.getParameter("id"));
@@ -333,12 +338,12 @@ public class AdmissionFormPageController {
 
 
         /*patient is accepted into the ward*/
-        boolean accepted = this.accept(admission.getId());
+        boolean accepted = this.accept(admissionId);
 
         if(accepted){
             Map<String,Object> params=new HashMap<String, Object>();
             params.put("tab",tab);
-            params.put("ipdWard",ipdWard);
+            params.put("ipdWard",admittedWard);
             params.put("ipdWardString",ipdWardString);
             return "redirect:"+uiUtils.pageLink("ipdapp","patientsAdmission",params);
         }
@@ -348,7 +353,9 @@ public class AdmissionFormPageController {
     public boolean accept(Integer admissionId) {
         int acceptStatus = 1;
         PatientDashboardService patientDashboardService = Context.getService(PatientDashboardService.class);
-        IpdService ipdService = (IpdService) Context.getService(IpdService.class);
+        IpdService ipdService = Context.getService(IpdService.class);
+        KenyaEmrService  kenyaEmrService = Context.getService(KenyaEmrService.class);
+
         IpdPatientAdmission admission = ipdService.getIpdPatientAdmission(admissionId);
 
         if (admission != null) {
@@ -359,10 +366,10 @@ public class AdmissionFormPageController {
             Encounter encounter = new Encounter();
             Date date = new Date();
             User user = Context.getAuthenticatedUser();
-            Location location = new Location(1);
+            Location location = kenyaEmrService.getDefaultLocation();
             encounter.setPatient(admission.getPatient());
             encounter.setCreator(user);
-            encounter.setProvider(user);
+            encounter.setProvider(getEncounterRole(), getProvider(user));
             encounter.setEncounterDatetime(date);
             encounter.setEncounterType(encounterType);
             encounter.setLocation(location);
@@ -372,6 +379,22 @@ public class AdmissionFormPageController {
         }
         return true;
 
+    }
+
+    private Provider getProvider(User user) {
+        Provider provider = null;
+        for (Provider prov:Context.getProviderService().getProvidersByPerson(user.getPerson())){
+            if(prov != null) {
+                provider = prov;
+                break;
+            }
+        }
+
+        return provider;
+    }
+
+    private EncounterRole getEncounterRole() {
+        return Context.getEncounterService().getEncounterRoleByUuid("a0b03050-c99b-11e0-9572-0800200c9a66");
     }
 
 }
