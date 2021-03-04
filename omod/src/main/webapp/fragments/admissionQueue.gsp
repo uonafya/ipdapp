@@ -24,7 +24,8 @@
 		admissionQueueResultsData = results || [];
 		var dataRows = [];
 		_.each(admissionQueueResultsData, function(result){
-			var icons = '<div style="position: static" class="dropdown"><span class="dropdown-name"><i class="icon-cog"></i>Actions<i class="icon-sort-down"></i></span><ul><li><a href="admissionForm.page?admissionId='+result.id+'&ipdWard=ipdWard.id"><i class="icon-signin"></i>Admit</a></li><li><a class="remove-patient" data-idnt="'+result.id+'" data-action=1><i class="icon-remove"></i>Remove</a></li><li><a class="remove-patient" data-idnt="'+result.id+'" data-action=2><i class="icon-thumbs-down"></i>No bed</a></li></ul></div>';
+			//console.log("The results has the following information>>"+result)
+			var icons = '<div style="position: static" class="dropdown"><span class="dropdown-name"><i class="icon-cog"></i>Actions<i class="icon-sort-down"></i></span><ul><li><a href="admissionForm.page?admissionId='+result.id+'"><i class="icon-signin"></i>Admit</a></li><li><a class="remove-patient" data-idnt="'+result.id+'" data-action=1><i class="icon-remove"></i>Remove</a></li><li><a class="remove-patient" data-idnt="'+result.id+'" data-action=2><i class="icon-thumbs-down"></i>No bed</a></li></ul></div>';
 			var gender = result.gender;			
 			if (gender === "M"){
 				gender = 'Male';
