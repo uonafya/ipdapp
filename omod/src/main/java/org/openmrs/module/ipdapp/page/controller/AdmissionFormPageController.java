@@ -61,7 +61,8 @@ public class AdmissionFormPageController {
     )
 
     {
-        model.addAttribute("ipdWard", ipdWard);
+
+        model.addAttribute("ipdWard", Context.getConceptService().getConceptByName(ipdWard).getConceptId());
         IpdService ipdService = Context.getService(IpdService.class);
         Concept ipdConcept = Context.getConceptService().getConceptByName(
                 Context.getAdministrationService().getGlobalProperty(IpdConstants.PROPERTY_IPDWARD));
@@ -182,13 +183,13 @@ public class AdmissionFormPageController {
                     HospitalCoreConstants.PROPERTY_IPDENCOUNTER);
 
             Encounter encounter = new Encounter();
-            Location location = new Location(1);
+            Location location = Context.getService(KenyaEmrService.class).getDefaultLocation();
             encounter.setPatient(admission.getPatient());
             encounter.setCreator(user);
-            Provider p = new Provider();
             encounter.setEncounterDatetime(date);
             encounter.setEncounterType(encounterType);
             encounter.setLocation(location);
+            encounter.setProvider(getEncounterRole(), getProvider(user));
             encounter = Context.getEncounterService().saveEncounter(encounter);
             //done save ipd encounter
             patientAdmissionLog.setIpdEncounter(encounter);

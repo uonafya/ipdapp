@@ -27,8 +27,8 @@ public class BedStrengthFragmentController {
                 .getService(IpdService.class);
         Map<Long,Integer> bedStrengthMap = new HashMap<Long, Integer>();
         WardBedStrength wardBedStrength = ipdService.getWardBedStrengthByWardId(wardId);
-        //System.out.println("ward bed strength = " +wardBedStrength + "<<<wardId" + wardId);
-        if (wardBedStrength!=null){
+        System.out.println("ward bed strength = " +wardBedStrength + "<<<wardId" + wardId);
+        if (wardBedStrength !=null){
             Integer bedStrength = wardBedStrength.getBedStrength();
             List<IpdPatientAdmitted> allAdmittedPatients = ipdService.getAllIpdPatientAdmitted();
             //populate all bed numbers with 0;
