@@ -13,6 +13,7 @@
 		
 		jq.getJSON('${ ui.actionLink("ipdapp", "PatientAdmission", "listAdmittedIpdPatients") }', requestData)
 			.success(function (data) {
+				console.log("check hereeeeee", data)
 				updateAdmittedPatientsResults(data);
 			}).error(function (xhr, status, err) {
 				updateAdmittedPatientsResults([]);

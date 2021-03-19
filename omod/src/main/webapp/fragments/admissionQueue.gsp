@@ -10,10 +10,9 @@
 			fromDate:		jq('#outsFrom-field').val(),
 			toDate:			jq('#outsDate-field').val()
 		}
-		
 		jq.getJSON('${ ui.actionLink("ipdapp", "PatientAdmission", "listAdmissionQueuePatients") }', requestData)
 			.success(function (data) {
-				console.log("The values aere>>"+data);
+				console.log("i'mmmmmmmmmm heeeeeeeeeeeeeeeeerrrrrrrrr"+ data)
 				updateAdmissionQueueResults(data);
 			}).error(function (xhr, status, err) {
 				updateAdmissionQueueResults([]);
@@ -25,7 +24,7 @@
 		admissionQueueResultsData = results || [];
 		var dataRows = [];
 		_.each(admissionQueueResultsData, function(result){
-			var icons = '<div style="position: static" class="dropdown"><span class="dropdown-name"><i class="icon-cog"></i>Actions<i class="icon-sort-down"></i></span><ul><li><a href="admissionForm.page?admissionId='+result.id+'&ipdWard=ipdWard.id"><i class="icon-signin"></i>Admit</a></li><li><a class="remove-patient" data-idnt="'+result.id+'" data-action=1><i class="icon-remove"></i>Remove</a></li><li><a class="remove-patient" data-idnt="'+result.id+'" data-action=2><i class="icon-thumbs-down"></i>No bed</a></li></ul></div>';
+			var icons = '<div style="position: static" class="dropdown"><span class="dropdown-name"><i class="icon-cog"></i>Actions<i class="icon-sort-down"></i></span><ul><li><a href="admissionForm.page?admissionId='+result.id+'&ipdWard='+'${ipdWard.id}"><i class="icon-signin"></i>Admit</a></li><li><a class="remove-patient" data-idnt="'+result.id+'" data-action=1><i class="icon-remove"></i>Remove</a></li><li><a class="remove-patient" data-idnt="'+result.id+'" data-action=2><i class="icon-thumbs-down"></i>No bed</a></li></ul></div>';
 			var gender = result.gender;			
 			if (gender === "M"){
 				gender = 'Male';
@@ -102,10 +101,10 @@
 			
 			jq.post('${ ui.actionLink("ipdapp", "PatientAdmission", "removeOrNoBed") }', requestData)
 				.success(function (data) {
-					jq().toastmessage('showErrorToast', "Successfully Updated Queue Patient Information");
+					jq().toastmessage('message', "Successfully Updated Queue Patient Information");
 					getAdmissionQueue();						
 				}).error(function (xhr, status, err) {
-					jq().toastmessage('showErrorToast', "AJAX error!" + err);
+					jq().toastmessage('messageerror', "AJAX error!" + err);
 				}
 			);			
 		});

@@ -70,16 +70,18 @@ public class AdmissionFormPageController {
 
         if (admission != null) {
             PersonAddress add = admission.getPatient().getPersonAddress();
+            //String address = add.getAddress1();
             //ghansham 25-june-2013 issue no # 1924 Change in the address format
             //String district = add.getCountyDistrict();
             //String upazila = add.getCityVillage();
-            String pname = add.getPerson().getGivenName();
+            //String pname = add.getPerson().getGivenName();
 
             String doctorRoleProps = Context.getAdministrationService().getGlobalProperty(IpdConstants.PROPERTY_NAME_DOCTOR_ROLE);
             Role doctorRole = Context.getUserService().getRole(doctorRoleProps);
             if (doctorRole != null) {
                 List<User> listDoctor = Context.getUserService().getUsersByRole(doctorRole);
                 model.addAttribute("listDoctor", listDoctor);
+                System.out.println("hhhhhhhheeeeeeeerrrrr" + listDoctor );
             }
 
             PersonAttribute relationNameattr = admission.getPatient().getAttribute("Father/Husband Name");
@@ -100,15 +102,15 @@ public class AdmissionFormPageController {
             PersonAttribute fileNumber = admission.getPatient().getAttribute("File Number");
 
             model.addAttribute("admission", admission);
-            model.addAttribute("address", StringUtils.isNotBlank(add.getCityVillage()) ? add.getCityVillage() : "");
+            //model.addAttribute("address", StringUtils.isNotBlank(address) ? address : "");
             //  issue no # 1924 Change in the address format
             //model.addAttribute("district", district);
             //model.addAttribute("upazila", upazila);
-            model.addAttribute("name", pname);
+            //model.addAttribute("name", pname);
             //added condition 21/7/16 (Throws bug since person attribute is null
             String relationNameattrStr = "";
             if(relationNameattr!=null) {
-                 relationNameattrStr = relationNameattr.getValue();
+                relationNameattrStr = relationNameattr.getValue();
             }
             model.addAttribute("relationName", relationNameattrStr);
             if (fileNumber != null) {
@@ -161,7 +163,6 @@ public class AdmissionFormPageController {
             patientAdmissionLog.setPatientName(admission.getPatientName());
             patientAdmissionLog.setStatus(IpdConstants.STATUS[0]);
             patientAdmissionLog.setIndoorStatus(1);
-
 
             //save ipd encounter
             User user = Context.getAuthenticatedUser();
@@ -240,19 +241,13 @@ public class AdmissionFormPageController {
 
             PersonAddress add = admission.getPatient().getPersonAddress();
 
-            String address = add.getAddress1();
+            //String address = add.getAddress1();
             // ghansham 25-june-2013 issue no # 1924 Change in the address format
-            String district = add.getCountyDistrict();
-            String upazila = add.getCityVillage();
-
-
+            //String district = add.getCountyDistrict();
+            //String upazila = add.getCityVillage();
 
             PersonAttribute relationNameattr = admission.getPatient().getAttribute("Father/Husband Name");
             PersonAttribute relationTypeattr = admission.getPatient().getAttribute("Relative Name Type");
-
-
-
-
             PersonAttribute fileNumber_old = admission.getPatient().getAttribute("File Number");
             if (fileNumber_old == null) {
                 PersonAttributeType type = Context.getPersonService().getPersonAttributeTypeByName("File Number");
@@ -262,7 +257,6 @@ public class AdmissionFormPageController {
                 Patient patient = admission.getPatient();
                 patient.addAttribute(attribute);
             }
-
 
 //            model.addAttribute("dateAdmission", date);
 
@@ -298,7 +292,7 @@ public class AdmissionFormPageController {
                 admitted.setPatient(patientAdmissionLog.getPatient());
             }
 
-            admitted.setPatientAddress(StringUtils.isNotBlank(address) ? address : "");
+            //admitted.setPatientAddress(StringUtils.isNotBlank(address) ? address : "");
             admitted.setPatientAdmissionLog(patientAdmissionLog);
             admitted.setPatientIdentifier(admission.getPatientIdentifier());
             admitted.setPatientName(admission.getPatientName());
@@ -363,7 +357,5 @@ public class AdmissionFormPageController {
             ipdService.saveIpdPatientAdmission(admission);
         }
         return true;
-
     }
-
 }

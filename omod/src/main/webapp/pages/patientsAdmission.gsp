@@ -105,6 +105,25 @@
 	}
 </style>
 
+<div class="example">
+	<ul id="breadcrumbs">
+		<li>
+			<a href="link to home">
+				<i class="icon-home small"></i></a>
+		</li>
+
+		<li>
+			<i class="icon-chevron-right link"></i>
+			<a href="chooseIpdWard.page">IPD Wards</a>
+		</li>
+
+		<li>
+			<i class="icon-chevron-right link"></i>
+			${ipdWard.name}
+		</li>
+	</ul>
+</div>
+
 <div class="patient-header new-patient-header">
 	<div class="demographics">
 		<h1 class="name" style="border-bottom: 1px solid #ddd;">
@@ -133,11 +152,15 @@
 
 		<div id="ipd-patients">
 			${ui.includeFragment("ipdapp", "admittedPatients")}
+
+		</div>
+
+		<div id="ipd-queue">
+			${ui.includeFragment("ipdapp", "admissionQueue")}
+
 		</div>
 		
-		<div id="ipd-queue">      
-			${ui.includeFragment("ipdapp", "admissionQueue")}
-		</div>
+
 	</div>
 </div>
 

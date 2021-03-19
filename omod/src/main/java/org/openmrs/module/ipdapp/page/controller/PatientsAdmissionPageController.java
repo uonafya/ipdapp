@@ -41,15 +41,15 @@ public class PatientsAdmissionPageController {
         for (IpdPatientAdmitted admit : listPatientAdmitted) {
             PersonAttribute relationNameattr = admit.getPatient().getAttribute("Father/Husband Name");
             PersonAddress add = admit.getPatient().getPersonAddress();
-            String address1 = add.getAddress1();
-            if(address1!=null){
+         //   String address1 = add.getAddress1();
+            /*if(address1!=null){
                 String address = " " + add.getAddress1() +" " + add.getCountyDistrict() + " " + add.getCityVillage();
                 model.addAttribute("address", address);
             }
             else{
                 String address = " " + add.getCountyDistrict() + " " + add.getCityVillage();
                 model.addAttribute("address", address);
-            }
+            }*/
             PersonAttribute relationTypeattr = admit.getPatient().getAttribute("Relative Name Type");
             //ghanshyam 30/07/2012 this code modified under feedback of 'New Requirement #313'
             if(relationTypeattr!=null){
