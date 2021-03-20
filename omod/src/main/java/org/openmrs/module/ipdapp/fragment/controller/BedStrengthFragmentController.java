@@ -24,6 +24,7 @@ public class BedStrengthFragmentController {
         IpdService ipdService = Context.getService(IpdService.class);
         Map<Long, Integer> bedStrengthMap = new HashMap<Long, Integer>();
         WardBedStrength wardBedStrength = ipdService.getWardBedStrengthByWardId(wardId);
+
         boolean bedStrengthValueAvailable = false;
         if (wardBedStrength != null) {
             Integer bedStrength = wardBedStrength.getBedStrength();
