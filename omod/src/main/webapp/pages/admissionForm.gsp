@@ -1,11 +1,85 @@
-<% ui.decorateWith("appui", "standardEmrPage", [title: "admit"]) %>
+<%
+    ui.decorateWith("appui", "standardEmrPage", [title: "admit"])
+
+    ui.includeCss("ehrconfigs", "referenceapplication.css")
+    ui.includeCss("ehrconfigs", "onepcssgrid.css")
+
+    ui.includeJavascript("ehrconfigs", "moment.js")
+    ui.includeJavascript("ehrconfigs", "jquery.dataTables.min.js")
+    ui.includeJavascript("ehrconfigs", "jq.browser.select.js")
+    ui.includeJavascript("ehrconfigs", "knockout-3.4.0.js")
+    ui.includeJavascript("ehrconfigs", "jquery-ui-1.9.2.custom.min.js")
+    ui.includeJavascript("ehrconfigs", "underscore-min.js")
+    ui.includeJavascript("ehrconfigs", "emr.js")
+%>
+
+
 
 <body></body>
 <header>
+    <style>
+        .adm-frm{
+            display: flex;
+            flex-direction: row;
+            padding: 5px;
+            margin-left: 8px;
+        }
+        @media screen and (max-width: 900px){
+            .adm-frm{
+                flex-direction: column;
+            }
+        }
+        #dump-bed{
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(6, auto);
+            gap: 7px;
+            padding-bottom: 14px;
+        }
+        .bp-container{
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 2px;
+        }
+        .bp-span{
+            padding: 3px;
+        }
+        .bp-container{
+            padding: 3px;
+            background-color: firebrick;
+            color: white;
+            cursor: pointer;
+        }
+        .bp-container[data-people="0"]{
+            background-color: #34bf6e;
+        }
+        .ke-page-container{
+            min-height: 100vh;
+        }
+        body{
+            min-height: 100vh;
+        }
+        .page-content{
+            height: 100%;
+            min-height: 700px;
+        }
+        #addDrugDialog{
+            position: absolute;
+            top: 0%;
+            z-index: 3000;
+            left: 25%;
+            width: 60%;
+            overflow: auto;
+            height: 90%;
+        }
+        .hidden{
+            display: none;
+        }
+    </style>
 </header>
 <script>
     var jq = jQuery;
-    var pasteBed = '';
     //treatment: send post information
     var getJSON = function (dataToParse) {
         if (typeof dataToParse === "string") {
@@ -14,19 +88,26 @@
         return dataToParse;
     }
 
+
+    function setBedNo(bedNum){
+            jq('#BedNo').val(bedNum)
+        jq('#addDrugDialog').addClass('hidden')
+    }
+
     jq(function() {
+
 
         jq("#admittedWard").on("change",function () {
             var currentID = jq(this).val();
+
 
             jq.getJSON('${ ui.actionLink("ipdapp", "BedStrength", "getBedStrength")  }',{
                 wardId: currentID
             })
                 .success(function(data) {
 
+                    var pasteBed = '';
                     jq('#dump-bed').html('');
-
-                    dta = JSON.stringify(data);
 
                     for (var key in data) {
                         if (data.hasOwnProperty(key)) {
@@ -36,7 +117,7 @@
                                 if(val.hasOwnProperty(i)){
                                     var j = val[i];
 
-                                    pasteBed += ' Bed No. ' + i + ' People: ' + j;
+                                    pasteBed += '<div class="bp-container" onclick="setBedNo('+i+')" data-bednum="'+i+'" data-people="'+j+'"> <span class="bp-span bno">Bed <b>#' + i + '</b></span> <span class="bp-span bpl" >Patients: <b>' + j+'</b></span></div>';
                                 }
                             }
 
@@ -51,20 +132,31 @@
                     jq().toastmessage('showErrorToast', "Error:" + err);
                 })
         });
-        var adddrugdialog = emr.setupConfirmationDialog({
-            selector: '#addDrugDialog',
-            actions: {
-                confirm: function() {
-
-                },
-                cancel: function() {
-                    adddrugdialog.close();
-                }
-            }
+        // var adddrugdialog = emr.setupConfirmationDialog({
+        //     selector: '#addDrugDialog',
+        //     actions: {
+        //         confirm: function() {
+        //
+        //         },
+        //         cancel: function() {
+        //             adddrugdialog.close();
+        //         }
+        //     }
+        // });
+        // jq("#bedButton").on("click", function(e) {
+        //     adddrugdialog.show();
+        // });
+        jq("#BedNo").on("click", function(e) {
+            jq('#addDrugDialog').removeClass('hidden')
         });
-        jq("#bedButton").on("click", function(e) {
-            adddrugdialog.show();
-        });
+        // jq(".bp-container").on("click", function(e) {
+        //     var bednum = jq(this).attr('data-bednum')
+        //     console.log("picked bed: ", bednum)
+        //     if(!isNaN(parseInt(bednum))){
+        //         jq('#BedNo').val(parseInt(bednum))
+        //     }
+        //     jq('#addDrugDialog').addClass('hidden')
+        // });
     });
 
 
@@ -125,50 +217,54 @@
     </div>
 </div>
 <ul style=" margin-top: 10px;" class="grid"></ul>
-<div class="patient-header new-patient-header">
-    <div>
+<div class="page-content" style="min-height: 700px;">
+    <div style="width: 100%;height: 100%;">
 
-        <form method="post" action = "admissionForm.page?ipdWard=${ipdWard}">
-            <div style="float: left;">
-                <div>
+        <form method="post" action = "admissionForm.page?ipdWard=${ipdWard}" style="display: flex; flex-direction: column; width: 100%">
+            <div class="adm-frm">
+                <div style="float: left;">
                     <div>
-                        <input type="hidden" name="id" value="${admission.id}">
-                        Admitted Ward:<br/>
-                        <span class="select-arrow">
-                            <select required  name="admittedWard" id="admittedWard"  style="width: 250px;">
-                                <option value="">Select Ward</option>
-                                <% if (listIpd!=null && listIpd!="") { %>
-                                <% listIpd.each { ipd -> %>
-                                <option title="${ipd.answerConcept.name}"   value="${ipd.answerConcept.id}">
-                                    ${ipd.answerConcept.name}
-                                </option>
-                                <%}%>
-                                <%}%>
-                            </select>
-                        </span>
+                        <div>
+                            <input type="hidden" name="id" value="${admission.id}">
+                            Admitted Ward:<br/>
+                            <span class="select-arrow">
+                                <select required  name="admittedWard" id="admittedWard"  style="width: 250px;">
+                                    <option value="">Select Ward</option>
+                                    <% if (listIpd!=null && listIpd!="") { %>
+                                    <% listIpd.each { ipd -> %>
+                                    <option title="${ipd.answerConcept.name}"   value="${ipd.answerConcept.id}">
+                                        ${ipd.answerConcept.name}
+                                    </option>
+                                    <%}%>
+                                    <%}%>
+                                </select>
+                            </span>
+                        </div>
+                        <div style="margin-right: 100px; ">
+                            <ul ></ul>
+                            Doctor on Call: <br/>
+                        </div>
                     </div>
-                    <div style="margin-right: 100px; ">
-                        <ul ></ul>
-                        Doctor on Call: <br/>
+                    <div>
+                        <div style="width: 250px;">
+                            <label for="FileNo" >File Number:</label>
+                            <input id="FileNo" type="text" name="fileNumber" style="min-width: 250px;" placeholder="Enter File Number">
+                        </div>
+                        <div style="width: 250px;">
+                            <label for="BedNo" style="width: 100px; display: inline-block;">Bed Number:</label>
+                            <input id="BedNo" type="text" name="bedNumber" style="min-width: 250px;" placeholder="Select Bed number">
+                        </div>
                     </div>
+                    <a style="display: none" class="button" id="bedButton"> bed</a>
                 </div>
-                <div>
-                    <div style="width: 250px;">
-                        <label for="FileNo" >File Number:</label>
-                        <input id="FileNo" type="text" name="fileNumber" style="min-width: 250px;" placeholder="Enter File Number">
-                    </div>
-                    <div style="width: 250px;">
-                        <label for="BedNo" style="width: 100px; display: inline-block;">Bed Number:</label>
-                        <input id="BedNo" type="text" name="bedNumber" style="min-width: 250px;" placeholder="Select Bed number">
-                    </div>
+
+                <div style="margin-left: 14px; padding: 4px">
+                    Comments:
+                    <textarea placeholder="Enter Comments" name="comments" style="min-width: 450px; min-height: 100px;"></textarea>
                 </div>
-                <a style="display: none" class="button" id="bedButton"> bed</a>
             </div>
 
-            <div><ul style=" margin-top: 10px;"></ul>
-                Comments:
-                <textarea placeholder="Enter Comments" name="comments" style="min-width: 450px; min-height: 100px;"></textarea>
-            </div>
+
             <ul style=" margin-top: 30px; margin-bottom: 30px;"></ul>
             <div style="width: 100%" align="center">
                 <div style="width: 50%">
@@ -179,18 +275,13 @@
             </div>
         </form>
 
-        <div id="addDrugDialog" class="dialog">
+        <div id="addDrugDialog" class="dialog hidden">
             <div class="dialog-header">
                 <i class="icon-folder-open"></i>
-                <h3>bednumber</h3>
+                <h3>Bed occupancy map</h3>
             </div>
             <div class="dialog-content">
-                <ul>
                     <div id="dump-bed"></div>
-
-                </ul>
-                <span class="button confirm right" > Confirm </span>
-                <span class="button cancel"> Cancel </span>
             </div>
         </div>
     </div>
