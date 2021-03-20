@@ -5,16 +5,16 @@
         var treatingdoctor = document.forms["admissionForm"]["treatingDoctor"].value;
         var bednumber = document.forms["admissionForm"]["bedNumber"].value;
 
-        if (admittedward == null || admittedward === "") {
+        if (admittedward == null || admittedward == "") {
             alert("Please select admitted Ward");
             return false;
         }
 
-        if (treatingdoctor == null || treatingdoctor === "") {
+        if (treatingdoctor == null || treatingdoctor == "") {
             alert("Please select Doctor on Call");
             return false;
         }
-        if (bednumber == null || bednumber === "") {
+        if (bednumber == null || bednumber == "") {
             alert("Please enter bed Number");
             return false;
         }

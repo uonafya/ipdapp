@@ -1,19 +1,85 @@
-<% ui.decorateWith("kenyaemr", "standardPage")
-ui.includeJavascript("ehrconfigs", "knockout-3.4.0.js")
-ui.includeJavascript("ehrconfigs", "emr.js")
-ui.includeJavascript("ehrconfigs", "jquery.simplemodal.1.4.4.min.js")
-ui.includeJavascript("ehrconfigs", "jquery.dataTables.min.js")
-ui.includeJavascript("ehrconfigs", "moment.min.js")
-ui.includeCss("ehrconfigs", "referenceapplication.css")
-ui.includeCss("uicommons", "datatables/dataTables_jui.css")
+<%
+    ui.decorateWith("appui", "standardEmrPage", [title: "admit"])
+
+    ui.includeCss("ehrconfigs", "referenceapplication.css")
+    ui.includeCss("ehrconfigs", "onepcssgrid.css")
+
+    ui.includeJavascript("ehrconfigs", "moment.js")
+    ui.includeJavascript("ehrconfigs", "jquery.dataTables.min.js")
+    ui.includeJavascript("ehrconfigs", "jq.browser.select.js")
+    ui.includeJavascript("ehrconfigs", "knockout-3.4.0.js")
+    ui.includeJavascript("ehrconfigs", "jquery-ui-1.9.2.custom.min.js")
+    ui.includeJavascript("ehrconfigs", "underscore-min.js")
+    ui.includeJavascript("ehrconfigs", "emr.js")
 %>
+
+
 
 <body></body>
 <header>
+    <style>
+        .adm-frm{
+            display: flex;
+            flex-direction: row;
+            padding: 5px;
+            margin-left: 8px;
+        }
+        @media screen and (max-width: 900px){
+            .adm-frm{
+                flex-direction: column;
+            }
+        }
+        #dump-bed{
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(6, auto);
+            gap: 7px;
+            padding-bottom: 14px;
+        }
+        .bp-container{
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 2px;
+        }
+        .bp-span{
+            padding: 3px;
+        }
+        .bp-container{
+            padding: 3px;
+            background-color: firebrick;
+            color: white;
+            cursor: pointer;
+        }
+        .bp-container[data-people="0"]{
+            background-color: #34bf6e;
+        }
+        .ke-page-container{
+            min-height: 100vh;
+        }
+        body{
+            min-height: 100vh;
+        }
+        .page-content{
+            height: 100%;
+            min-height: 700px;
+        }
+        #addDrugDialog{
+            position: absolute;
+            top: 0%;
+            z-index: 3000;
+            left: 25%;
+            width: 60%;
+            overflow: auto;
+            height: 90%;
+        }
+        .hidden{
+            display: none;
+        }
+    </style>
 </header>
 <script>
     var jq = jQuery;
-    var pasteBed = '';
     //treatment: send post information
     var getJSON = function (dataToParse) {
         if (typeof dataToParse === "string") {
@@ -22,161 +88,36 @@ ui.includeCss("uicommons", "datatables/dataTables_jui.css")
         return dataToParse;
     }
 
-
-
-    function validateCheck(checkAlert,maxPatientOnBed){
-        if(document.forms["transferForm"] !== undefined)
-        {
-            document.forms["transferForm"]["bedNumber"].value=checkAlert;
-            jq("#bedsTable").hide();
-        }
-        else {
-            var mpob=parseInt(maxPatientOnBed);
-            if(mpob>2){
-                alert("This bed already has 3 patients admitted. Please select another bed.");
-                return false;
-            }
-            else{
-                document.forms["admissionForm"]["bedNumber"].value=checkAlert;
-                jq("#bedsTable").hide();
-            }
-        }
+    function setBedNo(bedNum){
+            jq('#BedNo').val(bedNum)
+        jq('#addDrugDialog').addClass('hidden')
     }
 
-    function validate() {
-        var admittedward = document.forms["admissionForm"]["admittedWard"].value;
-        var treatingdoctor = document.forms["admissionForm"]["treatingDoctor"].value;
-        var bednumber = document.forms["admissionForm"]["bedNumber"].value;
-
-        if (admittedward == null || admittedward === "") {
-            alert("Please select admitted Ward");
-            return false;
-        }
-
-        if (treatingdoctor == null || treatingdoctor === "") {
-            alert("Please select Doctor on Call");
-            return false;
-        }
-        if (bednumber == null || bednumber === "") {
-            alert("Please enter bed Number");
-            return false;
-        }
-        if (bednumber != null) {
-            var checkMaxBed = parseInt(document.forms["admissionForm"]["bedMax"].value);
-            if (isNaN(bednumber)) {
-                alert("Please enter bed number in correct format");
-                return false;
-            }
-            if (bednumber > checkMaxBed) {
-                alert("Please enter correct bed number");
-                return false;
-            }
-        }
-        document.getElementById("admissionForm").submit();
-
-    }
     jq(function() {
 
 
-
-        jq("#admitButton").on("click",function () {
-            //    reDirect to the admission list
-            validate();
-        });
-
-        function preloadBeds(wardId) {
-            jq.getJSON('${ ui.actionLink("ipdapp", "BedStrength", "getBedStrength")  }',{
-                wardId: wardId
-            })
-                .success(function(data) {
-                    console.log("The data being submitted is this "+data);
-                    var bedStrengthMap = data.bedStrengthMap;
-                    console.log("The bed strength map is >>"+bedStrengthMap);
-                    var count = 0;
-                    var size = data.size;
-                    var bedCount = 0;
-                    var bedOccupied = 0;
-                    var bedMax = data.bedMax;
-                    jq("#bedMax").val(bedMax);
-                    jq("#size").val(size);
-                    for (var i = 1; i <= bedMax ; i++) {
-                        bedCount =  bedCount + 1;
-                        if(bedStrengthMap[bedCount] != null && bedStrengthMap[bedCount] > 0){
-                            bedOccupied = bedOccupied + 1;
-                        }
-                    }
-
-                    // jq("#bedsBody").empty();
-                    jq("#bedsBody tr").remove();
-                    var sString = "";
-
-                    for (var i = 1; i <= size; i++) {
-                        sString +='<tr>';
-                        for (var j = 0; j <= size ; j++) {
-                            count = count + 1;
-                            if(bedStrengthMap[count] != null){
-                                if(bedStrengthMap[count] > 0 && bedOccupied < bedMax){
-                                    sString+= '<td><input id="validate" name="validateName" style="background-color:red; font-size: 9px !important;" class="f2" value="' + count + '/'+ bedStrengthMap[count] +'" readonly="readonly" />';
-                                }else if(bedStrengthMap[count] > 0 && bedOccupied >= bedMax){
-                                    sString+= `<td><input id="validate" name="validateName" style="background-color:red; font-size: 9px !important;" class="f2" value="`+ count + `/`+ bedStrengthMap[count] +`" readonly="readonly" onclick="javascript:return validateCheck(` + count + `,` + bedStrengthMap[count] + `);" />`;
-                                }else{
-                                    sString+=`<td style="background-color:green; font-size: 8px !important;" class="f2" ><input id="validate" name="validateName" style="background-color:green"  class="f2" value="`+ count + `/`+ bedStrengthMap[count] +`" readonly="readonly" onclick="javascript:return validateCheck(` + count + `,` + bedStrengthMap[count] + `);" />`;
-                                }
-                            }else{
-
-                            }
-                        }
-                        sString +='</tr>';
-                    }
-
-                    jq("#bedsBody").append(sString);
-                    dta = JSON.stringify(data);
-                })
-                .error(function(xhr, status, err) {
-                    jq().toastmessage('showErrorToast', "Error:" + err);
-                })
-        }
-
-        preloadBeds(${ipdWard});
         jq("#admittedWard").on("change",function () {
             var currentID = jq(this).val();
+
 
             jq.getJSON('${ ui.actionLink("ipdapp", "BedStrength", "getBedStrength")  }',{
                 wardId: currentID
             })
                 .success(function(data) {
-                    console.log(data);
-                    var bedStrengthMap = data.bedStrengthMap;
-                    console.log(bedStrengthMap);
-                    var count = 0;
-                    var size = data.size;
-                    var bedCount = 0;
-                    var bedOccupied = 0;
-                    var bedMax = data.bedMax;
-                    jq("#bedMax").val(bedMax);
-                    jq("#size").val(size);
-                    for (var i = 1; i <= bedMax ; i++) {
-                        bedCount =  bedCount + 1;
-                        if(bedStrengthMap[bedCount] != null && bedStrengthMap[bedCount] > 0){
-                            bedOccupied = bedOccupied + 1;
-                        }
-                    }
 
-                    // jq("#bedsBody").empty();
-                    jq("#bedsBody tr").remove();
-                    var sString = "";
+                    var pasteBed = '';
+                    jq('#dump-bed').html('');
 
-                    for (var i = 1; i <= size; i++) {
-                        sString +='<tr>';
-                        for (var j = 0; j <= size ; j++) {
-                            count = count + 1;
-                            if(bedStrengthMap[count] != null){
-                                if(bedStrengthMap[count] > 0 && bedOccupied < bedMax){
-                                    sString+= '<td><input id="validate" name="validateName" style="background-color:red; font-size: 9px !important;" class="f2" value="' + count + '/'+ bedStrengthMap[count] +'" readonly="readonly" />';
-                                }else if(bedStrengthMap[count] > 0 && bedOccupied >= bedMax){
-                                    sString+= `<td><input id="validate" name="validateName" style="background-color:red; font-size: 9px !important;" class="f2" value="`+ count + `/`+ bedStrengthMap[count] +`" readonly="readonly" onclick="javascript:return validateCheck(` + count + `,` + bedStrengthMap[count] + `);" />`;
-                                }else{
-                                    sString+=`<td style="background-color:green; font-size: 8px !important;" class="f2" ><input id="validate" name="validateName" style="background-color:green"  class="f2" value="`+ count + `/`+ bedStrengthMap[count] +`" readonly="readonly" onclick="javascript:return validateCheck(` + count + `,` + bedStrengthMap[count] + `);" />`;
+                    for (var key in data) {
+                        if (data.hasOwnProperty(key)) {
+                            var val = data[key];
+
+                            for(var i in val){
+                                if(val.hasOwnProperty(i)){
+                                    var j = val[i];
+
+                                    pasteBed += '<div class="bp-container" onclick="setBedNo('+i+')" data-bednum="'+i+'" data-people="'+j+'"> <span class="bp-span bno">Bed <b>#' + i + '</b></span> <span class="bp-span bpl" >Patients: <b>' + j+'</b></span></div>';
+
                                 }
                             }else{
 
@@ -185,43 +126,41 @@ ui.includeCss("uicommons", "datatables/dataTables_jui.css")
                         sString +='</tr>';
                     }
 
-                    jq("#bedsBody").append(sString);
-                    dta = JSON.stringify(data);
+                        }
+                    }
+
+
+                    jq('#dump-bed').html(pasteBed);
                 })
                 .error(function(xhr, status, err) {
                     jq().toastmessage('showErrorToast', "Error:" + err);
                 })
         });
-        var adddrugdialog = emr.setupConfirmationDialog({
-            selector: '#addDrugDialog',
-            actions: {
-                confirm: function() {
-
-                },
-                cancel: function() {
-                    adddrugdialog.close();
-                }
-            }
+        // var adddrugdialog = emr.setupConfirmationDialog({
+        //     selector: '#addDrugDialog',
+        //     actions: {
+        //         confirm: function() {
+        //
+        //         },
+        //         cancel: function() {
+        //             adddrugdialog.close();
+        //         }
+        //     }
+        // });
+        // jq("#bedButton").on("click", function(e) {
+        //     adddrugdialog.show();
+        // });
+        jq("#BedNo").on("click", function(e) {
+            jq('#addDrugDialog').removeClass('hidden')
         });
-        jq("#fileNumber").on("click", function(e) {
-            adddrugdialog.show();
-        });
-        var selectBedDialog = emr.setupConfirmationDialog({
-            selector: '#selectBedDialog',
-            actions: {
-                confirm: function() {
-
-                },
-                cancel: function() {
-                    selectBedDialog.close();
-                }
-            }
-        });
-        jq("#bedNumber").on("click", function(e) {
-            //display the bed selection div
-            jq("#bedsTable").show();
-
-        });
+        // jq(".bp-container").on("click", function(e) {
+        //     var bednum = jq(this).attr('data-bednum')
+        //     console.log("picked bed: ", bednum)
+        //     if(!isNaN(parseInt(bednum))){
+        //         jq('#BedNo').val(parseInt(bednum))
+        //     }
+        //     jq('#addDrugDialog').addClass('hidden')
+        // });
     });
 
 
@@ -414,46 +353,111 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
     <div class="patient-header new-patient-header">
         <div class="demographics">
             <h1 class="name">
-                <span id="surname">${admission.patient.familyName},<em>surname</em></span>
-                <span id="othname">${admission.patient.givenName} ${admission.patient.middleName?admission.patient.middleName:''}&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<em>other names</em></span>
-
-                <span>
-                    <% if (admission.patient.gender == "F") { %>
-                    Female
-                    <% } else { %>
-                    Male
-                    <% } %>
-                    <em>gender</em>
-                </span>
-                <span id="agename">${admission.patient.age} years (${ui.formatDatePretty(admission.patient.birthdate)})
-                    <em>surname</em>
-                </span>
+                <span>${admission.patientName}<em>name</em></span>
 
             </h1>
-
-            <br/>
-            <div id="stacont" class="status-container">
-                <span class="status active"></span>
-                Visit Status
+            <div class="gender-age">
+                <span>${admission.gender}<em>gender</em></span>
+                <span>${admission.birthDate}<em>date of birth</em></span>
             </div>
-            <div class="tag">Admission in process</div>
-        </div>
+            <div class="status-container">
+                <span class="status active"></span>
+                Marital Status:
+                <div class="tag">${maritalStatus}</div>
+            </div>
+            <div class="gender-age">
+                <span><b>Address:</b></span>
+                <span>Kakamega</span>
+            </div>
+            <div class="gender-age">
+                <span><b>Relative Name:</b></span>
+                <span>${relative}</span>
+            </div>
 
-        <div class="identifiers">
-            <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Patient ID</em>
-            <span>${admission.patient.getPatientIdentifier()}</span>
+
+
             <br>
+        </div>
+        <div class="identifiers">
+            <em>Patient ID</em>
+            <span>${admission.patientIdentifier}</span>
+        </div>
+        <div class="identifiers">
+            <em>Admission Date:</em>
+            <span>${admission.admissionDate}</span>
+        </div>
+    </div>
+</div>
+<ul style=" margin-top: 10px;" class="grid"></ul>
+<div class="page-content" style="min-height: 700px;">
+    <div style="width: 100%;height: 100%;">
 
-            <div class="catg" style="margin-top: 10px; margin-right: 10px;">
-                <i class="icon-tags small" style="font-size: 16px"></i><small>Category:</small> ${admission.patient.getAttribute(53)}
+        <form method="post" action = "admissionForm.page?ipdWard=${ipdWard}" style="display: flex; flex-direction: column; width: 100%">
+            <div class="adm-frm">
+                <div style="float: left;">
+                    <div>
+                        <div>
+                            <input type="hidden" name="id" value="${admission.id}">
+                            Admitted Ward:<br/>
+                            <span class="select-arrow">
+                                <select required  name="admittedWard" id="admittedWard"  style="width: 250px;">
+                                    <option value="">Select Ward</option>
+                                    <% if (listIpd!=null && listIpd!="") { %>
+                                    <% listIpd.each { ipd -> %>
+                                    <option title="${ipd.answerConcept.name}"   value="${ipd.answerConcept.id}">
+                                        ${ipd.answerConcept.name}
+                                    </option>
+                                    <%}%>
+                                    <%}%>
+                                </select>
+                            </span>
+                        </div>
+                        <div style="margin-right: 100px; ">
+                            <ul ></ul>
+                            Doctor on Call: <br/>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="width: 250px;">
+                            <label for="FileNo" >File Number:</label>
+                            <input id="FileNo" type="text" name="fileNumber" style="min-width: 250px;" placeholder="Enter File Number">
+                        </div>
+                        <div style="width: 250px;">
+                            <label for="BedNo" style="width: 100px; display: inline-block;">Bed Number:</label>
+                            <input id="BedNo" type="text" name="bedNumber" style="min-width: 250px;" placeholder="Select Bed number">
+                        </div>
+                    </div>
+                    <a style="display: none" class="button" id="bedButton"> bed</a>
+                </div>
+
+                <div style="margin-left: 14px; padding: 4px">
+                    Comments:
+                    <textarea placeholder="Enter Comments" name="comments" style="min-width: 450px; min-height: 100px;"></textarea>
+                </div>
+            </div>
+
+
+            <ul style=" margin-top: 30px; margin-bottom: 30px;"></ul>
+            <div style="width: 100%" align="center">
+                <div style="width: 50%">
+                    <input type="reset" class="button cancel" style="float: left" value="Reset">
+                    <input id="testsubmit" type="submit" value="submit" class="button confirm" style="float: right">
+
+                </div>
+            </div>
+        </form>
+
+        <div id="addDrugDialog" class="dialog hidden">
+            <div class="dialog-header">
+                <i class="icon-folder-open"></i>
+                <h3>Bed occupancy map</h3>
+            </div>
+            <div class="dialog-content">
+                    <div id="dump-bed"></div>
             </div>
         </div>
         <div class="clear"></div>
     </div>
 </div>
 
-
-<ul style=" margin-top: 10px;" class="grid"></ul>
-
-${ui.includeFragment("ipdapp", "patientAdmissionInfo")}
-
+</div>
