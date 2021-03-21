@@ -1,7 +1,12 @@
 package org.openmrs.module.ipdapp.page.controller;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.openmrs.*;
+import org.openmrs.Concept;
+import org.openmrs.ConceptAnswer;
+import org.openmrs.ConceptClass;
+import org.openmrs.ConceptDatatype;
+import org.openmrs.ConceptName;
+import org.openmrs.User;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.IpdService;
@@ -10,7 +15,11 @@ import org.openmrs.module.ipdapp.utils.IpdConstants;
 import org.openmrs.module.kenyaui.annotation.AppPage;
 import org.openmrs.ui.framework.page.PageModel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 
 /**
  * .
@@ -32,7 +41,7 @@ public class ChooseIpdWardPageController {
         }
         model.addAttribute("wardOverviewList", wardOverviewList);
     }
-    public void creatConceptQuestionAndAnswer(ConceptService conceptService,  User user ,String conceptParent, String...conceptChild) {
+    public void creatConceptQuestionAndAnswer(ConceptService conceptService, User user , String conceptParent, String...conceptChild) {
         // System.out.println("========= insertExternalHospitalConcepts =========");
         Concept concept = conceptService.getConcept(conceptParent);
         if(concept == null){
