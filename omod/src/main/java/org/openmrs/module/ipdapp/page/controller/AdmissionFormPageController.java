@@ -74,7 +74,7 @@ public class AdmissionFormPageController {
             //ghansham 25-june-2013 issue no # 1924 Change in the address format
             //String district = add.getCountyDistrict();
             //String upazila = add.getCityVillage();
-            //String pname = add.getPerson().getGivenName();
+            String pname = admission.getPatient().getGivenName();
 
             String doctorRoleProps = Context.getAdministrationService().getGlobalProperty(IpdConstants.PROPERTY_NAME_DOCTOR_ROLE);
             Role doctorRole = Context.getUserService().getRole(doctorRoleProps);
@@ -106,7 +106,7 @@ public class AdmissionFormPageController {
             //  issue no # 1924 Change in the address format
             //model.addAttribute("district", district);
             //model.addAttribute("upazila", upazila);
-            //model.addAttribute("name", pname);
+            model.addAttribute("name", pname);
             //added condition 21/7/16 (Throws bug since person attribute is null
             String relationNameattrStr = "";
             if(relationNameattr!=null) {
