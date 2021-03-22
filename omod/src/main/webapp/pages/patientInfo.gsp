@@ -387,6 +387,7 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
 			<span id="surname">${patient.familyName},<em>surname</em></span>
 			<span id="othname"> ${patient.middleName?patient.middleName:''}&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<em>other names</em></span>
 
+
 			<span class="gender-age">
 				<span>
 					<% if (patient.gender == "F") { %>
