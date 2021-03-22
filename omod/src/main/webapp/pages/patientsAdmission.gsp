@@ -8,7 +8,6 @@
 	ui.includeJavascript("ehrconfigs", "jquery.toastmessage.js")
 	ui.includeJavascript("ehrconfigs", "jquery.dataTables.min.js")
 	ui.includeJavascript("ehrconfigs", "moment.min.js")
-
 	ui.includeCss("ehrconfigs", "jquery-ui-1.9.2.custom.min.css")
 	ui.includeCss("ehrconfigs", "referenceapplication.css")
 	ui.includeCss("uicommons", "datatables/dataTables_jui.css")
@@ -18,7 +17,7 @@
 <script>
 	var refreshInTable = function(resultData, dTable){
 		var rowCount = resultData.length;
-		if(rowCount == 0){
+		if(rowCount === 0){
 			dTable.find('td.dataTables_empty').html("No Records Found");
 		}
 		dTable.fnPageChange(0);
@@ -28,14 +27,14 @@
 		if(resultData.length > 0){
 			return false
 		}
-		return !dTable || dTable.fnGetNodes().length == 0;
+		return !dTable || dTable.fnGetNodes().length === 0;
 	};
 	
 	jq(function () {
 		jq("#tabs").tabs();
 		
 		jq('li.ui-corner-top a').click(function(){
-			if (jq(this).attr('href') == '#ipd-patients'){
+			if (jq(this).attr('href') === '#ipd-patients'){
 				jq('#refresher a').html('<i class="icon-refresh"></i>Refresh Patients');
 				getAdmittedPatients();
 			}
@@ -46,10 +45,10 @@
 		});
 		
 		jq('#refresher a').click(function(){
-			if (jq('li.ui-state-active').attr('aria-controls') == "ipd-patients"){
+			if (jq('li.ui-state-active').attr('aria-controls') === "ipd-patients"){
 				getAdmittedPatients();
 			}
-			else if (jq('li.ui-state-active').attr('aria-controls') == "ipd-queue"){
+			else if (jq('li.ui-state-active').attr('aria-controls') === "ipd-queue"){
 				getAdmissionQueue();
 			}
 		});
