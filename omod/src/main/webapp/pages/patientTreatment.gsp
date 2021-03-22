@@ -1,14 +1,16 @@
 <%
 	ui.decorateWith("appui", "standardEmrPage", [title: "Patient Treatment"])
-	ui.includeJavascript("uicommons", "datetimepicker/bootstrap-datetimepicker.min.js")
 
-	ui.includeJavascript("uicommons", "handlebars/handlebars.min.js", Integer.MAX_VALUE - 1)
-	ui.includeJavascript("uicommons", "navigator/validators.js", Integer.MAX_VALUE - 19)
-	ui.includeJavascript("uicommons", "navigator/navigator.js", Integer.MAX_VALUE - 20)
-	ui.includeJavascript("uicommons", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
-	ui.includeJavascript("uicommons", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
-	ui.includeJavascript("uicommons", "navigator/navigatorTemplates.js", Integer.MAX_VALUE - 21)
-	ui.includeJavascript("uicommons", "navigator/exitHandlers.js", Integer.MAX_VALUE - 22)
+	ui.includeCss("ehrconfigs", "referenceapplication.css")
+	ui.includeCss("ehrconfigs", "onepcssgrid.css")
+
+	ui.includeJavascript("ehrconfigs", "moment.js")
+	ui.includeJavascript("ehrconfigs", "jquery.dataTables.min.js")
+	ui.includeJavascript("ehrconfigs", "jq.browser.select.js")
+	ui.includeJavascript("ehrconfigs", "knockout-3.4.0.js")
+	ui.includeJavascript("ehrconfigs", "jquery-ui-1.9.2.custom.min.js")
+	ui.includeJavascript("ehrconfigs", "underscore-min.js")
+	ui.includeJavascript("ehrconfigs", "emr.js")
 %>
 
 <script>
@@ -43,7 +45,6 @@
 				var selectedProcedure = document.createElement('option');
 				selectedProcedure.value = ui.item.value;
 				selectedProcedure.text = ui.item.label;
-				appModel.procedureSet.push(ui.item.label);
 				selectedProcedure.id = ui.item.value;
 				var selectedProcedureList = document.getElementById("selectedProcedureList");
 
@@ -121,8 +122,6 @@
 				var selectedInvestigation = document.createElement('option');
 				selectedInvestigation.value = ui.item.value;
 				selectedInvestigation.text = ui.item.label;
-				appModel.investigationSet.push(ui.item.label);
-
 				selectedInvestigation.id = ui.item.value;
 				var selectedInvestigationList = document.getElementById("selectedInvestigationList");
 
@@ -259,9 +258,6 @@
 								comment: jq("#drugComment").val()
 							}
 					);
-
-					var lastIn = drugOrder[drugOrder.length-1];
-					appModel.prescriptionSet.push(jq("#drugName").val() + " - " + jq("#formulationsSelect option:selected").text());
 					jq('#prescription-set').val('SET');
 					adddrugdialog.close();
 				},
@@ -647,13 +643,15 @@ fieldset select {
 
 			<div class="tasks" id="task-procedure" style="display: none;">
 				<header class="tasks-header">
-					<span id="title-procedures" class="tasks-title">PROCEDURES APPLIED</span>
+					<span id="title-symptom" class="tasks-title">PROCEDURES APPLIED</span>
 					<a class="tasks-lists"></a>
 				</header>
 
-				<select style="display: none" id="selectedProcedureList"></select>
-				<div class="symptom-container selectdiv" id="selected-procedures">
+				<div class="symptoms-qualifiers" data-bind="foreach: signs">
+					<select style="display: none" id="selectedProcedureList"></select>
+					<div class="symptom-container selectdiv" id="selected-procedures">
 
+					</div>
 				</div>
 			</div>
 		</fieldset>
@@ -666,8 +664,7 @@ fieldset select {
 			</label>
 
 			<p>
-				<textarea data-bind="value: physicalExamination"  id="physicalExamination" name="PhysicalExamination" placeholder="Physical Examination"
-						  style="height: 129px; width: 100%; resize: none;"></textarea>
+				<textarea id="physicalExamination" name="PhysicalExamination" placeholder="Physical Examination" style="height: 129px; width: 100%; resize: none;"></textarea>
 			</p>
 
 		</fieldset>
@@ -686,9 +683,11 @@ fieldset select {
 					<a class="tasks-lists"></a>
 				</header>
 
-				<select style="display: none" id="selectedInvestigationList"></select>
-				<div class="symptom-container selectdiv" id="selected-investigations">
+				<div class="symptoms-qualifiers" data-bind="foreach: signs">
+					<select style="display: none" id="selectedInvestigationList"></select>
+					<div class="symptom-container selectdiv" id="selected-investigations">
 
+					</div>
 				</div>
 			</div>
 		</fieldset>
@@ -726,7 +725,7 @@ fieldset select {
 			</label>
 
 			<p>
-				<textarea data-bind="value: otherTreatmentInstructions" id="otherTreatmentInstructions" name="otherTreatmentInstructions" placeholder="Enter Other Instructions" style="height: 129px; width: 100%; resize: none;"></textarea>
+				<textarea id="otherTreatmentInstructions" name="otherTreatmentInstructions" placeholder="Enter Other Instructions" style="height: 129px; width: 100%; resize: none;"></textarea>
 				<input value="${patientInformation.admittedWard.id}" name="treatmentIPDWard" id="treatmentIPDWard" type="hidden">
 				<input name="treatmentPatientID" id="treatmentPatientID" value="${patient.patientId}" type="hidden">
 			</p>
@@ -753,27 +752,27 @@ fieldset select {
 							<tbody>
 							<tr>
 								<td><span class="status active"></span>Procedure</td>
-								<td><span data-bind="foreach: procedureSet"><span data-bind="text: \$data"></span><br></span></td>
+								<td>N/A</td>
 							</tr>
 
 							<tr>
 								<td><span class="status active"></span>Physical Examination</td>
-								<td><span data-bind="text: physicalExamination">N/A</span></td>
+								<td>N/A</td>
 							</tr>
 
 							<tr>
 								<td><span class="status active"></span>Investigations</td>
-								<td><span data-bind="foreach: investigationSet"><span data-bind="text: \$data"></span><br></span></td>
+								<td>N/A</td>
 							</tr>
 
 							<tr>
 								<td><span class="status active"></span>Prescriptions</td>
-								<td><span data-bind="foreach: prescriptionSet"><span data-bind="text: \$data"></span><br></span></td>
+								<td>N/A</td>
 							</tr>
 
 							<tr>
 								<td><span class="status active"></span>Instructions</td>
-								<td><span data-bind="text: otherTreatmentInstructions">N/A</span></td>
+								<td>N/A</td>
 							</tr>
 							</tbody>
 						</table>
@@ -838,18 +837,3 @@ fieldset select {
 		<span class="button cancel"> Cancel </span>
 	</div>
 </div>
-
-<script>
-	function AppViewModel() {
-		this.firstName = "Stanslaus";
-		this.physicalExamination = ko.observable("");
-		this.otherTreatmentInstructions = ko.observable("");
-		this.procedureSet = ko.observableArray([]);
-		this.investigationSet = ko.observableArray([]);
-		this.prescriptionSet = ko.observableArray([]);
-	}
-
-	// Activates knockout.js
-	var appModel = new AppViewModel();
-	ko.applyBindings(appModel, jq("#treatmentForm")[0]);
-</script>
