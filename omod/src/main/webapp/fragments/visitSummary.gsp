@@ -138,7 +138,7 @@
                     <span class='status active'></span>
                     Gender:
                 </label>
-                <span>${gender}</span>
+                <span></span>
                 <br/>
             </div>
 

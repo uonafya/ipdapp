@@ -15,7 +15,7 @@
 					<i class="status active zero-em"></i>
 					Patient :
 				</label>
-				<span>${patient.familyName} ${patient.givenName} ${patient.middleName?patient.middleName:''}</span>
+				<span>${patient.familyName}  ${patient.middleName?patient.middleName:''}</span>
 				<br/>
 
 				<label>
@@ -50,7 +50,7 @@
 					<i class="status active zero-em"></i>
 					Admitted By:
 				</label>
-				<span>${patientInformation.ipdAdmittedUser.givenName}</span>
+				<span>Doc</span>
 			</div>
 			<div class="clear"></div>
 		</div>
