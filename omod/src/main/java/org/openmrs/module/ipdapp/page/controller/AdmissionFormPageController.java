@@ -62,7 +62,7 @@ public class AdmissionFormPageController {
 
     {
 
-        model.addAttribute("ipdWard", Context.getConceptService().getConceptByName(ipdWard).getConceptId());
+        model.addAttribute("ipdWard", ipdWard);
         IpdService ipdService = Context.getService(IpdService.class);
         Concept ipdConcept = Context.getConceptService().getConceptByName(
                 Context.getAdministrationService().getGlobalProperty(IpdConstants.PROPERTY_IPDWARD));
@@ -79,19 +79,13 @@ public class AdmissionFormPageController {
             //ghansham 25-june-2013 issue no # 1924 Change in the address format
             //String district = add.getCountyDistrict();
             //String upazila = add.getCityVillage();
-<<<<<<< HEAD
             String pname = admission.getPatient().getGivenName();
-=======
-
-            //String pname = add.getPerson().getGivenName();
->>>>>>> 19c1b589a6907f549fcb2c8baa6f591c9000b6e2
 
             String doctorRoleProps = Context.getAdministrationService().getGlobalProperty(IpdConstants.PROPERTY_NAME_DOCTOR_ROLE);
             Role doctorRole = Context.getUserService().getRole(doctorRoleProps);
             if (doctorRole != null) {
                 List<User> listDoctor = Context.getUserService().getUsersByRole(doctorRole);
                 model.addAttribute("listDoctor", listDoctor);
-                System.out.println("hhhhhhhheeeeeeeerrrrr" + listDoctor );
             }
 
             PersonAttribute relationNameattr = admission.getPatient().getAttribute("Father/Husband Name");

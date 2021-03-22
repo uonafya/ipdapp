@@ -14,7 +14,6 @@
 %>
 
 <script>
-	var NavigatorController;
 	var drugOrder = [];
 
 	var getJSON = function (dataToParse) {
@@ -25,7 +24,6 @@
 	}
 
 	jq(function(){
-		NavigatorController = new KeyboardController();
 
 		jq("#procedure").autocomplete({
 			source: function( request, response ) {
