@@ -721,7 +721,7 @@ fieldset select {
 
 			<table id="drugsTable">
 				<thead>
-				<th>Drug Name</th>
+				<th style="width: auto;">Drug Name</th>
 				<th>Formulation</th>
 				<th>Frequency</th>
 				<th>Number of Days</th>
