@@ -50,7 +50,7 @@
 					<i class="status active zero-em"></i>
 					Admitted By:
 				</label>
-				<span>Doc</span>
+				<span>${patientInformation.user.person.names}</span>
 			</div>
 			<div class="clear"></div>
 		</div>

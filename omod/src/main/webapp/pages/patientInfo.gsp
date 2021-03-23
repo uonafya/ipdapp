@@ -495,7 +495,7 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
 			Visit Status
 		</div>
 		<div class="tag">Admitted</div>
-		<div class="tad">Bed 00${patientInformation.bed}</div>
+		<div class="tad">Bed ${patientInformation.bed}</div>
 	</div>
 
 	<div class="identifiers">
