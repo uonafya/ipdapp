@@ -88,7 +88,6 @@
         return dataToParse;
     }
 
-
     function setBedNo(bedNum){
         jq('#BedNo').val(bedNum)
         jq('#addDrugDialog').addClass('hidden')
@@ -116,6 +115,7 @@
                             for(var i in val){
                                 if(val.hasOwnProperty(i)){
                                     var j = val[i];
+
 
                                     pasteBed += '<div class="bp-container" onclick="setBedNo('+i+')" data-bednum="'+i+'" data-people="'+j+'"> <span class="bp-span bno">Bed <b>#' + i + '</b></span> <span class="bp-span bpl" >Patients: <b>' + j+'</b></span></div>';
                                 }
@@ -277,6 +277,4 @@
             </div>
         </div>
     </div>
-
-
 </div>
