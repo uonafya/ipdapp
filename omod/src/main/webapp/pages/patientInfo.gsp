@@ -4,7 +4,7 @@
 	ui.includeJavascript("patientdashboardapp", "jq.print.js")
 	ui.includeJavascript("patientdashboardapp", "jq.slimscroll.js")
 
-	ui.includeCss("patientdashboardapp", "patientdashboardapp.css");
+//	ui.includeCss("patientdashboardapp", "patientdashboardapp.css");
 	ui.includeCss("ehrconfigs", "referenceapplication.css")
 
 %>
@@ -16,6 +16,55 @@
 		}
 		return dataToParse;
 	}
+
+
+
+	function setBedNo(bedNum){
+		jq('#transferBedNumber').val(bedNum)
+		jq('#addDrugDialog').addClass('hidden')
+	}
+
+	jq(function() {
+		jq("#transferIpdWard").on("change",function () {
+			var currentID = jq(this).val();
+
+
+			jq.getJSON('${ ui.actionLink("ipdapp", "BedStrength", "getBedStrength")  }',{
+				wardId: currentID
+			})
+					.success(function(data) {
+
+						var pasteBed = '';
+						jq('#dump-bed').html('');
+
+						for (var key in data) {
+							if (data.hasOwnProperty(key)) {
+								var val = data[key];
+
+								for(var i in val){
+									if(val.hasOwnProperty(i)){
+										var j = val[i];
+
+										pasteBed += '<div class="bp-container" onclick="setBedNo('+i+')" data-bednum="'+i+'" data-people="'+j+'"> <span class="bp-span bno">Bed <b>#' + i + '</b></span> <span class="bp-span bpl" >Patients: <b>' + j+'</b></span></div>';
+									}
+								}
+
+							}
+						}
+
+
+						jq('#dump-bed').html(pasteBed);
+
+					})
+					.error(function(xhr, status, err) {
+						jq().toastmessage('showErrorToast', "Error:" + err);
+					})
+		});
+
+		jq("#transferBedNumber").on("click", function(e) {
+			jq('#addDrugDialog').removeClass('hidden')
+		});
+	});
 
 	jq(function() {
 		jq("#tabs").tabs();
@@ -191,6 +240,7 @@
 	function selectTab(tabIdnt){
 		jq('#tabs').tabs('select', tabIdnt);
 	}
+
 </script>
 
 <style>
@@ -354,6 +404,44 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
 }
 .dashboard .action-section a:not(.button) {
 	cursor: pointer;
+}
+#addDrugDialog{
+	position: absolute;
+	top: 0%;
+	z-index: 3000;
+	left: 25%;
+	width: 60%;
+	overflow: auto;
+	height: 90%;
+	min-height: 550px;
+}
+.hidden{
+	display: none;
+}
+#dump-bed{
+	width: 100%;
+	display: grid;
+	grid-template-columns: repeat(6, auto);
+	gap: 7px;
+	padding-bottom: 14px;
+}
+.bp-container{
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 2px;
+}
+.bp-span{
+	padding: 3px;
+}
+.bp-container{
+	padding: 3px;
+	background-color: firebrick;
+	color: white;
+	cursor: pointer;
+}
+.bp-container[data-people="0"]{
+	background-color: #34bf6e;
 }
 </style>
 

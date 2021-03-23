@@ -65,7 +65,18 @@
 						</span>
 					</div>
 				</div>
-			</form>	
+			</form>
+
+			<div id="addDrugDialog" class="dialog hidden">
+				<div class="dialog-header">
+					<i class="icon-folder-open"></i>
+					<h3>Bed occupancy map</h3>
+				</div>
+				<div class="dialog-content">
+					<div id="dump-bed"></div>
+				</div>
+			</div>
+
 			<div class="clear"></div>
 		</div>
 	</div>
