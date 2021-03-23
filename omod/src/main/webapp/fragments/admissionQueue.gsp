@@ -12,6 +12,7 @@
 		}
 		jq.getJSON('${ ui.actionLink("ipdapp", "PatientAdmission", "listAdmissionQueuePatients") }', requestData)
 			.success(function (data) {
+				console.log("i'mmmmmmmmmm heeeeeeeeeeeeeeeeerrrrrrrrr"+ data)
 				updateAdmissionQueueResults(data);
 			}).error(function (xhr, status, err) {
 				updateAdmissionQueueResults([]);

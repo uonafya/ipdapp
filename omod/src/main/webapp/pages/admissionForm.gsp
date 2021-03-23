@@ -88,6 +88,7 @@
         return dataToParse;
     }
 
+r
     function setBedNo(bedNum){
             jq('#BedNo').val(bedNum)
         jq('#addDrugDialog').addClass('hidden')
@@ -116,8 +117,8 @@
                                 if(val.hasOwnProperty(i)){
                                     var j = val[i];
 
-                                    pasteBed += '<div class="bp-container" onclick="setBedNo('+i+')" data-bednum="'+i+'" data-people="'+j+'"> <span class="bp-span bno">Bed <b>#' + i + '</b></span> <span class="bp-span bpl" >Patients: <b>' + j+'</b></span></div>';
 
+                                    pasteBed += '<div class="bp-container" onclick="setBedNo('+i+')" data-bednum="'+i+'" data-people="'+j+'"> <span class="bp-span bno">Bed <b>#' + i + '</b></span> <span class="bp-span bpl" >Patients: <b>' + j+'</b></span></div>';
                                 }
                             }else{
 
@@ -131,6 +132,7 @@
 
 
                     jq('#dump-bed').html(pasteBed);
+
                 })
                 .error(function(xhr, status, err) {
                     jq().toastmessage('showErrorToast', "Error:" + err);
@@ -415,6 +417,19 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
                         <div style="margin-right: 100px; ">
                             <ul ></ul>
                             Doctor on Call: <br/>
+                            <span class="select-arrow">
+                                <select required name="treatingDoctor" id="treatingDoctor"  style="width: 250px; >
+                                <option value="please select ...">Select Doctor On Call</option>
+                                <% if (listDoctor!=null && listDoctor!=""){ %>
+                                <% listDoctor.each { doct -> %>
+                                <option title="${doct.givenName}"   value="${doct.id}">
+                                    ${doct.givenName}
+                                </option>
+                                <% } %>
+                                <% } %>
+                            </select>
+                            </span>
+
                         </div>
                     </div>
                     <div>
@@ -458,6 +473,7 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
         </div>
         <div class="clear"></div>
     </div>
-</div>
+
 
 </div>
+

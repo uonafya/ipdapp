@@ -46,7 +46,7 @@
 						
 						<label>Bed Number</label>
 						<span>
-							<input required name="transferBedNumber" id="transferBedNumber" type="number"/>
+							<input min="1" required name="transferBedNumber" id="transferBedNumber" type="number"/>
 						</span>
 						
 						<label>Comments</label>

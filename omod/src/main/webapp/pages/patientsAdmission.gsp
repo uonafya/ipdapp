@@ -8,7 +8,6 @@
 	ui.includeJavascript("ehrconfigs", "jquery.toastmessage.js")
 	ui.includeJavascript("ehrconfigs", "jquery.dataTables.min.js")
 	ui.includeJavascript("ehrconfigs", "moment.min.js")
-    
 	ui.includeCss("ehrconfigs", "jquery-ui-1.9.2.custom.min.css")
 	ui.includeCss("ehrconfigs", "referenceapplication.css")
 	ui.includeCss("uicommons", "datatables/dataTables_jui.css")

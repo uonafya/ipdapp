@@ -5,6 +5,8 @@
 	ui.includeJavascript("patientdashboardapp", "jq.slimscroll.js")
 
 	ui.includeCss("patientdashboardapp", "patientdashboardapp.css");
+	ui.includeCss("ehrconfigs", "referenceapplication.css")
+
 %>
 
 <script>
@@ -383,7 +385,8 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
 	<div class="demographics">
 		<h1 class="name">
 			<span id="surname">${patient.familyName},<em>surname</em></span>
-			<span id="othname">${patient.givenName} ${patient.middleName?patient.middleName:''}&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<em>other names</em></span>
+			<span id="othname"> ${patient.middleName?patient.middleName:''}&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<em>other names</em></span>
+
 
 			<span class="gender-age">
 				<span>
