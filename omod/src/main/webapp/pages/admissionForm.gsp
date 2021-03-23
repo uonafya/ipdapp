@@ -417,6 +417,19 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
                         <div style="margin-right: 100px; ">
                             <ul ></ul>
                             Doctor on Call: <br/>
+                            <span class="select-arrow">
+                                <select required name="treatingDoctor" id="treatingDoctor"  style="width: 250px; >
+                                <option value="please select ...">Select Doctor On Call</option>
+                                <% if (listDoctor!=null && listDoctor!=""){ %>
+                                <% listDoctor.each { doct -> %>
+                                <option title="${doct.givenName}"   value="${doct.id}">
+                                    ${doct.givenName}
+                                </option>
+                                <% } %>
+                                <% } %>
+                            </select>
+                            </span>
+
                         </div>
                     </div>
                     <div>
