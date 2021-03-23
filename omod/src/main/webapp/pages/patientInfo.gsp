@@ -229,9 +229,11 @@
     function checkFilled() {
         var checkComplete = true;
         jq("form#vitalStatisticsForm :input[required]").map(function(idx, elem) {
-            if(jq(elem).val()==''){
-                checkComplete=false;
+            if(jq(this).attr('id')!="vitalStatisticsDietAdvised"){
+					if(jq(elem).val()==''){
+                	checkComplete=false;
             }
+			}
         }).get();
         jq("form#vitalStatisticsForm :input[validation='false']").map(function(idx, elem) {
             if(jq(elem).attr("validation")==='false'){
@@ -260,7 +262,6 @@
                 jq("#errorAlert").show();
             }
         }
-        console.log(checkComplete);
     }
 
 
