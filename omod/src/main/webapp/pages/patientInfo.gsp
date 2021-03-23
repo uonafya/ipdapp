@@ -262,6 +262,7 @@
                 jq("#errorAlert").show();
             }
         }
+		return checkComplete;
     }
 
 
@@ -278,15 +279,21 @@
 				'notes': jq('#vitalStatisticsComment').val(),
 				'ipdWard': jq('#vitalStatisticsIPDWard').val(),
 			};
+			if(checkFilled()){
 			vitalStatisticsForm.submit(
 					jq.getJSON('${ ui.actionLink("ipdapp", "PatientInfo", "saveVitalStatistics") }',vitalStatisticsFormData)
 							.success(function(data) {
+								kenyaui.notifySuccess("Success! Vitals have been updated");
 								location.reload();
 							})
 							.error(function(xhr, status, err) {
 								jq().toastmessage('showErrorToast', "Error:" + err);
 							})
 			);
+			}
+			else{
+				kenyaui.notifyError("Cannot submit! Please Rectify Errors first");
+			}
 		});
 		    
 
