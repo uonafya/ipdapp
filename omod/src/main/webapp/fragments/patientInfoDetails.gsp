@@ -50,7 +50,7 @@
 					<i class="status active zero-em"></i>
 					Admitted By:
 				</label>
-				<span>Doc</span>
+				<span>${patientInformation.user.person.names}</span>
 			</div>
 			<div class="clear"></div>
 		</div>
@@ -119,9 +119,14 @@
 			<form method="post" id="vitalStatisticsForm" style="margin-bottom: 5px;">
 				<div class="simple-form-ui">
 					<div class="col12 daily-vitals">
-						<label>Blood Pressure</label>
+						<label>Blood Pressure (Systolic)</label>
 						<span>
-							<input id="vitalStatisticsBloodPressure" name="vitalStatisticsBloodPressure" placeholder="Blood Pressure" type="number"/>
+							<input id="vitalStatisticsSystolicBloodPressure" name="vitalStatisticsSystolicBloodPressure" placeholder="Blood Pressure" type="number"/>
+						</span>
+
+						<label>Blood Pressure (Diastolic)</label>
+						<span>
+							<input id="vitalStatisticsDiastolicBloodPressure" name="vitalStatisticsDiastolicBloodPressure" placeholder="Blood Pressure" type="number"/>
 						</span>
 						
 						<label>Temperature</label>
@@ -183,7 +188,8 @@
 				<tr>
 					<th style="width: 5px;">#</th>
 					<th>DATE</th>
-					<th>B.P</th>
+					<th>B.P(Systolic)</th>
+					<th>B.P(Diastolic)</th>
 					<th>PULSE RATE</th>
 					<th>TEMPERATURE</th>
 					<th>DIET</th>
@@ -196,7 +202,8 @@
 						<tr>
 							<td>${idx+1}</td>
 							<td>${ipvs.createdOn}</td>
-							<td>${ipvs.bloodPressure}</td>
+							<td>${ipvs.systolicBloodPressure}</td>
+							<td>${ipvs.diastolicBloodPressure}</td>
 							<td>${ipvs.pulseRate}</td>
 							<td>${ipvs.temperature}</td>
 							<td>${ipvs.dietAdvised}</td>
