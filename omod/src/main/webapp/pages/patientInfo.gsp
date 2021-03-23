@@ -140,7 +140,8 @@
 			var vitalStatisticsFormData = {
 				'admittedId': jq('#vitalStatisticsAdmittedID').val(),
 				'patientId': jq('#vitalStatisticsPatientID').val(),
-				'bloodPressure': jq('#vitalStatisticsBloodPressure').val(),
+				'systolicBloodPressure':jq('#vitalStatisticsSystolicBloodPressure').val(),
+				'diastolicBloodPressure': jq('#vitalStatisticsDiastolicBloodPressure').val(),
 				'pulseRate': jq('#vitalStatisticsPulseRate').val(),
 				'temperature': jq('#vitalStatisticsTemperature').val(),
 				'dietAdvised': jq('#vitalStatisticsDietAdvised').val(),
