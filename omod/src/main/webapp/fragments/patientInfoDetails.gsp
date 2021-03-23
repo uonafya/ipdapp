@@ -98,11 +98,7 @@
 				<i class="icon-user-md"></i>
 				<a href="patientTreatment.page?patientId=${patient.id}">Update Treatment</a>
 			</li>
-			
-			<li>
-				<i class="icon-random"></i>
-				<a onclick="selectTab(1);">Transfer Patient</a>
-			</li>
+
 		</ul>
 	</div>
 </div>
