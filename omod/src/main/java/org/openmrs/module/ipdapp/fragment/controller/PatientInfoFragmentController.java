@@ -399,13 +399,13 @@ public class PatientInfoFragmentController {
 
         }
 
-        IndoorPatientServiceBill bill = new IndoorPatientServiceBill();
+        PatientServiceBill bill = new PatientServiceBill();
 
         bill.setCreatedDate(new Date());
         bill.setPatient(patient);
         bill.setCreator(Context.getAuthenticatedUser());
 
-        IndoorPatientServiceBillItem item;
+        PatientServiceBillItem item;
         BillableService service;
         BigDecimal amount = new BigDecimal(0);
 
@@ -437,16 +437,16 @@ public class PatientInfoFragmentController {
                 if(service!=null){
                     serviceAvailable = true;
                     amount = service.getPrice();
-                    item = new IndoorPatientServiceBillItem();
+                    item = new PatientServiceBillItem();
                     item.setCreatedDate(new Date());
                     item.setName(service.getName());
-                    item.setIndoorPatientServiceBill(bill);
+                    item.setPatientServiceBill(bill);
                     item.setQuantity(1);
                     item.setService(service);
                     item.setUnitPrice(service.getPrice());
                     item.setAmount(amount);
                     item.setActualAmount(amount);
-                    item.setOrderType("SERVICE");
+                   // item.setOrderType("SERVICE");
                     bill.addBillItem(item);
                 }
             }
@@ -455,15 +455,15 @@ public class PatientInfoFragmentController {
             bill.setEncounter(admitted.getPatientAdmissionLog()
                     .getIpdEncounter());
             if(serviceAvailable ==true){
-                bill = billingService.saveIndoorPatientServiceBill(bill);
+                bill = billingService.savePatientServiceBill(bill);
             }
 
-            IndoorPatientServiceBill indoorPatientServiceBill = billingService
-                    .getIndoorPatientServiceBillById(bill
-                            .getIndoorPatientServiceBillId());
-            if (indoorPatientServiceBill != null) {
+            PatientServiceBill PatientServiceBill = billingService
+                    .getPatientServiceBillById(bill
+                            .getPatientServiceBillId());
+            if (PatientServiceBill != null) {
                 billingService
-                        .saveBillEncounterAndOrderForIndoorPatient(indoorPatientServiceBill);
+                        .saveBillEncounterAndOrder(PatientServiceBill);
             }
         }
 
