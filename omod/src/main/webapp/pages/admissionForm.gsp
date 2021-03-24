@@ -137,23 +137,7 @@
             jq('#addDrugDialog').removeClass('hidden')
         });
 
-        var gender = "${admission.gender}";
-
-        if(gender==="M"){
-        var substrings =['MATERNITY','FEMALE','labor'];
-        }
-        else if(gender==="F"){
-            var substrings =['MALE'];
-        }
-        jq("#admittedWard option").each(function() {
-        if (new RegExp(substrings.join("|")).test(jq(this).attr("title"))) {
-        jq(this).remove();
-        }
-        });
-
     });
-
-
 
 </script>
 <div class="clear"></div>
