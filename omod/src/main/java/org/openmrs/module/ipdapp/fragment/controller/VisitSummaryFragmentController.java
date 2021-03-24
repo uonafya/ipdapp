@@ -8,6 +8,7 @@ import org.openmrs.module.hospitalcore.model.OpdDrugOrder;
 import org.openmrs.module.hospitalcore.util.PatientDashboardConstants;
 import org.openmrs.module.ipdapp.model.VisitDetail;
 import org.openmrs.module.ipdapp.model.VisitSummary;
+import org.openmrs.module.kenyaemr.api.KenyaEmrService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
@@ -19,20 +20,21 @@ import java.util.List;
 
 public class VisitSummaryFragmentController {
 
-    private static final int ORDER_LOCATION_ID = 1;
+
 
     public void controller(FragmentConfiguration config,
                            FragmentModel model) {
         config.require("patientId");
         Integer patientId = Integer.parseInt(config.get("patientId").toString());
         PatientDashboardService dashboardService = Context.getService(PatientDashboardService.class);
-        Location location = Context.getLocationService().getLocation(ORDER_LOCATION_ID);
+        Location location = Context.getService(KenyaEmrService.class).getDefaultLocation();
 
         Patient patient = Context.getPatientService().getPatient(patientId);
 
         AdministrationService administrationService = Context.getAdministrationService();
         String gpOPDEncType = administrationService.getGlobalProperty(PatientDashboardConstants.PROPERTY_OPD_ENCOUTNER_TYPE);
         EncounterType labOPDType = Context.getEncounterService().getEncounterType(gpOPDEncType);
+
         List<Encounter> encounters = dashboardService.getEncounter(patient, location, labOPDType, null);
 
         List<VisitSummary> visitSummaries = new ArrayList<VisitSummary>();
@@ -70,10 +72,10 @@ public class VisitSummaryFragmentController {
         VisitDetail visitDetail = VisitDetail.create(encounter);
 
         SimpleObject detail = SimpleObject.fromObject(visitDetail, ui, "history","diagnosis", "symptoms", "procedures", "investigations","physicalExamination","visitOutcome","internalReferral","externalReferral");
-
         List<OpdDrugOrder> opdDrugs = Context.getService(PatientDashboardService.class).getOpdDrugOrder(encounter);
         List<SimpleObject> drugs = SimpleObject.fromCollection(opdDrugs, ui, "inventoryDrug.name",
                 "inventoryDrug.unit.name", "inventoryDrugFormulation.name", "inventoryDrugFormulation.dozage","dosage", "dosageUnit.name");
+
         return SimpleObject.create("notes", detail, "drugs", drugs);
     }
 }
