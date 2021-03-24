@@ -540,7 +540,7 @@ public class PatientInfoFragmentController {
                 opdTestOrder.setValueCoded(Context.getConceptService().getConcept(iId));
                 opdTestOrder.setCreator(user);
                 opdTestOrder.setCreatedOn(date);
-                opdTestOrder.setBillingStatus(1);
+                opdTestOrder.setBillingStatus(0);
                 opdTestOrder.setBillableService(billableService);
                 opdTestOrder.setScheduleDate(date);
                 opdTestOrder.setIndoorStatus(1);
