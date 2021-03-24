@@ -305,16 +305,20 @@
 				'physicalExamination' : jq('#physicalExamination').val()
 			};
 
+			function successFn(successly_){
+				console.log("successly_")
+				console.log(successly_)
+				jq().toastmessage('removeToast', savingMessage);
+				jq().toastmessage('showSuccessToast', "Patient Treatment has been updated Successfully");
+			}
 			jq("#treatmentForm").submit(
-					jq.getJSON('${ ui.actionLink("ipdapp", "PatientInfo", "treatment") }',treatmentFormData)
-							.success(function(data) {
-								jq().toastmessage('removeToast', savingMessage);
-								jq().toastmessage('showSuccessToast', "Patient Treatment has been updated Successfully");
-							})
-							.error(function(xhr, status, err) {
-								jq().toastmessage('removeToast', savingMessage);
-								jq().toastmessage('showErrorToast', "Error:" + err);
-							})
+					jq.ajax({
+						type: 'POST',
+						url: '${ ui.actionLink("ipdapp", "PatientInfo", "treatment") }',
+						data: treatmentFormData,
+						success: successFn,
+						dataType: "json"
+					})
 			);
 		});
 
@@ -721,7 +725,7 @@ fieldset select {
 
 			<table id="drugsTable">
 				<thead>
-				<th>Drug Name</th>
+				<th style="width: auto;">Drug Name</th>
 				<th>Formulation</th>
 				<th>Frequency</th>
 				<th>Number of Days</th>

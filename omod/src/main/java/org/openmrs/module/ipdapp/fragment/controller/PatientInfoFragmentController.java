@@ -119,7 +119,8 @@ public class PatientInfoFragmentController {
     }
     public void saveVitalStatistics(@RequestParam("admittedId") Integer admittedId,
                                     @RequestParam("patientId") Integer patientId,
-                                    @RequestParam(value = "bloodPressure", required = false) String bloodPressure,
+                                    @RequestParam(value = "systolicBloodPressure", required = false) String systolicBloodPressure,
+                                    @RequestParam(value = "diastolicBloodPressure", required = false) String diastolicBloodPressure,
                                     @RequestParam(value = "pulseRate", required = false) String pulseRate,
                                     @RequestParam(value = "temperature", required = false) String temperature,
                                     @RequestParam(value = "dietAdvised", required = false) String dietAdvised,
@@ -133,7 +134,8 @@ public class PatientInfoFragmentController {
         IpdPatientVitalStatistics ipdPatientVitalStatistics=new IpdPatientVitalStatistics();
         ipdPatientVitalStatistics.setPatient(patient);
         ipdPatientVitalStatistics.setIpdPatientAdmissionLog(admitted.getPatientAdmissionLog());
-        ipdPatientVitalStatistics.setBloodPressure(bloodPressure);
+        ipdPatientVitalStatistics.setSystolicBloodPressure(systolicBloodPressure);
+        ipdPatientVitalStatistics.setDiastolicBloodPressure(diastolicBloodPressure);
         ipdPatientVitalStatistics.setPulseRate(pulseRate);
         ipdPatientVitalStatistics.setTemperature(temperature);
         ipdPatientVitalStatistics.setDietAdvised(dietAdvised);
@@ -397,13 +399,13 @@ public class PatientInfoFragmentController {
 
         }
 
-        IndoorPatientServiceBill bill = new IndoorPatientServiceBill();
+        PatientServiceBill bill = new PatientServiceBill();
 
         bill.setCreatedDate(new Date());
         bill.setPatient(patient);
         bill.setCreator(Context.getAuthenticatedUser());
 
-        IndoorPatientServiceBillItem item;
+        PatientServiceBillItem item;
         BillableService service;
         BigDecimal amount = new BigDecimal(0);
 
@@ -435,16 +437,16 @@ public class PatientInfoFragmentController {
                 if(service!=null){
                     serviceAvailable = true;
                     amount = service.getPrice();
-                    item = new IndoorPatientServiceBillItem();
+                    item = new PatientServiceBillItem();
                     item.setCreatedDate(new Date());
                     item.setName(service.getName());
-                    item.setIndoorPatientServiceBill(bill);
+                    item.setPatientServiceBill(bill);
                     item.setQuantity(1);
                     item.setService(service);
                     item.setUnitPrice(service.getPrice());
                     item.setAmount(amount);
                     item.setActualAmount(amount);
-                    item.setOrderType("SERVICE");
+                   // item.setOrderType("SERVICE");
                     bill.addBillItem(item);
                 }
             }
@@ -453,15 +455,15 @@ public class PatientInfoFragmentController {
             bill.setEncounter(admitted.getPatientAdmissionLog()
                     .getIpdEncounter());
             if(serviceAvailable ==true){
-                bill = billingService.saveIndoorPatientServiceBill(bill);
+                bill = billingService.savePatientServiceBill(bill);
             }
 
-            IndoorPatientServiceBill indoorPatientServiceBill = billingService
-                    .getIndoorPatientServiceBillById(bill
-                            .getIndoorPatientServiceBillId());
-            if (indoorPatientServiceBill != null) {
+            PatientServiceBill PatientServiceBill = billingService
+                    .getPatientServiceBillById(bill
+                            .getPatientServiceBillId());
+            if (PatientServiceBill != null) {
                 billingService
-                        .saveBillEncounterAndOrderForIndoorPatient(indoorPatientServiceBill);
+                        .saveBillEncounterAndOrder(PatientServiceBill);
             }
         }
 
@@ -538,7 +540,7 @@ public class PatientInfoFragmentController {
                 opdTestOrder.setValueCoded(Context.getConceptService().getConcept(iId));
                 opdTestOrder.setCreator(user);
                 opdTestOrder.setCreatedOn(date);
-                opdTestOrder.setBillingStatus(1);
+                opdTestOrder.setBillingStatus(0);
                 opdTestOrder.setBillableService(billableService);
                 opdTestOrder.setScheduleDate(date);
                 opdTestOrder.setIndoorStatus(1);
