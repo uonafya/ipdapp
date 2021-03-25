@@ -9,7 +9,7 @@
 }
 </style>
 
-<table id="investigations-table">
+<table id="ipd-investigations-table">
     <thead>
     <tr>
         <th></th>
@@ -51,7 +51,7 @@
     }
 
     jq(function(){
-        investigationsTable = jq('#investigations-table').DataTable({
+        investigationsTable = jq('#ipd-investigations-table').DataTable({
             searching: false,
             lengthChange: false,
             pageLength: 15,
@@ -72,7 +72,7 @@
 
         var detailRows = [];
 
-        jq('#investigations-table tbody').on( 'click', 'tr td.details-control', function () {
+        jq('#ipd-investigations-table tbody').on( 'click', 'tr td.details-control', function () {
             var tr = jq(this).closest('tr');
             var row = investigationsTable.row( tr );
             var idx = jq.inArray( tr.attr('id'), detailRows );
@@ -91,6 +91,7 @@
                 jq.getJSON(emr.fragmentActionLink("ipdapp", "investigations", "getInvestigationResults", { "orderId": orderId, "patientId": patientId}))
                     .success(function (results) {
                         row.child(format(results)).show();
+                        console.log(results + 'investigation results')
                     });
 
                 // Add to the 'open' array
