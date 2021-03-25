@@ -598,7 +598,6 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
     background-color: #f8d7da;
     border-color: #f5c6cb;
 }
-
 </style>
 
 <div class="example">

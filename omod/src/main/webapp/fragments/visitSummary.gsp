@@ -11,9 +11,7 @@
             jq.getJSON('${ ui.actionLink("ipdapp", "visitSummary" ,"getVisitSummaryDetails") }',
                 { 'encounterId' : jq(visitSummary).find(".encounter-id").val() }
             ).success(function (data) {
-                var visitDetailTemplate =  _.template(jq("#visit-detail-template").html());
-                console.log(data.notes);
-                jq("#visit-detail").html(visitDetailTemplate(data.notes));
+                // console.log(data.notes);
 
                 if (data.drugs.length > 0) {
                     var drugsTemplate =  _.template(jq("#drugs-template").html());
@@ -25,6 +23,16 @@
                 }
 
                 jq("#opdRecordsPrintButton").show(100);
+
+                var cd_html = ''
+                Object.keys(data.notes).map(function (kd) {
+                    cd_html += '<div style="display: flex;flex-direction: row;">'
+                    cd_html += '<label style="display: inline-block; font-weight: bold; width: 190px; text-transform: capitalize;"><span class="status active"></span>'+kd+'</label>'
+                    cd_html+= '<span>'+data.notes[kd]+'</span>'
+                    cd_html += '</div>'
+                })
+                jq("#visit-detail").html(cd_html)
+
             })
         });
 
@@ -143,7 +151,7 @@
                 <br/>
             </div>
 
-            <div class="info-section" id="visit-detail">
+            <div class="info-section info-body" style="display: flex; flex-direction: column;" id="visit-detail">
 
             </div>
 
@@ -171,42 +179,7 @@
 
 <div class="info-body">
     <label style="display: inline-block; font-weight: bold; width: 190px"><span class='status active'></span>History:</label>
-    <span>{{-history}}</span>
-    <br>
-
-    <label style="display: inline-block; font-weight: bold; width: 190px"><span class="status active"></span>Physical Examination:</label>
-    <span>{{-physicalExamination}}</span>
-    <br>
-
-    <label style="display: inline-block; font-weight: bold; width: 190px"><span class="status active"></span>Symptoms:</label>
-    <span>{{-symptoms}}</span>
-    <br>
-
-    <label style="display: inline-block; font-weight: bold; width: 190px"><span class="status active"></span>Diagnosis:</label>
-    <span>{{-diagnosis}}</span>
-    <br>
-
-    <label style="display: inline-block; font-weight: bold; width: 190px"><span class="status active"></span>Investigations:</label>
-    <span>{{-investigations}}</span>
-    <br>
-
-    <label style="display: inline-block; font-weight: bold; width: 190px"><span class="status active"></span>Procedures:</label>
-    <span>{{-procedures}}</span>
-    <br>
-
-    <label style="display: inline-block; font-weight: bold; width: 190px"><span class="status active"></span>Internal Referral:</label>
-    <span>{{-internalReferral}}</span>
-    <br>
-
-    <label style="display: inline-block; font-weight: bold; width: 190px"><span class="status active"></span>External Referral:</label>
-    <span>{{-externalReferral}}</span>
-    <br>
-
-    <label style="display: inline-block; font-weight: bold; width: 190px"><span class="status active"></span>Visit Outcome:</label>
-    <span>{{-visitOutcome}}</span>
-    <br>
-
-</div>
+    <span id="history_"></span>
 </script>
 
 
