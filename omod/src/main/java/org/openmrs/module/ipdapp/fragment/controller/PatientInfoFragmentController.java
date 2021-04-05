@@ -92,6 +92,7 @@ public class PatientInfoFragmentController {
         IpdService ipdService = (IpdService) Context.getService(IpdService.class);
         IpdPatientAdmitted admitted = ipdService.getIpdPatientAdmitted(admittedId);
         IpdPatientAdmissionLog ipal = admitted.getPatientAdmissionLog();
+        ipal.setAbsconded(obStatus);
 
         admitted.setRequestForDischargeStatus(requestForDischargeStatus);
         admitted.setAbsconded(obStatus);
@@ -104,7 +105,9 @@ public class PatientInfoFragmentController {
             admitted.setAbscondedDate(date);
         }
         admitted = ipdService.saveIpdPatientAdmitted(admitted);
-        ipal = ipdService.saveIpdPatientAdmissionLog(ipal);
+        IpdPatientAdmissionLog ipdPatientAdmissionLog = admitted.getPatientAdmissionLog();
+        ipdPatientAdmissionLog.setRequestForDischargeStatus(requestForDischargeStatus);
+        ipdService.saveIpdPatientAdmissionLog(ipdPatientAdmissionLog);
     }
 
     public void transferPatient(@RequestParam("admittedId") Integer id,
