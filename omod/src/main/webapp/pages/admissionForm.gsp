@@ -136,8 +136,8 @@
         jq("#BedNo").on("click", function(e) {
             jq('#addDrugDialog').removeClass('hidden')
         });
-    });
 
+    });
 
 
 </script>

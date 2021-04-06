@@ -759,47 +759,7 @@ fieldset select {
 			<p style="display: none">
 				<button class="button submit confirm" style="display: none;"></button>
 			</p>
-
-			<div class="dashboard">
-				<div class="info-section">
-					<div class="info-header">
-						<i class="icon-list-ul"></i>
-						<h3>TREATMENT SUMMARY &amp; CONFIRMATION</h3>
-					</div>
-
-					<div class="info-body">
-						<table id="summaryTable">
-							<tbody>
-							<tr>
-								<td><span class="status active"></span>Procedure</td>
-								<td>N/A</td>
-							</tr>
-
-							<tr>
-								<td><span class="status active"></span>Physical Examination</td>
-								<td>N/A</td>
-							</tr>
-
-							<tr>
-								<td><span class="status active"></span>Investigations</td>
-								<td>N/A</td>
-							</tr>
-
-							<tr>
-								<td><span class="status active"></span>Prescriptions</td>
-								<td>N/A</td>
-							</tr>
-
-							<tr>
-								<td><span class="status active"></span>Instructions</td>
-								<td>N/A</td>
-							</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-
+			
 			<span value="Submit" class="button submit confirm right" id="treatmentSubmit" style="margin: 5px 10px;">
 				<i class="icon-save small"></i>
 				Save
