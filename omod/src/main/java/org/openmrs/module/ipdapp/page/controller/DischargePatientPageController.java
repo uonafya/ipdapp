@@ -16,6 +16,7 @@ import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,6 +66,9 @@ public class DischargePatientPageController {
         Concept outComeList = Context.getConceptService().getConceptByName(HospitalCoreConstants.CONCEPT_ADMISSION_OUTCOME);
 
         model.addAttribute("listOutCome", outComeList.getAnswers());
+
+        Collection<ConceptAnswer> answer = outComeList.getAnswers();
+        model.addAttribute("answer",answer);
 
         //fetch drug frequencies
         InventoryCommonService inventoryCommonService = Context
