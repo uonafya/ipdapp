@@ -1,11 +1,23 @@
 <%
-	ui.decorateWith("kenyaemr", "standardPage")
-	ui.includeJavascript("uicommons", "datetimepicker/bootstrap-datetimepicker.min.js")
-	ui.includeJavascript("uicommons", "handlebars/handlebars.min.js", Integer.MAX_VALUE - 1)
+	ui.decorateWith("kenyaemr", "standardEmrPage", [title: "Discharge Patient"])
 	ui.includeCss("ehrconfigs", "referenceapplication.css")
+	ui.includeCss("ehrconfigs", "onepcssgrid.css")
+	ui.includeJavascript("uicommons", "datetimepicker/bootstrap-datetimepicker.min.js")
+	ui.includeJavascript("uicommons", "handlebars/handlebars.min.js")
+	ui.includeJavascript("uicommons", "navigator/validators.js")
+	ui.includeJavascript("uicommons", "navigator/navigator.js")
+	ui.includeJavascript("uicommons", "navigator/navigatorHandlers.js")
+	ui.includeJavascript("uicommons", "navigator/navigatorModels.js")
+	ui.includeJavascript("uicommons", "navigator/navigatorTemplates.js")
+	ui.includeJavascript("uicommons", "navigator/exitHandlers.js")
 %>
 
 <script>
+	var NavigatorController
+	jq(function(){
+		NavigatorController = new KeyboardController();
+	});
+
 	jq(function() {
 		//autocomplete for the discharge tab
 		jq("#procedure").autocomplete({
@@ -112,15 +124,22 @@
 				//adds the selected procedures to the div
 				var selectedInvestigationP = document.createElement("div");
 				selectedInvestigationP.className = "selectp";
+
 				var selectedInvestigationT = document.createTextNode(ui.item.label);
 				selectedInvestigationP.id = ui.item.value;
 				selectedInvestigationP.appendChild(selectedInvestigationT);
 
 
+
 				var btnselectedRemoveIcon = document.createElement("span");
 				btnselectedRemoveIcon.className = "icon-remove small selecticon";
 				btnselectedRemoveIcon.id = "diagnosesRemoveIcon";
+
+
+
+
 				selectedInvestigationP.appendChild(btnselectedRemoveIcon);
+
 				var selectedInvestigationDiv = document.getElementById("selected-diagnoses");
 
 				//check if the item already exist before appending
@@ -188,7 +207,7 @@
 					jq.getJSON('${ ui.actionLink("ipdapp", "PatientInfo", "dischargePatient") }',dischargeFormData)
 							.success(function(data) {
 								jq().toastmessage('showNoticeToast', "Patient has been discharged");
-								window.location.href = "/openmrs/ipdapp/chooseIpdWard.page";
+								window.location.href = "/openmrs/ipdapp/patientsAdmission.page";
 							})
 							.error(function(xhr, status, err) {
 								jq().toastmessage('showErrorToast', "Error:" + err);
