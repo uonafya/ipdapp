@@ -306,8 +306,6 @@
 			};
 
 			function successFn(successly_){
-				console.log("successly_")
-				console.log(successly_)
 				jq().toastmessage('removeToast', savingMessage);
 				jq().toastmessage('showSuccessToast', "Patient Treatment has been updated Successfully");
 			}

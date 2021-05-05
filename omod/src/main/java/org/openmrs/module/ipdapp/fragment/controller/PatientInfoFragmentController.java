@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.openmrs.*;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
@@ -14,10 +12,8 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.*;
 import org.openmrs.module.hospitalcore.model.*;
-import org.openmrs.module.hospitalcore.util.ConceptComparator;
 import org.openmrs.module.hospitalcore.util.PatientDashboardConstants;
 import org.openmrs.module.ipdapp.model.Prescription;
-import org.openmrs.module.ipdapp.model.PrescriptionList;
 import org.openmrs.module.ipdapp.model.Procedure;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
@@ -27,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -278,8 +273,10 @@ public class PatientInfoFragmentController {
 
         IpdPatientAdmittedLog ipdPatientAdmittedLog=ipdService.discharge(dischargeAdmittedID, dischargeOutcomes, otherDischargeInstructions );
         OpdPatientQueueLog opdPatientQueueLog=ipdPatientAdmittedLog.getPatientAdmissionLog().getOpdLog();
-        opdPatientQueueLog.setVisitOutCome("DISCHARGE ON REQUEST");
-        queueService.saveOpdPatientQueueLog(opdPatientQueueLog);
+        if (opdPatientQueueLog != null){
+            opdPatientQueueLog.setVisitOutCome("DISCHARGE ON REQUEST");
+            queueService.saveOpdPatientQueueLog(opdPatientQueueLog);
+        }
         Encounter encounter=ipdPatientAdmittedLog.getPatientAdmissionLog().getIpdEncounter();
         BillingService billingService = (BillingService) Context.getService(BillingService.class);
         PatientServiceBill patientServiceBill=billingService.getPatientServiceBillByEncounter(encounter);
