@@ -18,7 +18,7 @@
   		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<!-- Add here beans related to the API context -->
-
+	<context:component-scan base-package="org.openmrs.module.ipdapp" />
 	<bean id="ipdapp.app.ipdapp" factory-bean="kenyacore.appFactoryBean" factory-method="createInstance">
 		<constructor-arg value="ipdapp.home" />
 		<constructor-arg value="IPD" />
