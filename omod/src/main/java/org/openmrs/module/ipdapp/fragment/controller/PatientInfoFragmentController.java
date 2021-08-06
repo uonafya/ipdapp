@@ -551,7 +551,7 @@ public class PatientInfoFragmentController {
 
         for(Prescription p: prescriptionList)
         {
-            System.out.println("HHHHHHHHHEEEEEEEEEEERRRRRRRRRR" + p.getName());
+            //System.out.println("HHHHHHHHHEEEEEEEEEEERRRRRRRRRR" + p.getName());
 
             InventoryCommonService inventoryCommonService = Context
                     .getService(InventoryCommonService.class);
