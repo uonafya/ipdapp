@@ -324,9 +324,9 @@ public class PatientInfoFragmentController {
         User user = Context.getAuthenticatedUser();
         Date date = new Date();
         PatientDashboardService patientDashboardService = Context.getService(PatientDashboardService.class);
-        Concept cOtherInstructions = Context.getConceptService().getConceptByName("OTHER INSTRUCTIONS");
+        Concept cOtherInstructions = Context.getConceptService().getConceptByUuid("5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
-        Concept cPhysicalExamination = Context.getConceptService().getConceptByName("PHYSICAL EXAMINATION");
+        Concept cPhysicalExamination = Context.getConceptService().getConceptByUuid("1391AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
         Obs obsGroup = null;
         obsGroup = hcs.getObsGroupCurrentDate(patient.getPersonId());
@@ -551,7 +551,7 @@ public class PatientInfoFragmentController {
 
         for(Prescription p: prescriptionList)
         {
-            //System.out.println(p.getName());
+            System.out.println("HHHHHHHHHEEEEEEEEEEERRRRRRRRRR" + p.getName());
 
             InventoryCommonService inventoryCommonService = Context
                     .getService(InventoryCommonService.class);
