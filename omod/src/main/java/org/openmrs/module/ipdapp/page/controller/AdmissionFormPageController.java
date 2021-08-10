@@ -179,10 +179,11 @@ public class AdmissionFormPageController {
             Location location = Context.getService(KenyaEmrService.class).getDefaultLocation();
             encounter.setPatient(admission.getPatient());
             encounter.setCreator(user);
+            Provider prov = new Provider();
             encounter.setEncounterDatetime(date);
             encounter.setEncounterType(encounterType);
             encounter.setLocation(location);
-            encounter.setProvider(getEncounterRole(), getProvider(user));
+            prov.setName(String.valueOf(user));
             encounter = Context.getEncounterService().saveEncounter(encounter);
             //done save ipd encounter
             patientAdmissionLog.setIpdEncounter(encounter);
