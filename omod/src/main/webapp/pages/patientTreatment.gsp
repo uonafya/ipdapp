@@ -180,7 +180,7 @@
 			jq('#selectedInvestigationList').find("#" + investigationId).remove();
 			investigationP.remove();
 
-			if (jq('#selectedInvestigationList option').size() == 0){
+			if (jq('#selectedInvestigationList option').size() === 0){
 				jq('#task-investigation').hide();
 				jq('#investigation-set').val('');
 			}
@@ -217,6 +217,12 @@
 							jq('#formulationsSelect').append(jq('<option>').text(formulation.name + ":" + formulation.dozage).attr('value', formulation.id));
 						});
 					});
+
+					jq.getJSON('${ui.actionLink("patientdashboardapp","clinicalNotes","getDrugUnit")}').success(function(data) {
+						var drugUnit = jq.map(data, function(drugUnit) {
+							jq('#drugUnitSelect').append(jq('<option>').text(drugUnit.label).attr('value', drugUnit.id));
+						});
+					});
 				},
 				open: function() {
 					//jq( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
@@ -231,17 +237,20 @@
 			selector: '#addDrugDialog',
 			actions: {
 				confirm: function() {
-					if (jq('#drugName').val() == ''){
+					if (jq('#drugName').val() === ''){
 						jq().toastmessage('showErrorToast', "Kindly ensure that the drug name has been Entered Correctly");
 						return false;
 					}
+					if(jq('#drugUnitSelect').val()==='Select unit'){
+						jq().toastmessage('showErrorToast',"Kindly ensure that the dosage unit has been selected")
+					}
 
-					if (jq('#formulationsSelect').val() == 'Select Formulation'){
+					if (jq('#formulationsSelect').val() === 'Select Formulation'){
 						jq().toastmessage('showErrorToast', "Kindly ensure that the drug Formulation has been selected Correctly");
 						return false;
 					}
 
-					if (jq('#drugFrequency').val() == 'Select Frequency'){
+					if (jq('#drugFrequency').val() === 'Select Frequency'){
 						jq().toastmessage('showErrorToast', "Kindly ensure that the drug Frequency has been selected Correctly");
 						return false;
 					}
@@ -260,7 +269,9 @@
 								formulation: jq("#formulationsSelect").val(),
 								frequency: jq("#drugFrequency").val(),
 								days: jq("#drugDays").val(),
-								comment: jq("#drugComment").val()
+								comment: jq("#drugComment").val(),
+								dosage: jq("#drugDosage").val(),
+								drugUnit: jq("#drugUnitSelect").val()
 							}
 					);
 					jq('#prescription-set').val('SET');
@@ -783,6 +794,13 @@ fieldset select {
 				<input class="drug-name" id="drugName" type="text" >
 			</li>
 			<li>
+				<label style="display: block; margin-top: 9px">Dosage<span>*</span></label>
+				<input class="drug-dosage" id="drugDosage" type="text"  style="width: 60px!important;">
+				<select id="drugUnitSelect" class="drug-dosage-unit"  style="width: 191px!important;">
+					<option>Select unit</option>
+				</select>
+			</li>
+			<li>
 				<span style="display: block; margin-top: 9px">Formulation</span>
 				<select style="width: 100%;" id="formulationsSelect" >
 					<option>Select Formulation</option>
@@ -794,7 +812,7 @@ fieldset select {
 					<option>Select Frequency</option>
 					<% if (drugFrequencyList!=null &&drugFrequencyList!=""){ %>
 					<% drugFrequencyList.each { dfl -> %>
-					<option  value="${dfl.name}.${dfl.conceptId}">
+					<option  value="${dfl.conceptId}">
 						${dfl.name}
 					</option>
 					<% } %>
