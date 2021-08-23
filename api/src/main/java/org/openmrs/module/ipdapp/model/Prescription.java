@@ -1,7 +1,5 @@
 package org.openmrs.module.ipdapp.model;
 
-import javax.swing.text.html.Option;
-
 /**
  *
  */
