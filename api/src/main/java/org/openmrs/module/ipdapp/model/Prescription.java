@@ -9,6 +9,8 @@ public class Prescription {
     private Integer formulation;
     private Integer days;
     private String comment;
+    private String dosage;
+    private Integer drugUnit;
 
     public String getComment() {
         return comment;
@@ -51,6 +53,22 @@ public class Prescription {
         this.name = name;
     }
 
+    public String getDosage() {
+        return dosage;
+    }
+
+    public void setDosage(String dosage) {
+        this.dosage = dosage;
+    }
+
+    public Integer getDrugUnit() {
+        return drugUnit;
+    }
+
+    public void setDrugUnit(Integer drugUnit) {
+        this.drugUnit = drugUnit;
+    }
+
     @Override
     public String toString() {
         return "Prescription{" +
@@ -59,6 +77,8 @@ public class Prescription {
                 ", formulation=" + formulation +
                 ", days=" + days +
                 ", comment='" + comment + '\'' +
+                ", dosage='" + dosage + '\'' +
+                ", drugUnit=" + drugUnit +
                 '}';
     }
 }

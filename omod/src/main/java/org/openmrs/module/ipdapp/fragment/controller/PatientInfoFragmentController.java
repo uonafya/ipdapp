@@ -287,10 +287,10 @@ public class PatientInfoFragmentController {
     //method to convert drugs
     public List<Prescription> getPrescriptions(String json){
         ObjectMapper mapper = new ObjectMapper();
-        List<Prescription> list = null;        try {
+        List<Prescription> list = null;
+        try {
             list = mapper.readValue(json,
-                    TypeFactory.defaultInstance().constructCollectionType(List.class,
-                            Prescription.class));
+                    TypeFactory.defaultInstance().constructCollectionType(List.class, Prescription.class));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -551,7 +551,6 @@ public class PatientInfoFragmentController {
 
         for(Prescription p: prescriptionList)
         {
-            //System.out.println("HHHHHHHHHEEEEEEEEEEERRRRRRRRRR" + p.getName());
 
             InventoryCommonService inventoryCommonService = Context
                     .getService(InventoryCommonService.class);
@@ -559,22 +558,23 @@ public class PatientInfoFragmentController {
                     .getDrugByName(p.getName());
             InventoryDrugFormulation inventoryDrugFormulation = inventoryCommonService
                     .getDrugFormulationById(p.getFormulation());
-            Concept freCon = Context.getConceptService().getConcept(p.getFrequency());
+            Concept freCon = Context.getConceptService().getConcept(p.getFrequency().trim());
+            Concept dosageUnitConcept = Context.getConceptService().getConcept(p.getDrugUnit());
 
             OpdDrugOrder opdDrugOrder = new OpdDrugOrder();
             opdDrugOrder.setPatient(patient);
             opdDrugOrder.setEncounter(encounter);
             opdDrugOrder.setInventoryDrug(inventoryDrug);
-            opdDrugOrder
-                    .setInventoryDrugFormulation(inventoryDrugFormulation);
+            opdDrugOrder.setInventoryDrugFormulation(inventoryDrugFormulation);
             opdDrugOrder.setFrequency(freCon);
             opdDrugOrder.setNoOfDays(p.getDays());
+            opdDrugOrder.setDosage(p.getDosage());
+            opdDrugOrder.setDosageUnit(dosageUnitConcept);
             opdDrugOrder.setComments(p.getComment());
             opdDrugOrder.setCreator(user);
             opdDrugOrder.setCreatedOn(date);
             opdDrugOrder.setReferralWardName(Context.getConceptService().getConcept(Integer.parseInt(ipdWard)).getName().toString());
-            patientDashboardService
-                    .saveOrUpdateOpdDrugOrder(opdDrugOrder);
+            patientDashboardService.saveOrUpdateOpdDrugOrder(opdDrugOrder);
         }
     }
 }
