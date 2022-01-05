@@ -213,6 +213,7 @@ public class PatientInfoFragmentController {
 
         List<Concept> listConceptDiagnosis = new ArrayList<Concept>();
 
+        Patient patient = ipdEncounter.getPatient();
         if(selectedDiagnosisList!=null){
             for (Integer cId : selectedDiagnosisList) {
                 Concept cons = conceptService.getConcept(cId);
@@ -226,7 +227,7 @@ public class PatientInfoFragmentController {
                 obsDiagnosis.setObsDatetime(date);
                 obsDiagnosis.setLocation(location);
                 obsDiagnosis.setDateCreated(date);
-                obsDiagnosis.setPatient(ipdEncounter.getPatient());
+               //(ipdEncounter.getPatient());
                 obsDiagnosis.setEncounter(ipdEncounter);
                 obsDiagnosis = Context.getObsService().saveObs(obsDiagnosis, "update obs diagnosis if need");
                 obses.add(obsDiagnosis);
@@ -256,7 +257,7 @@ public class PatientInfoFragmentController {
                 obsProcedure.setCreator(user);
                 obsProcedure.setObsDatetime(date);
                 obsProcedure.setLocation(location);
-                obsProcedure.setPatient(ipdEncounter.getPatient());
+                obsProcedure.setPerson (ipdEncounter.getPatient ());
                 obsProcedure.setDateCreated(date);
                 obsProcedure.setEncounter(ipdEncounter);
                 obsProcedure = Context.getObsService().saveObs(obsProcedure, "update obs diagnosis if need");

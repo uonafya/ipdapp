@@ -4,7 +4,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>ipdapp</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>In-patient App Module</name>
 	<description>Module for handling patient admission, monitoring and discharge</description>
@@ -26,13 +26,14 @@
 	</modules>
 	
 	<properties>
-		<openMRSVersion>1.12.0</openMRSVersion>
+		<openMRSVersion>2.3.3</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<appframeworkVersion>2.2.1</appframeworkVersion>
 		<kenyacoreVersion>2.4.1</kenyacoreVersion>
 		<kenyauiVersion>2.1.1</kenyauiVersion>
-		<kenyaemrVersion>17.0.3</kenyaemrVersion>
+		<kenyaemrVersion>18.0.0</kenyaemrVersion>
 		<metadatadeployVersion>1.2</metadatadeployVersion>
+		<legacyUiVersion>1.5.0</legacyUiVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -83,7 +84,7 @@
 
 				<artifactId>hospitalcore-api</artifactId>
 
-				<version>1.0.0-SNAPSHOT</version>
+				<version>1.0.7-SNAPSHOT</version>
 
 				<scope>provided</scope>
 
@@ -92,6 +93,18 @@
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>appframework-api</artifactId>
 				<version>${appframeworkVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>legacyui-api</artifactId>
+				<version>${legacyUiVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>legacyui-omod</artifactId>
+				<version>${legacyUiVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>

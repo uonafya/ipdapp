@@ -14,7 +14,8 @@ import org.openmrs.module.ipdapp.utils.IpdConstants;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageModel;
-
+import org.openmrs.EncounterRole;
+import org.openmrs.Provider;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +26,9 @@ import java.util.List;
 
 public class PatientAdmissionFragmentController {
     IpdService ipdService = (IpdService) Context.getService(IpdService.class);
+    private Person Person;
+    private EncounterRole EncounterRole;
+    private org.openmrs.Provider Provider;
 
     public void removeOrNoBed(@RequestParam(value = "admissionId", required = false) Integer admissionId, //If that tab is active we will set that tab active when page load.
                               @RequestParam(value = "action", required = false) Integer action, PageModel model) {
@@ -62,7 +66,7 @@ public class PatientAdmissionFragmentController {
             Location location = new Location(1);
             encounter.setPatient(admission.getPatient());
             encounter.setCreator(user);
-            encounter.setProvider(user);
+            encounter.setProvider(EncounterRole,Provider);
             encounter.setEncounterDatetime(date);
             encounter.setEncounterType(encounterType);
             encounter.setLocation(location);
