@@ -19,7 +19,12 @@
 		<name>OpenMRS</name>
 		<url>http://openmrs.org</url>
 	</organization>
-
+	<scm>
+		<connection>scm:git:https://github.com/uonafya/ipdapp.git</connection>
+		<developerConnection>scm:git:https://github.com/uonafya/ipdapp.git</developerConnection>
+		<url>https://github.com/uonafya/ipdapp.git</url>
+		<tag>HEAD</tag>
+	</scm>
 	<modules>
 		<module>api</module>
 		<module>omod</module>
