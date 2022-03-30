@@ -80,7 +80,6 @@ public class PatientInfoFragmentController {
     }
     
     public void requestForDischarge(@RequestParam(value = "id", required = false) Integer admittedId,
-                                    @RequestParam(value = "ipdWard", required = false) String ipdWard,
                                     @RequestParam(value = "obStatus", required = false) Integer obStatus) {
 
         int requestForDischargeStatus = 1;

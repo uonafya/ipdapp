@@ -3,7 +3,6 @@
 	ui.includeJavascript("uicommons", "datetimepicker/bootstrap-datetimepicker.min.js")
 	ui.includeJavascript("patientdashboardapp", "jq.print.js")
 	ui.includeJavascript("patientdashboardapp", "jq.slimscroll.js")
-
 	ui.includeCss("ehrconfigs", "referenceapplication.css")
 
 %>
@@ -340,10 +339,9 @@
 	});
 
 	//reqeust for discharge
-	function requestForDischarge(id, ipdWard, obStatus) {
+	function requestForDischarge(id, obStatus) {
 		var dischargeData = {
 			'id': id,
-			'ipdWard': ipdWard,
 			'obStatus':obStatus
 		};
 
@@ -357,10 +355,9 @@
 				})
 	}
 	//Abscond
-	function abscond(id, ipdWard, obStatus) {
+	function abscond(id, obStatus) {
 		var abscondData = {
 			'id': id,
-			'ipdWard': ipdWard,
 			'obStatus':obStatus
 		};
 
@@ -604,7 +601,7 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
 <div class="example">
 	<ul id="breadcrumbs">
 		<li>
-			<a href="${ui.pageLink('referenceapplication','home')}">
+			<a href="${ui.pageLink('ipdapp','chooseIpdWard')}">
 				<i class="icon-home small"></i></a>
 		</li>
 
@@ -660,7 +657,7 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
 		<br>
 
 		<div class="catg">
-			<i class="icon-tags small" style="font-size: 16px"></i><small>Category:</small> ${patient.getAttribute(14)}
+			<i class="icon-tags small" style="font-size: 16px"></i><small>Category:</small> ${category}/${subCategory}
 		</div>
 	</div>
 	<div class="clear"></div>

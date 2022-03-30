@@ -1,15 +1,18 @@
 package org.openmrs.module.ipdapp.page.controller;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.openmrs.*;
+import org.openmrs.Concept;
+import org.openmrs.ConceptAnswer;
+import org.openmrs.Patient;
+import org.openmrs.PersonAttributeType;
+import org.openmrs.Role;
+import org.openmrs.User;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.hospitalcore.InventoryCommonService;
 import org.openmrs.module.hospitalcore.IpdService;
 import org.openmrs.module.hospitalcore.model.IpdPatientAdmitted;
 import org.openmrs.module.hospitalcore.model.IpdPatientVitalStatistics;
 import org.openmrs.module.hospitalcore.util.ConceptAnswerComparator;
-import org.openmrs.module.hospitalcore.util.HospitalCoreConstants;
 import org.openmrs.module.ipdapp.utils.IpdConstants;
 import org.openmrs.module.kenyaui.annotation.AppPage;
 import org.openmrs.ui.framework.page.PageModel;
@@ -32,13 +35,17 @@ public class PatientInfoPageController {
 
         Patient patient = patientList.get(0);
         IpdPatientAdmitted patientInformation = ipdService.getAdmittedByPatientId(patient.getPatientId());
-
+        PersonAttributeType paymentCategoryPaymentAttribute = Context.getPersonService().getPersonAttributeTypeByUuid("09cd268a-f0f5-11ea-99a8-b3467ddbf779");
+        PersonAttributeType paymentCategorySubTypePaymentAttribute = Context.getPersonService()
+                .getPersonAttributeTypeByUuid("972a32aa-6159-11eb-bc2d-9785fed39154");
         model.addAttribute("patient", patient);
         model.addAttribute("patientIdentifier", search);
         model.addAttribute("patientInformation", patientInformation);
+        model.addAttribute("category", patient.getAttribute(paymentCategoryPaymentAttribute));
+        model.addAttribute("subCategory", patient.getAttribute(paymentCategorySubTypePaymentAttribute));
 
         //gets list of doctors
-        Concept ipdConcept = Context.getConceptService().getConceptByName(Context.getAdministrationService().getGlobalProperty(IpdConstants.PROPERTY_IPDWARD));
+        Concept ipdConcept = Context.getConceptService().getConceptByUuid("5fc29316-0869-4b3b-ae2f-cc37c6014eb7");
         List<ConceptAnswer> list = (ipdConcept != null ? new ArrayList<ConceptAnswer>(ipdConcept.getAnswers()) : null);
         if (CollectionUtils.isNotEmpty(list)) {
             Collections.sort(list, new ConceptAnswerComparator());
@@ -46,8 +53,7 @@ public class PatientInfoPageController {
         model.addAttribute("listIpd", list);
 
         //displays the list of doctors
-        String doctorRoleProps = Context.getAdministrationService().getGlobalProperty(IpdConstants.PROPERTY_NAME_DOCTOR_ROLE);
-        Role doctorRole = Context.getUserService().getRole(doctorRoleProps);
+        Role doctorRole = Context.getUserService().getRole("Doctor");
         if (doctorRole != null) {
             List<User> listDoctor = Context.getUserService().getUsersByRole(doctorRole);
             model.addAttribute("listDoctor", listDoctor);
@@ -62,7 +68,7 @@ public class PatientInfoPageController {
         model.addAttribute("ipdPatientVitalStatistics", ipdPatientVitalStatistics);
 
         //list of discharge outcomes
-        Concept outComeList = Context.getConceptService().getConceptByName(HospitalCoreConstants.CONCEPT_ADMISSION_OUTCOME);
+        Concept outComeList = Context.getConceptService().getConceptByUuid("0c760f02-df3d-4280-b8b3-ea51aab94a69");
         model.addAttribute("listOutCome", outComeList.getAnswers());
     }
 }

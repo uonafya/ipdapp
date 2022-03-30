@@ -139,6 +139,12 @@
 				<version>${metadatadeployVersion}</version>
 				<scope>provided</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>ehrconfigs-api</artifactId>
+				<version>${ehrconfigsVersion}</version>
+				<scope>provided</scope>
+			</dependency>
 						
 			<!-- End OpenMRS modules -->
 			

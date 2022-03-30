@@ -66,12 +66,12 @@
 			<% if (patientInformation.requestForDischargeStatus != 1 && patientInformation.absconded != 1) { %>
 				<li>
 					<i class="icon-edit"></i>
-					<a onclick='requestForDischarge(${patientInformation.id}, ${patientInformation.admittedWard},0)'>Request Discharge</a>
+					<a onclick='requestForDischarge(${patientInformation.id},0)'>Request Discharge</a>
 				</li>
 				
 				<li>
 					<i class="icon-share"></i>
-					<a onclick='abscond(${patientInformation.id}, ${patientInformation.admittedWard},1)'>Patient Abscorded</a>
+					<a onclick='abscond(${patientInformation.id}, "${patientInformation.admittedWard}",1)'>Patient Abscorded</a>
 				</li>
 			<% } %>
 			
