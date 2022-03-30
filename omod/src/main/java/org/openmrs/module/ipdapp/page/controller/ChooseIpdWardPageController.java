@@ -18,7 +18,7 @@ import java.util.*;
 @AppPage(IpdConstants.APP_IPD_APP)
 public class ChooseIpdWardPageController {
     public void get(PageModel model) {
-        Concept ipdConcept = Context.getConceptService().getConceptByName(Context.getAdministrationService().getGlobalProperty(IpdConstants.PROPERTY_IPDWARD));
+        Concept ipdConcept = Context.getConceptService().getConceptByUuid("5fc29316-0869-4b3b-ae2f-cc37c6014eb7");
         List<ConceptAnswer> ipdWardsList = (ipdConcept != null ? new ArrayList<ConceptAnswer>(ipdConcept.getAnswers()) : null);
         List<WardOverview> wardOverviewList = new ArrayList<WardOverview>();
         IpdService ipdService = Context.getService(IpdService.class);
