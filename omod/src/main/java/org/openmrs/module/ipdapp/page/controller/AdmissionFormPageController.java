@@ -166,7 +166,7 @@ public class AdmissionFormPageController {
 
             //save ipd encounter
             User user = Context.getAuthenticatedUser();
-            EncounterType encounterType = Context.getService(HospitalCoreService.class).insertEncounterTypeByKey("IPDENCOUNTER");
+            EncounterType encounterType = Context.getEncounterService().getEncounterTypeByUuid("f2fdbb02-f290-11ea-9a81-3729eb94d52d");
 
             Encounter encounter = new Encounter();
             Location location = Context.getService(KenyaEmrService.class).getDefaultLocation();
@@ -204,8 +204,8 @@ public class AdmissionFormPageController {
                 BillableService service;
 
                 ArrayList<Concept> al=new ArrayList<Concept>();
-                Concept concept1=Context.getConceptService().getConcept("ADMISSION FEE");
-                Concept concept2=Context.getConceptService().getConcept("CATERING FEE");
+                Concept concept1=Context.getConceptService().getConceptByUuid("404b4f27-641f-4889-ae91-66fa2165db0c");
+                Concept concept2=Context.getConceptService().getConceptByUuid("06fca151-2945-49a5-9ba3-032dc2f947e1");
                 al.add(concept1);
                 al.add(concept2);
 
@@ -340,7 +340,7 @@ public class AdmissionFormPageController {
 
         if (admission != null) {
             admission.setAcceptStatus(acceptStatus);
-            EncounterType encounterType = Context.getService(HospitalCoreService.class).insertEncounterTypeByKey("IPDENCOUNTER");
+            EncounterType encounterType = Context.getEncounterService().getEncounterTypeByUuid("f2fdbb02-f290-11ea-9a81-3729eb94d52d");
 
             Encounter encounter = new Encounter();
             Date date = new Date();
