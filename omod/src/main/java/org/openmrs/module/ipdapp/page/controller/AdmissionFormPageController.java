@@ -1,7 +1,6 @@
 package org.openmrs.module.ipdapp.page.controller;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;
@@ -17,7 +16,6 @@ import org.openmrs.PersonAttributeType;
 import org.openmrs.Provider;
 import org.openmrs.Role;
 import org.openmrs.User;
-import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.BillingService;
 import org.openmrs.module.hospitalcore.HospitalCoreService;
@@ -31,12 +29,10 @@ import org.openmrs.module.hospitalcore.model.IpdPatientAdmissionLog;
 import org.openmrs.module.hospitalcore.model.IpdPatientAdmitted;
 import org.openmrs.module.hospitalcore.model.PatientSearch;
 import org.openmrs.module.hospitalcore.util.ConceptAnswerComparator;
-import org.openmrs.module.hospitalcore.util.HospitalCoreConstants;
 import org.openmrs.module.hospitalcore.util.Money;
 import org.openmrs.module.ipdapp.utils.IpdConstants;
 import org.openmrs.module.kenyaemr.api.KenyaEmrService;
 import org.openmrs.module.kenyaui.annotation.AppPage;
-import org.openmrs.module.kenyaui.wrapper.KenyaEMRObsWrapper;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,8 +60,7 @@ public class AdmissionFormPageController {
 
         model.addAttribute("ipdWard", ipdWard);
         IpdService ipdService = Context.getService(IpdService.class);
-        Concept ipdConcept = Context.getConceptService().getConceptByName(
-                Context.getAdministrationService().getGlobalProperty(IpdConstants.PROPERTY_IPDWARD));
+        Concept ipdConcept = Context.getConceptService().getConceptByUuid("5fc29316-0869-4b3b-ae2f-cc37c6014eb7");
         List<ConceptAnswer> list = (ipdConcept != null ? new ArrayList<ConceptAnswer>(ipdConcept.getAnswers()) : null);
         if (CollectionUtils.isNotEmpty(list)) {
             Collections.sort(list, new ConceptAnswerComparator());
@@ -81,8 +76,7 @@ public class AdmissionFormPageController {
             //String upazila = add.getCityVillage();
             String pname = admission.getPatient().getGivenName();
 
-            String doctorRoleProps = Context.getAdministrationService().getGlobalProperty(IpdConstants.PROPERTY_NAME_DOCTOR_ROLE);
-            Role doctorRole = Context.getUserService().getRole(doctorRoleProps);
+            Role doctorRole = Context.getUserService().getRole(IpdConstants.PROPERTY_NAME_DOCTOR_ROLE);
             if (doctorRole != null) {
                 List<User> listDoctor = Context.getUserService().getUsersByRole(doctorRole);
                 model.addAttribute("listDoctor", listDoctor);
@@ -172,8 +166,7 @@ public class AdmissionFormPageController {
 
             //save ipd encounter
             User user = Context.getAuthenticatedUser();
-            EncounterType encounterType = Context.getService(HospitalCoreService.class).insertEncounterTypeByKey(
-                    HospitalCoreConstants.PROPERTY_IPDENCOUNTER);
+            EncounterType encounterType = Context.getService(HospitalCoreService.class).insertEncounterTypeByKey("IPDENCOUNTER");
 
             Encounter encounter = new Encounter();
             Location location = Context.getService(KenyaEmrService.class).getDefaultLocation();
@@ -347,8 +340,7 @@ public class AdmissionFormPageController {
 
         if (admission != null) {
             admission.setAcceptStatus(acceptStatus);
-            EncounterType encounterType = Context.getService(HospitalCoreService.class).insertEncounterTypeByKey(
-                    HospitalCoreConstants.PROPERTY_IPDENCOUNTER);
+            EncounterType encounterType = Context.getService(HospitalCoreService.class).insertEncounterTypeByKey("IPDENCOUNTER");
 
             Encounter encounter = new Encounter();
             Date date = new Date();
