@@ -1,5 +1,5 @@
 <%
-	ui.decorateWith("kenyaemr", "standardEmrPage", [title: "Discharge Patient"])
+	ui.decorateWith("appui", "standardEmrPage", [title: "Discharge Patient"])
 	ui.includeCss("ehrconfigs", "referenceapplication.css")
 	ui.includeCss("ehrconfigs", "onepcssgrid.css")
 	ui.includeJavascript("uicommons", "datetimepicker/bootstrap-datetimepicker.min.js")
@@ -552,7 +552,7 @@ fieldset select {
 			Visit Status
 		</div>
 		<div class="tag">Admitted</div>
-		<div class="tad">Bed 00${patientInformation.bed}</div>
+		<div class="tad">Bed ${patientInformation.bed}</div>
 	</div>
 
 	<div class="identifiers">
@@ -561,7 +561,7 @@ fieldset select {
 		<br>
 
 		<div class="catg">
-			<i class="icon-tags small" style="font-size: 16px"></i><small>Category:</small> ${patient.getAttribute(14)}
+			<i class="icon-tags small" style="font-size: 16px"></i><small>Category:</small> ${category}/${subCategory}
 		</div>
 	</div>
 	<div class="clear"></div>
@@ -585,7 +585,7 @@ fieldset select {
 				</header>
 
 				<div class="symptoms-qualifiers" data-bind="foreach: signs">
-					<select style="display: none" id="selectedDiagnosisList"></select>
+					<select style="display: none" id="selectedDiagnosisList" name="selectedDiagnosisList"></select>
 					<div class="symptom-container selectdiv" id="selected-diagnoses"></div>
 				</div>
 			</div>
@@ -606,7 +606,7 @@ fieldset select {
 				</header>
 
 				<div class="symptoms-qualifiers" data-bind="foreach: signs">
-					<select style="display: none" id="selectedProcedureList"></select>
+					<select style="display: none" id="selectedProcedureList" name="selectedProcedureList"></select>
 					<div class="symptom-container selectdiv" id="selected-procedures">
 
 					</div>

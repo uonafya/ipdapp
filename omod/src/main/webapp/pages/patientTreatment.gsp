@@ -581,7 +581,7 @@ fieldset select {
 <div class="example">
 	<ul id="breadcrumbs">
 		<li>
-			<a href="${ui.pageLink('referenceapplication','home')}">
+			<a href="${ui.pageLink('ipdapp','chooseIpdWard')}">
 				<i class="icon-home small"></i></a>
 		</li>
 
@@ -641,7 +641,7 @@ fieldset select {
 		<br>
 
 		<div class="catg">
-			<i class="icon-tags small" style="font-size: 16px"></i><small>Category:</small> ${patient.getAttribute(14)}
+			<i class="icon-tags small" style="font-size: 16px"></i><small>Category:</small> ${category}/${subCategory}
 		</div>
 	</div>
 	<div class="clear"></div>

@@ -5,16 +5,40 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.openmrs.*;
-import org.openmrs.api.AdministrationService;
+import org.openmrs.Concept;
+import org.openmrs.ConceptAnswer;
+import org.openmrs.Encounter;
+import org.openmrs.Location;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.User;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.hospitalcore.*;
-import org.openmrs.module.hospitalcore.model.*;
-import org.openmrs.module.hospitalcore.util.PatientDashboardConstants;
+import org.openmrs.module.hospitalcore.BillingService;
+import org.openmrs.module.hospitalcore.HospitalCoreService;
+import org.openmrs.module.hospitalcore.InventoryCommonService;
+import org.openmrs.module.hospitalcore.IpdService;
+import org.openmrs.module.hospitalcore.PatientDashboardService;
+import org.openmrs.module.hospitalcore.PatientQueueService;
+import org.openmrs.module.hospitalcore.model.BillableService;
+import org.openmrs.module.hospitalcore.model.DepartmentConcept;
+import org.openmrs.module.hospitalcore.model.IndoorPatientServiceBill;
+import org.openmrs.module.hospitalcore.model.IndoorPatientServiceBillItem;
+import org.openmrs.module.hospitalcore.model.InventoryDrug;
+import org.openmrs.module.hospitalcore.model.InventoryDrugFormulation;
+import org.openmrs.module.hospitalcore.model.IpdPatientAdmissionLog;
+import org.openmrs.module.hospitalcore.model.IpdPatientAdmitted;
+import org.openmrs.module.hospitalcore.model.IpdPatientAdmittedLog;
+import org.openmrs.module.hospitalcore.model.IpdPatientVitalStatistics;
+import org.openmrs.module.hospitalcore.model.OpdDrugOrder;
+import org.openmrs.module.hospitalcore.model.OpdPatientQueueLog;
+import org.openmrs.module.hospitalcore.model.OpdTestOrder;
+import org.openmrs.module.hospitalcore.model.PatientSearch;
+import org.openmrs.module.hospitalcore.model.PatientServiceBill;
 import org.openmrs.module.ipdapp.model.Prescription;
 import org.openmrs.module.ipdapp.model.Procedure;
+import org.openmrs.module.kenyaemr.api.KenyaEmrService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageModel;
@@ -25,7 +49,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -143,8 +172,8 @@ public class PatientInfoFragmentController {
     }
     public void dischargePatient( @RequestParam(value ="dischargeAdmittedID", required = false) Integer dischargeAdmittedID,
                                   @RequestParam(value ="patientId", required = false) Integer patientId,
-                                  @RequestParam(value ="selectedDiagnosisList[]", required = false) Integer[] selectedDiagnosisList,
-                                  @RequestParam(value ="selectedDischargeProcedureList[]", required = false) Integer[] selectedDischargeProcedureList,
+                                  @RequestParam(value ="selectedDiagnosisList", required = false) Integer[] selectedDiagnosisList,
+                                  @RequestParam(value ="selectedProcedureList", required = false) Integer[] selectedDischargeProcedureList,
                                   @RequestParam(value ="dischargeOutcomes", required = false) Integer dischargeOutcomes,
                                   @RequestParam(value ="otherDischargeInstructions", required = false) String otherDischargeInstructions
     ){
@@ -152,13 +181,11 @@ public class PatientInfoFragmentController {
         HospitalCoreService hospitalCoreService = (HospitalCoreService) Context.getService(HospitalCoreService.class);
         PatientQueueService queueService = Context.getService(PatientQueueService.class);
         PatientSearch patientSearch = hospitalCoreService.getPatient(patientId);
-
+        ConceptService conceptService = Context.getConceptService();
         IpdService ipdService = (IpdService) Context.getService(IpdService.class);
 
-        if (Context.getConceptService().getConcept(dischargeOutcomes).getName().getName().equalsIgnoreCase("DEATH")) {
-
-            ConceptService conceptService = Context.getConceptService();
-            Concept causeOfDeath = conceptService.getConceptByName("NONE");
+        if (conceptService.getConcept(dischargeOutcomes).equals(conceptService.getConceptByUuid("9c348c8c-e033-4fc0-ab2a-7e6702b68739"))) {
+            Concept causeOfDeath = conceptService.getConceptByUuid("1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             hospitalCoreService.savePatientSearch(patientSearch);
             PatientService ps=Context.getPatientService();
             Patient patient = ps.getPatient(patientId);
@@ -175,18 +202,12 @@ public class PatientInfoFragmentController {
             hospitalCoreService.savePatientSearch(patientSearch);
         }
 
-        AdministrationService administrationService = Context.getAdministrationService();
-        GlobalProperty gpDiagnosis = administrationService
-                .getGlobalPropertyObject(PatientDashboardConstants.PROPERTY_PROVISIONAL_DIAGNOSIS);
-        GlobalProperty procedure = administrationService
-                .getGlobalPropertyObject(PatientDashboardConstants.PROPERTY_POST_FOR_PROCEDURE);
-        ConceptService conceptService = Context.getConceptService();
-        Concept cDiagnosis = conceptService.getConceptByName(gpDiagnosis.getPropertyValue());
-        Concept cProcedure = conceptService.getConceptByName(procedure.getPropertyValue());
+        Concept cDiagnosis = conceptService.getConceptByUuid("160249AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        Concept cProcedure = conceptService.getConceptByUuid("1651AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         IpdPatientAdmitted admitted = ipdService.getIpdPatientAdmitted(dischargeAdmittedID);
         Encounter ipdEncounter = admitted.getPatientAdmissionLog().getIpdEncounter();
         List<Obs> listObsOfIpdEncounter = new ArrayList<Obs>(ipdEncounter.getAllObs());
-        Location location = new Location(1);
+        Location location = Context.getService(KenyaEmrService.class).getDefaultLocation();
 
         User user = Context.getAuthenticatedUser();
         Date date = new Date();
@@ -213,7 +234,7 @@ public class PatientInfoFragmentController {
         List<Concept> listConceptDiagnosis = new ArrayList<Concept>();
 
         Patient patient = ipdEncounter.getPatient();
-        if(selectedDiagnosisList!=null){
+        if(selectedDiagnosisList != null){
             for (Integer cId : selectedDiagnosisList) {
                 Concept cons = conceptService.getConcept(cId);
                 listConceptDiagnosis.add(cons);
@@ -300,8 +321,8 @@ public class PatientInfoFragmentController {
     public void treatment(@RequestParam(value ="patientId", required = false) Integer patientId,
                           @RequestParam(value = "drugOrder", required = false) String drugOrder,
                           @RequestParam(value = "ipdWard", required = false) String ipdWard,
-                          @RequestParam(value ="selectedProcedureList[]", required = false) Integer[] selectedProcedureList,
-                          @RequestParam(value ="selectedInvestigationList[]", required = false) Integer[] selectedInvestigationList,
+                          @RequestParam(value ="selectedProcedureList", required = false) Integer[] selectedProcedureList,
+                          @RequestParam(value ="selectedInvestigationList", required = false) Integer[] selectedInvestigationList,
                           @RequestParam(value ="otherTreatmentInstructions", required = false) String otherTreatmentInstructions,
                           @RequestParam(value = "physicalExamination", required = false) String physicalExamination)
     {
@@ -309,24 +330,18 @@ public class PatientInfoFragmentController {
 
         List<Prescription> prescriptionList = getPrescriptions(drugOrder);
 
-        /*List<Prescription> list = mapper.readValue(drugOrder, new TypeReference<List<Prescription>>() { });
-        Prescription[] array = mapper.readValue(drugOrder, Prescription[].class);*/
-
         HospitalCoreService hcs = (HospitalCoreService) Context
                 .getService(HospitalCoreService.class);
         IpdService ipdService = Context.getService(IpdService.class);
         IpdPatientAdmitted admitted = ipdService.getAdmittedByPatientId(patientId);
         Patient patient = Context.getPatientService().getPatient(patientId);
         BillingService billingService = Context.getService(BillingService.class);
-        AdministrationService administrationService = Context.getAdministrationService();
-        GlobalProperty procedure = administrationService.getGlobalPropertyObject(PatientDashboardConstants.PROPERTY_POST_FOR_PROCEDURE);
-        GlobalProperty investigationn = administrationService.getGlobalPropertyObject(PatientDashboardConstants.PROPERTY_FOR_INVESTIGATION);
         User user = Context.getAuthenticatedUser();
         Date date = new Date();
         PatientDashboardService patientDashboardService = Context.getService(PatientDashboardService.class);
-        Concept cOtherInstructions = Context.getConceptService().getConceptByName("OTHER INSTRUCTIONS");
+        Concept cOtherInstructions = Context.getConceptService().getConceptByUuid("163106AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
-        Concept cPhysicalExamination = Context.getConceptService().getConceptByName("PHYSICAL EXAMINATION");
+        Concept cPhysicalExamination = Context.getConceptService().getConceptByUuid("1391AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
         Obs obsGroup = null;
         obsGroup = hcs.getObsGroupCurrentDate(patient.getPersonId());
@@ -335,8 +350,7 @@ public class PatientInfoFragmentController {
 
         if (admitted != null) {
             if (!ArrayUtils.isEmpty(selectedProcedureList)) {
-                Concept cProcedure = Context.getConceptService().getConceptByName(procedure
-                        .getPropertyValue());
+                Concept cProcedure = Context.getConceptService().getConceptByUuid("1651AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
                 for (Integer pId : selectedProcedureList) {
                     Obs oProcedure = new Obs();
@@ -353,8 +367,7 @@ public class PatientInfoFragmentController {
             }
 
             if (!ArrayUtils.isEmpty(selectedInvestigationList)) {
-                Concept coninvt =  Context.getConceptService().getConceptByName(investigationn
-                        .getPropertyValue());
+                Concept coninvt =  Context.getConceptService().getConceptByUuid("0179f241-8c1d-47c1-8128-841f6508e251");
 
                 for (Integer pId : selectedInvestigationList) {
                     Obs obsInvestigation = new Obs();
@@ -468,11 +481,9 @@ public class PatientInfoFragmentController {
         }
 
         if (!ArrayUtils.isEmpty(selectedProcedureList)) {
-        Concept conpro = Context.getConceptService().getConceptByName(procedure
-                .getPropertyValue());
+        Concept conpro = Context.getConceptService().getConceptByUuid("0179f241-8c1d-47c1-8128-841f6508e251");
 
-        Concept concept = Context.getConceptService().getConcept(
-                "MINOR OPERATION");
+        Concept concept = Context.getConceptService().getConceptByUuid("3c3946b1-d71d-41b3-a2e4-2d755006200a");
         Collection<ConceptAnswer> allMinorOTProcedures = null;
         List<Integer> id = new ArrayList<Integer>();
         if (concept != null) {
@@ -482,8 +493,7 @@ public class PatientInfoFragmentController {
             }
         }
 
-        Concept concept2 = Context.getConceptService().getConcept(
-                "MAJOR OPERATION");
+        Concept concept2 = Context.getConceptService().getConceptByUuid("3798940f-87b8-464e-b36a-17da246f034e");
         Collection<ConceptAnswer> allMajorOTProcedures = null;
         List<Integer> id2 = new ArrayList<Integer>();
         if (concept2 != null) {
@@ -526,7 +536,7 @@ public class PatientInfoFragmentController {
     }
         if (!ArrayUtils.isEmpty(selectedInvestigationList)) {
             Concept coninvt = Context.getConceptService()
-                    .getConceptByName(investigationn.getPropertyValue());
+                    .getConceptByUuid("0179f241-8c1d-47c1-8128-841f6508e251");
 
 
             for (Integer iId : selectedInvestigationList) {
@@ -551,7 +561,6 @@ public class PatientInfoFragmentController {
 
         for(Prescription p: prescriptionList)
         {
-            //System.out.println(p.getName());
 
             InventoryCommonService inventoryCommonService = Context
                     .getService(InventoryCommonService.class);

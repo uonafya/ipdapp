@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;
 import org.openmrs.Patient;
+import org.openmrs.PersonAttributeType;
 import org.openmrs.Role;
 import org.openmrs.User;
 import org.openmrs.api.PatientService;
@@ -78,6 +79,13 @@ public class DischargePatientPageController {
         List<Concept> drugFrequencyConcept = inventoryCommonService
                 .getDrugFrequency();
         model.addAttribute("drugFrequencyList", drugFrequencyConcept);
+
+        PersonAttributeType paymentCategoryPaymentAttribute = Context.getPersonService().getPersonAttributeTypeByUuid("09cd268a-f0f5-11ea-99a8-b3467ddbf779");
+        PersonAttributeType paymentCategorySubTypePaymentAttribute = Context.getPersonService()
+                .getPersonAttributeTypeByUuid("972a32aa-6159-11eb-bc2d-9785fed39154");
+
+        model.addAttribute("category", patient.getAttribute(paymentCategoryPaymentAttribute));
+        model.addAttribute("subCategory", patient.getAttribute(paymentCategorySubTypePaymentAttribute));
 
 
     }
