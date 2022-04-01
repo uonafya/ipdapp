@@ -71,7 +71,7 @@
 				
 				<li>
 					<i class="icon-share"></i>
-					<a onclick='abscond(${patientInformation.id}, "${patientInformation.admittedWard}",1)'>Patient Abscorded</a>
+					<a onclick='abscond(${patientInformation.id},1)'>Patient Abscorded</a>
 				</li>
 			<% } %>
 			
