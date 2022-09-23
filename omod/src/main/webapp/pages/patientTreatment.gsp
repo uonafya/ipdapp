@@ -253,14 +253,17 @@
 
 					var tbody = jq('#drugsTable').children('tbody');
 					var table = tbody.length ? tbody : jq('#drugsTable');
-					table.append('<tr><td>'+jq("#drugName").val()+'</td><td>'+jq("#formulationsSelect option:selected").text()+'</td><td>'+jq("#drugFrequency option:selected").text()+'</td><td>'+jq("#drugDays").val()+'</td><td>'+jq("#drugComment").val()+'</td></tr>');
+					table.append('<tr><td>'+jq("#drugName").val()+'</td><td>'+jq("#formulationsSelect option:selected").text()+'</td><td>'+jq("#drugFrequency option:selected").text()+'</td><td>'+jq("#drugDays").val()+'</td><td>'+jq("#dosage").val()+'</td><td>'+jq("#dosageUnits option:selected").text()+'</td><td>'+jq("#drugComment").val()+'</td></tr>');
 					drugOrder.push(
 							{
 								name: jq("#drugName").val(),
 								formulation: jq("#formulationsSelect").val(),
 								frequency: jq("#drugFrequency").val(),
 								days: jq("#drugDays").val(),
-								comment: jq("#drugComment").val()
+								comment: jq("#drugComment").val(),
+								dosage: jq("#dosage").val(),
+								dosageUnits: jq("#dosageUnits").val()
+
 							}
 					);
 					jq('#prescription-set').val('SET');
@@ -727,6 +730,8 @@ fieldset select {
 				<th>Formulation</th>
 				<th>Frequency</th>
 				<th>Number of Days</th>
+				<th>Dosage</th>
+				<th>Dosage Units</th>
 				<th>Comment</th>
 				</thead>
 				<tbody>
@@ -789,6 +794,17 @@ fieldset select {
 				</select>
 			</li>
 			<li>
+				<span style="display: block; margin-top: 9px">Dosage</span>
+				<input style="width: 100%;" id="dosage" type="text" />
+			</li>
+			<li>
+				<span style="display: block; margin-top: 9px">Dosage Units</span>
+				<select style="width: 100%;" id="dosageUnits">Select dosage units</select>
+					<% dosageUnits.each { dsg %>
+						<option value="${dsg.conceptId}">${dsg.name}</option>
+					<%}%>
+			</li>
+			<li>
 				<span style="display: block; margin-top: 9px">Frequency</span>
 				<select style="width: 100%;" id="drugFrequency">
 					<option>Select Frequency</option>
@@ -803,7 +819,7 @@ fieldset select {
 			</li>
 			<li>
 				<span style="display: block; margin-top: 9px">Number of Days</span>
-				<input style="width: 100%;" id="drugDays" type="text"  >
+				<input style="width: 100%;" id="drugDays" type="text" />
 			</li>
 			<li>
 				<span style="display: block; margin-top: 9px">Comment</span>

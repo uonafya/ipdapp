@@ -1,5 +1,5 @@
 <%
-	ui.decorateWith("appui", "standardEmrPage", [title: "Discharge Patient"])
+	ui.decorateWith("kenyaemr", "standardEmrPage")
 	ui.includeCss("ehrconfigs", "referenceapplication.css")
 	ui.includeCss("ehrconfigs", "onepcssgrid.css")
 	ui.includeJavascript("uicommons", "datetimepicker/bootstrap-datetimepicker.min.js")

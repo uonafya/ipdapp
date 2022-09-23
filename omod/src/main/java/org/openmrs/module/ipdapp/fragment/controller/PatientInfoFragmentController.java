@@ -184,7 +184,7 @@ public class PatientInfoFragmentController {
         ConceptService conceptService = Context.getConceptService();
         IpdService ipdService = (IpdService) Context.getService(IpdService.class);
 
-        if (conceptService.getConcept(dischargeOutcomes).equals(conceptService.getConceptByUuid("9c348c8c-e033-4fc0-ab2a-7e6702b68739"))) {
+        if(conceptService.getConcept(dischargeOutcomes).equals(conceptService.getConceptByUuid("9c348c8c-e033-4fc0-ab2a-7e6702b68739"))) {
             Concept causeOfDeath = conceptService.getConceptByUuid("1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             hospitalCoreService.savePatientSearch(patientSearch);
             PatientService ps=Context.getPatientService();
@@ -329,7 +329,7 @@ public class PatientInfoFragmentController {
 
 
         List<Prescription> prescriptionList = getPrescriptions(drugOrder);
-
+        System.out.println("The drugs are>>"+prescriptionList);
         HospitalCoreService hcs = (HospitalCoreService) Context
                 .getService(HospitalCoreService.class);
         IpdService ipdService = Context.getService(IpdService.class);
@@ -561,14 +561,13 @@ public class PatientInfoFragmentController {
 
         for(Prescription p: prescriptionList)
         {
-
             InventoryCommonService inventoryCommonService = Context
                     .getService(InventoryCommonService.class);
             InventoryDrug inventoryDrug = inventoryCommonService
                     .getDrugByName(p.getName());
             InventoryDrugFormulation inventoryDrugFormulation = inventoryCommonService
                     .getDrugFormulationById(p.getFormulation());
-            Concept freCon = Context.getConceptService().getConcept(p.getFrequency());
+            Concept freCon = Context.getConceptService().getConcept(p.getFrequency().split("\\.")[1]);
 
             OpdDrugOrder opdDrugOrder = new OpdDrugOrder();
             opdDrugOrder.setPatient(patient);
