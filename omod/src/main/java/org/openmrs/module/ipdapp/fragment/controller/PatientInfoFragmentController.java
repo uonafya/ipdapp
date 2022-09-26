@@ -324,12 +324,13 @@ public class PatientInfoFragmentController {
                           @RequestParam(value ="selectedProcedureList", required = false) Integer[] selectedProcedureList,
                           @RequestParam(value ="selectedInvestigationList", required = false) Integer[] selectedInvestigationList,
                           @RequestParam(value ="otherTreatmentInstructions", required = false) String otherTreatmentInstructions,
-                          @RequestParam(value = "physicalExamination", required = false) String physicalExamination)
+                          @RequestParam(value = "physicalExamination", required = false) String physicalExamination,
+                          @RequestParam(value = "dosage", required = false) Integer dosage,
+                          @RequestParam(value = "dosageUnits", required = false) Integer dosageUnits)
     {
 
 
         List<Prescription> prescriptionList = getPrescriptions(drugOrder);
-        System.out.println("The drugs are>>"+prescriptionList);
         HospitalCoreService hcs = (HospitalCoreService) Context
                 .getService(HospitalCoreService.class);
         IpdService ipdService = Context.getService(IpdService.class);
@@ -578,6 +579,12 @@ public class PatientInfoFragmentController {
             opdDrugOrder.setFrequency(freCon);
             opdDrugOrder.setNoOfDays(p.getDays());
             opdDrugOrder.setComments(p.getComment());
+            if(dosage != null) {
+                opdDrugOrder.setDosage(String.valueOf(dosage));
+            }
+            if(dosageUnits != null) {
+                opdDrugOrder.setDosageUnit(Context.getConceptService().getConcept(dosageUnits));
+            }
             opdDrugOrder.setCreator(user);
             opdDrugOrder.setCreatedOn(date);
             opdDrugOrder.setReferralWardName(Context.getConceptService().getConcept(Integer.parseInt(ipdWard)).getName().toString());

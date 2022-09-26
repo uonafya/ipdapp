@@ -1,7 +1,7 @@
 package org.openmrs.module.ipdapp.page.controller;
 
 import org.openmrs.Concept;
-import org.openmrs.ConceptAnswer;
+import org.openmrs.ConceptSet;
 import org.openmrs.Patient;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.api.context.Context;
@@ -39,15 +39,13 @@ public class PatientTreatmentPageController {
         model.addAttribute("category", patient.getAttribute(paymentCategoryPaymentAttribute));
         model.addAttribute("subCategory", patient.getAttribute(paymentCategorySubTypePaymentAttribute));
         model.addAttribute("dosageUnits", getDrugUnit());
-        System.out.println("The list of concepts are >>"+getDrugUnit());
-
     }
 
     public List<Concept> getDrugUnit(){
         Concept drugUnit = Context.getConceptService().getConceptByUuid("162384AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        Collection<ConceptAnswer> unit = drugUnit.getAnswers();
+        Collection<ConceptSet> unit = drugUnit.getConceptSets();
         List<Concept> drugUnitOptions = new ArrayList<Concept>();
-        for (ConceptAnswer conceptUnit: unit) {
+        for (ConceptSet conceptUnit: unit) {
             drugUnitOptions.add(conceptUnit.getConcept());
         }
         return drugUnitOptions ;

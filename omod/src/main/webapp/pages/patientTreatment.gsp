@@ -260,10 +260,7 @@
 								formulation: jq("#formulationsSelect").val(),
 								frequency: jq("#drugFrequency").val(),
 								days: jq("#drugDays").val(),
-								comment: jq("#drugComment").val(),
-								dosage: jq("#dosage").val(),
-								dosageUnits: jq("#dosageUnits").val()
-
+								comment: jq("#drugComment").val()
 							}
 					);
 					jq('#prescription-set').val('SET');
@@ -305,7 +302,9 @@
 				'drugOrder':drugOrder,
 				'ipdWard': jq('#treatmentIPDWard').val(),
 				'otherTreatmentInstructions': jq('#otherTreatmentInstructions').val(),
-				'physicalExamination' : jq('#physicalExamination').val()
+				'physicalExamination' : jq('#physicalExamination').val(),
+				'dosage' : jq('#dosage').val(),
+				'dosageUnits' : jq('#dosageUnits').val()
 			};
 
 			function successFn(successly_){
@@ -795,14 +794,15 @@ fieldset select {
 			</li>
 			<li>
 				<span style="display: block; margin-top: 9px">Dosage</span>
-				<input style="width: 100%;" id="dosage" type="text" />
+				<input style="width: 100%;" id="dosage" type="text" name="dosage" />
 			</li>
 			<li>
 				<span style="display: block; margin-top: 9px">Dosage Units</span>
-				<select style="width: 100%;" id="dosageUnits">Select dosage units</select>
-					<% dosageUnits.each { dsg %>
+				<select style="width: 100%;" id="dosageUnits" name="dosageUnits">
+					<% dosageUnits.each { dsg -> %>
 						<option value="${dsg.conceptId}">${dsg.name}</option>
 					<%}%>
+				</select>
 			</li>
 			<li>
 				<span style="display: block; margin-top: 9px">Frequency</span>
