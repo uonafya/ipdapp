@@ -301,8 +301,10 @@ public class PatientInfoFragmentController {
         Encounter encounter=ipdPatientAdmittedLog.getPatientAdmissionLog().getIpdEncounter();
         BillingService billingService = (BillingService) Context.getService(BillingService.class);
         PatientServiceBill patientServiceBill=billingService.getPatientServiceBillByEncounter(encounter);
-        patientServiceBill.setDischargeStatus(1);
-        billingService.savePatientServiceBill(patientServiceBill);
+        if(patientServiceBill != null) {
+            patientServiceBill.setDischargeStatus(1);
+            billingService.savePatientServiceBill(patientServiceBill);
+        }
 
     }
     //method to convert drugs

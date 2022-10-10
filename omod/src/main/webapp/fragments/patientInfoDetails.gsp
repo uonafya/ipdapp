@@ -84,7 +84,7 @@
 			<% } else if (patientInformation.requestForDischargeStatus == 1) {%>
 				<li>
 					<i class="icon-edit"></i>
-					<a href="dischargePatient.page?patientId=${patient.id}">Discharge Patient</a>
+					<a href="dischargePatient.page?patientId=${patient.id}&ipdWard=${patientInformation.admittedWard.id}">Discharge Patient</a>
 				</li>
 			<% } %>						
 

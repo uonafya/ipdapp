@@ -13,7 +13,6 @@
 		
 		jq.getJSON('${ ui.actionLink("ipdapp", "PatientAdmission", "listAdmittedIpdPatients") }', requestData)
 			.success(function (data) {
-				console.log("check hereeeeee", data)
 				updateAdmittedPatientsResults(data);
 			}).error(function (xhr, status, err) {
 				updateAdmittedPatientsResults([]);
@@ -25,7 +24,7 @@
 		admittedPatientsResultsData = results || [];
 		var dataRows = [];			
 		_.each(admittedPatientsResultsData, function(result){
-			var icons = '<a class="button task dropdown" href="patientInfo.page?search=' + result.patientIdentifier + '" style="position: static; padding: 5px 12px; float: none; margin: 0px 3px;"><i class="icon-cog"></i>&nbsp; Details &nbsp;<i class="icon-location"></i></a>';
+			var icons = '<a class="button task dropdown" href="patientInfo.page?search=' + result.patientIdentifier + '&ipdWard='+ result.admittedWard +'" style="position: static; padding: 5px 12px; float: none; margin: 0px 3px;"><i class="icon-cog"></i>&nbsp; Details &nbsp;<i class="icon-location"></i></a>';
 			var gender = result.gender;			
 			if (gender == "M"){
 				gender = 'Male';

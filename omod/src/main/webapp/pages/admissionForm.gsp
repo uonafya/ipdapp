@@ -174,7 +174,7 @@
             </div>
             <div class="gender-age">
                 <span><b>Address:</b></span>
-                <span>Kakamega</span>
+                <span>&nbsp;</span>
             </div>
             <div class="gender-age">
                 <span><b>Relative Name:</b></span>
