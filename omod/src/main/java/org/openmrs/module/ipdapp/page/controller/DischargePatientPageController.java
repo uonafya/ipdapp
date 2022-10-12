@@ -39,7 +39,7 @@ public class DischargePatientPageController {
         IpdPatientAdmitted patientInformation = ipdService.getAdmittedByPatientId(patientList.get(0).getPatientId());
 
         model.addAttribute("patient", patient);
-        model.addAttribute("patientInformation",patientInformation );
+        model.addAttribute("patientInformation",patientInformation);
 
         //gets list of doctors
         Concept ipdConcept = Context.getConceptService().getConceptByUuid("5fc29316-0869-4b3b-ae2f-cc37c6014eb7");
