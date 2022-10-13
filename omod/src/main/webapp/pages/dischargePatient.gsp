@@ -1,23 +1,11 @@
 <%
-	ui.decorateWith("kenyaemr", "standardEmrPage")
+	ui.decorateWith("appui", "standardEmrPage", [title: "IPD Details"])
 	ui.includeCss("ehrconfigs", "referenceapplication.css")
 	ui.includeCss("ehrconfigs", "onepcssgrid.css")
-	ui.includeJavascript("uicommons", "datetimepicker/bootstrap-datetimepicker.min.js")
-	ui.includeJavascript("uicommons", "handlebars/handlebars.min.js")
-	ui.includeJavascript("uicommons", "navigator/validators.js")
-	ui.includeJavascript("uicommons", "navigator/navigator.js")
-	ui.includeJavascript("uicommons", "navigator/navigatorHandlers.js")
-	ui.includeJavascript("uicommons", "navigator/navigatorModels.js")
-	ui.includeJavascript("uicommons", "navigator/navigatorTemplates.js")
-	ui.includeJavascript("uicommons", "navigator/exitHandlers.js")
+	ui.includeJavascript("ehrconfigs", "emr.js")
 %>
 
 <script>
-	var NavigatorController
-	jq(function(){
-		NavigatorController = new KeyboardController();
-	});
-
 	jq(function() {
 		//autocomplete for the discharge tab
 		jq("#procedure").autocomplete({
@@ -89,7 +77,7 @@
 			jq('#selectedProcedureList').find("#" + procedureId).remove();
 			procedureP.remove();
 
-			if (jq('#selectedProcedureList option').size() == 0){
+			if (jq('#selectedProcedureList option').size() === 0){
 				jq('#task-procedure').hide();
 				jq('#procedure-set').val('');
 			}
@@ -145,13 +133,13 @@
 				//check if the item already exist before appending
 				var exists = false;
 				for (var i = 0; i < selectedInvestigationList.length; i++) {
-					if(selectedInvestigationList.options[i].value==ui.item.value)
+					if(selectedInvestigationList.options[i].value===ui.item.value)
 					{
 						exists = true;
 					}
 				}
 
-				if(exists == false)
+				if(exists === false)
 				{
 					selectedInvestigationList.appendChild(selectedInvestigation);
 					selectedInvestigationDiv.appendChild(selectedInvestigationP);
@@ -174,7 +162,7 @@
 			jq('#selectedDiagnosisList').find("#" + investigationId).remove();
 			investigationP.remove();
 
-			if (jq('#selectedDiagnosisList option').size() == 0){
+			if (jq('#selectedDiagnosisList option').size() === 0){
 				jq('#task-diagnoses').hide();
 				jq('#diagnoses-set').val('');
 			}
@@ -501,7 +489,7 @@ fieldset select {
 <div class="example">
 	<ul id="breadcrumbs">
 		<li>
-			<a href="${ui.pageLink('referenceapplication','home')}">
+			<a href="${ui.pageLink('kenyaemr','userHome')}">
 				<i class="icon-home small"></i></a>
 		</li>
 
@@ -567,9 +555,8 @@ fieldset select {
 	<div class="clear"></div>
 </div>
 
-<form class="simple-form-ui" id="dischargeForm" method="post">
+<form id="dischargeForm" method="post">
 	<section id="charges-info2">
-		<span class="title">Discharge Patient</span>
 		<fieldset>
 			<legend>Diagnosis</legend>
 			<input type="text" style="width:98.6%; margin-left:5px;" id="diagnosis" name="diagnosis" placeholder="Enter Diagnosis" />
@@ -649,58 +636,10 @@ fieldset select {
 		</fieldset>
 	</section>
 
-	<div id="confirmation" style="min-height: 250px;">
-		<span id="confirmation_label" class="title">Confirmation</span>
-
-		<div id="confirmationQuestion" class="focused" style="margin-top:0px">
-			<p style="display: none">
-				<button class="button submit confirm" style="display: none;"></button>
-			</p>
-
-			<div class="dashboard">
-				<div class="info-section">
-					<div class="info-header">
-						<i class="icon-list-ul"></i>
-						<h3>DISCHARGE PATIENT</h3>
-					</div>
-
-					<div style="display:none" class="info-body">
-						<table id="summaryTable">
-							<tbody>
-							<tr>
-								<td><span class="status active"></span>Diagnosis</td>
-								<td>N/A</td>
-							</tr>
-
-							<tr>
-								<td><span class="status active"></span>Procedure</td>
-								<td>N/A</td>
-							</tr>
-
-							<tr>
-								<td><span class="status active"></span>Outcome</td>
-								<td>N/A</td>
-							</tr>
-
-							<tr>
-								<td><span class="status active"></span>Instructions</td>
-								<td>N/A</td>
-							</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-
+	<div style="min-height: 250px;">
 			<span value="Submit" class="button submit confirm right" id="dischargeSubmit" style="margin: 5px 10px;">
 				<i class="icon-save small"></i>
-				Save
+				Discharge Patient
 			</span>
-
-			<span id="cancelButton" class="button cancel" style="margin: 5px">
-				<i class="icon-remove small"></i>
-				Cancel
-			</span>
-		</div>
 	</div>
 </form>
