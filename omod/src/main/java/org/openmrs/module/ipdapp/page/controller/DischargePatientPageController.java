@@ -29,8 +29,7 @@ import java.util.List;
  */
 @AppPage(IpdConstants.APP_IPD_APP)
 public class DischargePatientPageController {
-    public void get(@RequestParam("patientId") Patient patient,
-                    PageModel model) {
+    public void get(@RequestParam("patientId") Patient patient, PageModel model) {
 
         IpdService ipdService = (IpdService) Context.getService(IpdService.class);
         PatientService patientService = Context.getService(PatientService.class);;

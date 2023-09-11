@@ -5,13 +5,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.openmrs.Concept;
-import org.openmrs.ConceptAnswer;
-import org.openmrs.Encounter;
-import org.openmrs.Location;
-import org.openmrs.Obs;
-import org.openmrs.Patient;
-import org.openmrs.User;
+import org.openmrs.*;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -70,20 +64,17 @@ public class PatientInfoFragmentController {
             proceduresPriority.add(new Procedure(myConcept));
         }
 
-        List<SimpleObject> proceduresList = SimpleObject.fromCollection(proceduresPriority, ui, "id", "label", "schedulable");
-        return proceduresList;
+        return SimpleObject.fromCollection(proceduresPriority, ui, "id", "label", "schedulable");
     }
 
     public List<SimpleObject> getInvestigations(@RequestParam(value="q") String name,UiUtils ui) {
         List<Concept> investigations = Context.getService(PatientDashboardService.class).searchInvestigation(name);
-        List<SimpleObject> investigationsList = SimpleObject.fromCollection(investigations, ui, "id", "name");
-        return investigationsList;
+        return SimpleObject.fromCollection(investigations, ui, "id", "name");
     }
 
     public List<SimpleObject> getDrugs(@RequestParam(value="q") String name,UiUtils ui) {
         List<InventoryDrug> drugs = Context.getService(PatientDashboardService.class).findDrug(name);
-        List<SimpleObject> drugList = SimpleObject.fromCollection(drugs, ui, "id", "name");
-        return drugList;
+        return SimpleObject.fromCollection(drugs, ui, "id", "name");
     }
 
     public List<SimpleObject> getFormulationByDrugName(@RequestParam(value="drugName") String drugName,UiUtils ui) {
@@ -104,8 +95,7 @@ public class PatientInfoFragmentController {
     public List<SimpleObject> getDiagnosis(@RequestParam(value="q") String name,UiUtils ui) {
         List<Concept> diagnosis = Context.getService(PatientDashboardService.class).searchDiagnosis(name);
 
-        List<SimpleObject> diagnosisList = SimpleObject.fromCollection(diagnosis, ui, "id", "name");
-        return diagnosisList;
+        return SimpleObject.fromCollection(diagnosis, ui, "id", "name");
     }
     
     public void requestForDischarge(@RequestParam(value = "id", required = false) Integer admittedId,
@@ -219,6 +209,7 @@ public class PatientInfoFragmentController {
 
         List<Concept> listConceptDianosisOfIpdEncounter = new ArrayList<Concept>();
         List<Concept> listConceptProcedureOfIpdEncounter = new ArrayList<Concept>();
+
         if (CollectionUtils.isNotEmpty(listObsOfIpdEncounter)) {
             for (Obs obx : obses) {
                 if (obx.getConcept().getConceptId().equals(cDiagnosis.getConceptId())) {
@@ -234,6 +225,7 @@ public class PatientInfoFragmentController {
         List<Concept> listConceptDiagnosis = new ArrayList<Concept>();
 
         Patient patient = ipdEncounter.getPatient();
+
         if(selectedDiagnosisList != null){
             for (Integer cId : selectedDiagnosisList) {
                 Concept cons = conceptService.getConcept(cId);
@@ -255,6 +247,7 @@ public class PatientInfoFragmentController {
             }
         }
         List<Concept> listConceptProcedure = new ArrayList<Concept>();
+
         if (!ArrayUtils.isEmpty(selectedDischargeProcedureList)) {
 
             if (cProcedure == null) {
@@ -287,6 +280,7 @@ public class PatientInfoFragmentController {
             }
 
         }
+
         ipdEncounter.setObs(obses);
 
         Context.getEncounterService().saveEncounter(ipdEncounter);
@@ -307,6 +301,7 @@ public class PatientInfoFragmentController {
         }
 
     }
+
     //method to convert drugs
     public List<Prescription> getPrescriptions(String json){
         ObjectMapper mapper = new ObjectMapper();
@@ -333,8 +328,7 @@ public class PatientInfoFragmentController {
 
 
         List<Prescription> prescriptionList = getPrescriptions(drugOrder);
-        HospitalCoreService hcs = (HospitalCoreService) Context
-                .getService(HospitalCoreService.class);
+        HospitalCoreService hcs = (HospitalCoreService) Context.getService(HospitalCoreService.class);
         IpdService ipdService = Context.getService(IpdService.class);
         IpdPatientAdmitted admitted = ipdService.getAdmittedByPatientId(patientId);
         Patient patient = Context.getPatientService().getPatient(patientId);
@@ -346,10 +340,17 @@ public class PatientInfoFragmentController {
 
         Concept cPhysicalExamination = Context.getConceptService().getConceptByUuid("1391AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
-        Obs obsGroup = null;
-        obsGroup = hcs.getObsGroupCurrentDate(patient.getPersonId());
+        Obs obsGroup = hcs.getObsGroupCurrentDate(patient.getPersonId());
         Encounter encounter = new Encounter();
-        encounter = admitted.getPatientAdmissionLog().getIpdEncounter();
+        //encounter = admitted.getPatientAdmissionLog().getIpdEncounter();
+        encounter.setEncounterType(admitted.getPatientAdmissionLog().getIpdEncounter().getEncounterType());
+        Location location = Context.getService(KenyaEmrService.class).getDefaultLocation();
+        encounter.setPatient(patient);
+        encounter.setCreator(user);
+        encounter.setEncounterDatetime(date);
+        encounter.setLocation(location);
+        encounter.setProvider(getEncounterRole(), getProvider(user));
+
 
         if (admitted != null) {
             if (!ArrayUtils.isEmpty(selectedProcedureList)) {
@@ -415,6 +416,8 @@ public class PatientInfoFragmentController {
 
         }
 
+        encounter = Context.getEncounterService().saveEncounter(encounter);
+
         IndoorPatientServiceBill bill = new IndoorPatientServiceBill();
 
         bill.setCreatedDate(new Date());
@@ -448,8 +451,7 @@ public class PatientInfoFragmentController {
         if (merge != null) {
             for (Integer iId : merge) {
                 Concept c = Context.getConceptService().getConcept(iId);
-                service = billingService.getServiceByConceptId(c
-                        .getConceptId());
+                service = billingService.getServiceByConceptId(c.getConceptId());
                 if(service!=null){
                     serviceAvailable = true;
                     amount = service.getPrice();
@@ -468,8 +470,7 @@ public class PatientInfoFragmentController {
             }
             bill.setAmount(amount);
             bill.setActualAmount(amount);
-            bill.setEncounter(admitted.getPatientAdmissionLog()
-                    .getIpdEncounter());
+            bill.setEncounter(admitted.getPatientAdmissionLog().getIpdEncounter());
             if(serviceAvailable ==true){
                 bill = billingService.saveIndoorPatientServiceBill(bill);
             }
@@ -478,8 +479,7 @@ public class PatientInfoFragmentController {
                     .getIndoorPatientServiceBillById(bill
                             .getIndoorPatientServiceBillId());
             if (indoorPatientServiceBill != null) {
-                billingService
-                        .saveBillEncounterAndOrderForIndoorPatient(indoorPatientServiceBill);
+                billingService.saveBillEncounterAndOrderForIndoorPatient(indoorPatientServiceBill);
             }
         }
 
@@ -508,8 +508,7 @@ public class PatientInfoFragmentController {
 
         int conId;
         for (Integer pId : selectedProcedureList) {
-            BillableService billableService = billingService
-                    .getServiceByConceptId(pId);
+            BillableService billableService = billingService.getServiceByConceptId(pId);
             OpdTestOrder opdTestOrder = new OpdTestOrder();
             opdTestOrder.setPatient(patient);
             opdTestOrder.setEncounter(admitted.getPatientAdmissionLog().getIpdEncounter());
@@ -523,13 +522,11 @@ public class PatientInfoFragmentController {
 
             conId = Context.getConceptService().getConcept(pId).getId();
             if (id.contains(conId)) {
-                SimpleDateFormat sdf = new SimpleDateFormat(
-                        "dd/MM/yyyy");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             }
 
             if (id2.contains(conId)) {
-                SimpleDateFormat sdf = new SimpleDateFormat(
-                        "dd/MM/yyyy");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             }
             opdTestOrder.setIndoorStatus(1);
             opdTestOrder.setFromDept(Context.getConceptService().getConcept(Integer.parseInt(ipdWard)).getName().toString());
@@ -538,13 +535,11 @@ public class PatientInfoFragmentController {
 
     }
         if (!ArrayUtils.isEmpty(selectedInvestigationList)) {
-            Concept coninvt = Context.getConceptService()
-                    .getConceptByUuid("0179f241-8c1d-47c1-8128-841f6508e251");
+            Concept coninvt = Context.getConceptService().getConceptByUuid("0179f241-8c1d-47c1-8128-841f6508e251");
 
 
             for (Integer iId : selectedInvestigationList) {
-                BillableService billableService = billingService
-                        .getServiceByConceptId(iId);
+                BillableService billableService = billingService.getServiceByConceptId(iId);
                 OpdTestOrder opdTestOrder = new OpdTestOrder();
                 opdTestOrder.setPatient(patient);
                 opdTestOrder.setEncounter(admitted.getPatientAdmissionLog().getIpdEncounter());
@@ -564,20 +559,16 @@ public class PatientInfoFragmentController {
 
         for(Prescription p: prescriptionList)
         {
-            InventoryCommonService inventoryCommonService = Context
-                    .getService(InventoryCommonService.class);
-            InventoryDrug inventoryDrug = inventoryCommonService
-                    .getDrugByName(p.getName());
-            InventoryDrugFormulation inventoryDrugFormulation = inventoryCommonService
-                    .getDrugFormulationById(p.getFormulation());
+            InventoryCommonService inventoryCommonService = Context.getService(InventoryCommonService.class);
+            InventoryDrug inventoryDrug = inventoryCommonService.getDrugByName(p.getName());
+            InventoryDrugFormulation inventoryDrugFormulation = inventoryCommonService.getDrugFormulationById(p.getFormulation());
             Concept freCon = Context.getConceptService().getConcept(p.getFrequency().split("\\.")[1]);
 
             OpdDrugOrder opdDrugOrder = new OpdDrugOrder();
             opdDrugOrder.setPatient(patient);
             opdDrugOrder.setEncounter(encounter);
             opdDrugOrder.setInventoryDrug(inventoryDrug);
-            opdDrugOrder
-                    .setInventoryDrugFormulation(inventoryDrugFormulation);
+            opdDrugOrder.setInventoryDrugFormulation(inventoryDrugFormulation);
             opdDrugOrder.setFrequency(freCon);
             opdDrugOrder.setNoOfDays(p.getDays());
             opdDrugOrder.setComments(p.getComment());
@@ -590,8 +581,23 @@ public class PatientInfoFragmentController {
             opdDrugOrder.setCreator(user);
             opdDrugOrder.setCreatedOn(date);
             opdDrugOrder.setReferralWardName(Context.getConceptService().getConcept(Integer.parseInt(ipdWard)).getName().toString());
-            patientDashboardService
-                    .saveOrUpdateOpdDrugOrder(opdDrugOrder);
+            patientDashboardService.saveOrUpdateOpdDrugOrder(opdDrugOrder);
         }
+    }
+
+    private Provider getProvider(User user) {
+        Provider provider = null;
+        for (Provider prov:Context.getProviderService().getProvidersByPerson(user.getPerson())){
+            if(prov != null) {
+                provider = prov;
+                break;
+            }
+        }
+
+        return provider;
+    }
+
+    private EncounterRole getEncounterRole() {
+        return Context.getEncounterService().getEncounterRoleByUuid("a0b03050-c99b-11e0-9572-0800200c9a66");
     }
 }

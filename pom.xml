@@ -33,13 +33,13 @@
 		<openMRSVersion>2.3.3</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<appframeworkVersion>2.2.1</appframeworkVersion>
-		<kenyacoreVersion>2.4.1</kenyacoreVersion>
-		<kenyauiVersion>2.1.1</kenyauiVersion>
-		<kenyaemrVersion>17.0.3</kenyaemrVersion>
+		<kenyacoreVersion>3.0.1</kenyacoreVersion>
+		<kenyauiVersion>3.0.0</kenyauiVersion>
+		<kenyaemrVersion>18.5.1</kenyaemrVersion>
 		<metadatadeployVersion>1.2</metadatadeployVersion>
 		<legacyUiVersion>1.5.0</legacyUiVersion>
-		<hospitalCoreVersion>2.0.0</hospitalCoreVersion>
-		<ehrconfigsVersion>2.0.0</ehrconfigsVersion>
+		<hospitalCoreVersion>2.0.3-SNAPSHOT</hospitalCoreVersion>
+		<ehrconfigsVersion>2.0.1-SNAPSHOT</ehrconfigsVersion>
 	</properties>
 
 	<dependencyManagement>

@@ -9,6 +9,8 @@
 }
 </style>
 
+<div><br/></div>
+
 <table id="ipd-investigations-table">
     <thead>
     <tr>

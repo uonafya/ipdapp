@@ -51,13 +51,11 @@ import java.util.Map;
  */
 @AppPage(IpdConstants.APP_IPD_APP)
 public class AdmissionFormPageController {
-    public void get(@RequestParam(value = "admissionId", required = false) Integer admissionId, //If that tab is active we will set that tab active when page load.
-                    PageModel model,
-                    @RequestParam(value = "ipdWard") String ipdWard
-    )
-
-    {
-
+    public void get(
+            @RequestParam(value = "admissionId", required = false) Integer admissionId, //If that tab is active we will set that tab active when page load.
+            PageModel model,
+            @RequestParam(value = "ipdWard") String ipdWard
+    ) {
         model.addAttribute("ipdWard", ipdWard);
         IpdService ipdService = Context.getService(IpdService.class);
         Concept ipdConcept = Context.getConceptService().getConceptByUuid("5fc29316-0869-4b3b-ae2f-cc37c6014eb7");

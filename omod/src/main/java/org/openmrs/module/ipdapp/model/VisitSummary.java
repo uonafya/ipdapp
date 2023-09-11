@@ -1,12 +1,16 @@
 package org.openmrs.module.ipdapp.model;
 
+import org.openmrs.ui.framework.SimpleObject;
+
 import java.util.Date;
+
 
 public class VisitSummary {
 
     private Date visitDate;
     private String outcome;
     private Integer encounterId;
+    private SimpleObject visitDetails;
 
     public Date getVisitDate() {
         return visitDate;
@@ -32,4 +36,11 @@ public class VisitSummary {
         this.encounterId = encounterId;
     }
 
+    public SimpleObject getVisitDetails() {
+        return visitDetails;
+    }
+
+    public void setVisitDetails(SimpleObject visitDetails) {
+        this.visitDetails = visitDetails;
+    }
 }
