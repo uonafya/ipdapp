@@ -5,6 +5,7 @@ import java.util.Date;
 public class NursingNote {
     private Integer encounterId;
     private String details;
+    private String medic;
     private Date date;
 
     public NursingNote() {
@@ -38,5 +39,13 @@ public class NursingNote {
 
     public void setEncounterId(Integer encounterId) {
         this.encounterId = encounterId;
+    }
+
+    public String getMedic() {
+        return medic;
+    }
+
+    public void setMedic(String medic) {
+        this.medic = medic;
     }
 }

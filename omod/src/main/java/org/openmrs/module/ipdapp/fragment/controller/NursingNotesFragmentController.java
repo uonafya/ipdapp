@@ -4,24 +4,18 @@ import org.apache.commons.lang.StringUtils;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.*;
-import org.openmrs.module.hospitalcore.model.*;
-import org.openmrs.module.ipdapp.model.NursingNote;
 import org.openmrs.module.kenyaemr.api.KenyaEmrService;
-import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class NursingNotesFragmentController {
 
     public void controller(
             FragmentConfiguration config,
-            FragmentModel model,
-            UiUtils ui
+            FragmentModel model
     ){
         config.require("patientId");
         Integer patientId = Integer.parseInt(config.get("patientId").toString());
@@ -32,36 +26,7 @@ public class NursingNotesFragmentController {
         //IpdPatientAdmitted admitted = ipdService.getAdmittedByPatientId(patientId);
         Patient patient = Context.getPatientService().getPatient(patientId);
 
-        EncounterType encounterType = Context.getEncounterService().getEncounterTypeByUuid("6e1105ba-f282-11ea-ad42-e7971c094de0");
-
-        List<Encounter> encounters = dashboardService.getEncounter(patient, location, encounterType, null);
-
-        List<NursingNote> nursingNotes = new ArrayList<NursingNote>();
-
-        Concept nursingNoteConcept = Context.getConceptService().getConceptByUuid("1238AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-
-        for (Encounter enc : encounters) {
-            NursingNote nursingNote = new NursingNote();
-            nursingNote.setDate(enc.getDateCreated());
-            nursingNote.setEncounterId(enc.getEncounterId());
-
-
-            StringBuilder sb = new StringBuilder();
-
-            for (Obs obs : enc.getAllObs()) {
-                if (obs.getConcept().equals(nursingNoteConcept)) {
-
-                    sb.append(obs.getValueText());
-                }
-            }
-
-            nursingNote.setDetails(sb.toString());
-
-            nursingNotes.add(nursingNote);
-        }
-
         model.addAttribute("patient", patient);
-        model.addAttribute("nursingNotes", nursingNotes);
     }
 
 

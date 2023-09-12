@@ -18,7 +18,7 @@
 			<form method="post" id="nursingNotesForm" style="margin-bottom: 5px;">
 				<div class="simple-form-ui">
 
-					<div class="col12 daily-vitals" style="width: 100%">
+					<div class="col12 daily-vitals" style="width: 80%">
 						<div>
 							<label>Notes</label>
 							<span>
@@ -48,6 +48,7 @@
 				<tr>
 					<th style="width: 180px;">DATE</th>
 					<th>NOTES</th>
+					<th style="width: 120px;">CREATED BY</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -56,11 +57,12 @@
 						<tr>
 							<td>${ui.formatDatetimePretty(nursingNote.date)}</td>
 							<td>${nursingNote.details}</td>
+							<td>${nursingNote.medic}</td>
 						</tr>
 					<% } %>
 				<% } else { %>
 					<tr>
-						<td colspan="2">No Nursing Notes</td>
+						<td colspan="3">No Nursing Notes</td>
 					</tr>
 				<% } %>
 			</tbody>

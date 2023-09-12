@@ -3,6 +3,7 @@
 	ui.includeJavascript("uicommons", "datetimepicker/bootstrap-datetimepicker.min.js")
 	ui.includeJavascript("patientdashboardapp", "jq.print.js")
 	ui.includeJavascript("patientdashboardapp", "jq.slimscroll.js")
+	ui.includeJavascript("ehrconfigs", "emr.js")
 	ui.includeCss("ehrconfigs", "referenceapplication.css")
 
 %>
@@ -104,6 +105,24 @@
         		jq('#nursingNotesForm')[0].reset();
         	}
         });
+
+        jq('.update-nursing-care-plan').click(function(){
+                	if (jq('.update-nursing-care-plan i').attr('class').indexOf('icon-chevron-right') >= 0){
+                	    jq('.update-nursing-care-plan i').removeClass('icon-chevron-right');
+                		jq('.update-nursing-care-plan i').addClass('icon-chevron-down');
+
+                		jq('.update-nursing-care-plan span').text('Cancel Edit');
+                		jq('.nursing-care-plan-edit-page').show(200);
+                	} else {
+                		jq('.update-nursing-care-plan i').removeClass('icon-chevron-down');
+                		jq('.update-nursing-care-plan i').addClass('icon-chevron-right');
+
+                		jq('.update-nursing-care-plan span').text('Update Nursing Notes');
+                		jq('.nursing-care-plan-edit-page').hide(300);
+
+                		jq('#nursingCarePlanForm')[0].reset();
+                	}
+                });
 
 		var requestType = localStorage.getItem('requestType');
 		if(requestType=="discharge"){
@@ -369,22 +388,45 @@
         	};
             nursingNotesForm.submit(
                  jq.getJSON('${ ui.actionLink("ipdapp", "NursingNotes", "saveNursingNotes") }', nursingNotesFormData)
-                                    .success(function(data) {
-                                         kenyaui.notifySuccess("Success! Nursing Notes have been updated");
-                                         location.reload();
-                                    })
-                                    .error(function(xhr, status, err) {
-                                         jq().toastmessage('showErrorToast', "Error:" + err);
-                                    })
+                    .success(function(data) {
+                        kenyaui.notifySuccess("Success! Nursing Notes have been updated");
+                        location.reload();
+                    })
+                    .error(function(xhr, status, err) {
+                        jq().toastmessage('showErrorToast', "Error:" + err);
+                     })
                  );
         });
+
+        jq("#nursingCarePlanButton").click(function(event){
+                	var nursingCarePlanForm = jq("#nursingCarePlanForm");
+                	var nursingCarePlanFormData = {
+                		'patientId': jq('#patientID').val(),
+                		'diagnosis': jq('#nursingCarePlanDiagnosis').val(),
+                		'objectives': jq('#nursingCarePlanObjectives').val(),
+                		'expectedOutcome': jq('#nursingCarePlanExpectedOutcome').val(),
+                		'intervention': jq('#nursingCarePlanIntervention').val(),
+                		'rationale': jq('#nursingCarePlanRationale').val(),
+                		'evaluation': jq('#nursingCarePlanEvaluation').val(),
+                	};
+                    nursingCarePlanForm.submit(
+                         jq.getJSON('${ ui.actionLink("ipdapp", "NursingCarePlan", "saveNursingCarePlan") }', nursingCarePlanFormData)
+                            .success(function(data) {
+                                kenyaui.notifySuccess("Success! Nursing Care Plan have been updated");
+                                location.reload();
+                            })
+                            .error(function(xhr, status, err) {
+                                jq().toastmessage('showErrorToast', "Error:" + err);
+                             })
+                         );
+                });
 
 
 	});
 
 	//dicharge patient send post information
     jq("#dischargeSubmit").click(function(event){
-    			var dischargeForm = jq("#dischargeForm");
+        var dischargeForm = jq("#dischargeForm");
 
     			//fetch the selected discharge diagnoses and store in an array
     			var selectedDiag = new Array;
@@ -736,27 +778,125 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
 		<div class="tad">Bed ${patientInformation.bed}</div>
 	</div>
 
-	<div class="identifiers">
-		<em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Patient ID</em>
-		<span>${patient.getPatientIdentifier()}</span>
-		<br>
+    <div class="col16 dashboard">
+    	<div class="info-section">
+    		<div class="info-header">
+    			<i class="icon-diagnosis"></i>
+    			<h3>PATIENT DETAILS</h3>
+    		</div>
 
-		<div class="catg">
-			<i class="icon-tags small" style="font-size: 16px"></i><small>Category:</small> ${category}/${subCategory}
-		</div>
-	</div>
+    		<div class="info-body" style="min-height: 180px;">
+    			<div class="col13">
+    				<img src="${ui.resourceLink('ipdapp', 'images/patient-icon.jpg')}" style="border: 1px solid #eee; height: 190px; margin-right: 10px;" />
+    			</div>
+
+    			<div class="col13 last">
+    				<label>
+    					<i class="status active zero-em"></i>
+    					Patient :
+    				</label>
+    				<span>${patient.familyName}  ${patient.middleName?patient.middleName:''}</span>
+    				<br/>
+
+    				<label>
+    					<i class="status active zero-em"></i>
+    					Age :
+    				</label>
+    				<span>${patientInformation.age.substring(1, patientInformation.age.size())}</span>
+    				<br/>
+
+    				<label>
+    					<i class="status active zero-em"></i>
+    					Admitted On:
+    				</label>
+    				<span>${ui.formatDatePretty(patientInformation.admissionDate)}</span>
+    				<br/>
+
+    				<label>
+    					<i class="status active zero-em"></i>
+    					Ward :
+    				</label>
+    				<span>${patientInformation.admittedWard.name}</span>
+    				<br/>
+
+    				<label>
+    					<i class="status active zero-em"></i>
+    					Bed :
+    				</label>
+    				<span>00${patientInformation.bed}</span>
+    				<br/>
+
+    				<label>
+    					<i class="status active zero-em"></i>
+    					Admitted By:
+    				</label>
+    				<span>${patientInformation.user.person.names}</span>
+    			</div>
+    			<div class="clear"></div>
+    		</div>
+    	</div>
+    </div>
+
+
+    <div class="dashboard col15 last">
+    	<div class="action-section">
+    		<ul style="min-height: 200px;">
+    			<h3>&nbsp; &nbsp;General Actions</h3>
+
+    			<% if (patientInformation.requestForDischargeStatus != 1 && patientInformation.absconded != 1) { %>
+    				<li>
+    					<i class="icon-edit"></i>
+    					<a onclick='requestForDischarge(${patientInformation.id},0)'>Request Discharge</a>
+    				</li>
+
+    				<li>
+    					<i class="icon-share"></i>
+    					<a onclick='abscond(${patientInformation.id},1)'>Patient Abscorded</a>
+    				</li>
+    			<% } %>
+
+
+    			<% if (patientInformation.absconded == 1) { %>
+    				<li>
+    					<i class="icon-user-times"></i>
+    					<a href="">Remove Patient</a>
+    				</li>
+    			<% } else if (patientInformation.requestForDischargeStatus == 1) {%>
+    				<li>
+    					<i class="icon-edit"></i>
+    					<a href="dischargePatient.page?patientId=${patient.id}&ipdWard=${patientInformation.admittedWard.id}">Discharge Patient</a>
+    				</li>
+    			<% } %>
+
+    			<li>
+    				<i class="icon-print"></i>
+    				<a href="">Print Details</a>
+    			</li>
+
+    			<h3 style="margin-top: 15px;">&nbsp; &nbsp;Inpatient Actions</h3>
+    			<li>
+    				<i class="icon-user-md"></i>
+    				<a href="patientTreatment.page?patientId=${patient.id}">Update Treatment</a>
+    			</li>
+
+    		</ul>
+    	</div>
+    </div>
+
+
 	<div class="clear"></div>
 </div>
 
 <div id="tab-container">
 	<div id="tabs">
 		<ul>
-			<li class="tabs1"><a href="#tabs-1">Patient Details</a></li>
+			<li class="tabs1"><a href="#tabs-1">Vitals</a></li>
 			<li class="tabs2"><a href="#tabs-2">Clinical History</a></li>
 			<li class="tabs3"><a href="#tabs-3">Lab Reports</a></li>
 			<li class="tabs4"><a href="#tabs-4">Cardex</a></li>
 			<li class="tabs5"><a href="#tabs-5">Nursing Care Plan</a></li>
-			<li class="tabs6"><a href="#tabs-6">Transfer</a></li>
+			<li class="tabs5"><a href="#tabs-6">Charts</a></li>
+			<li class="tabs6"><a href="#tabs-7">Transfer</a></li>
 		</ul>
 
 		<div id="tabs-1">
@@ -776,12 +916,16 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
         </div>
 
         <div id="tabs-5">
-
+            ${ ui.includeFragment("ipdapp", "nursingCarePlan", [patientId: patient.patientId]) }
         </div>
 
         <div id="tabs-6">
-            ${ui.includeFragment("ipdapp", "patientInfoTransfer")}
+
         </div>
+
+        <div id="tabs-7">
+            ${ui.includeFragment("ipdapp", "patientInfoTransfer")}
+       </div>
 
 
 	</div>
