@@ -12,7 +12,9 @@ public class IpdConstants {
     public static final String APP_IPD_APP = MODULE_ID + ".home";
 
     public static String PROPERTY_IPDWARD = "patientdashboard.IPDRootConcept";
-    public static String STATUS[] ={"admitted", "canceled","nobed" ,"discharge","transfer" };
+    public static String[] STATUS ={"admitted", "canceled","nobed" ,"discharge","transfer" };
 
     public static final String PROPERTY_NAME_DOCTOR_ROLE = "Doctor";
+
+    public static final String NURSING_NOTES_ENCOUNTER = "nU";
 }

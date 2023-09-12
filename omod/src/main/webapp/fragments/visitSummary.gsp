@@ -199,14 +199,16 @@
     </tr>
     </thead>
     <tbody>
+
     {{ _.each(drugs, function(drug, index) { }}
-    <tr style="border: 1px solid #eee;">
-        <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{=index+1}}</td>
-        <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.inventoryDrug.name}}</td>
-        <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.inventoryDrugFormulation.name}}:{{-drug.inventoryDrugFormulation.dozage}}</td>
-        <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dosage}}:{{-drug.dosageUnit.name}}</td>
-    </tr>
+    	<tr style="border: 1px solid #eee;">
+    		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{=index+1}}</td>
+    		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.inventoryDrug.name}}</td>
+    		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.inventoryDrugFormulation.name}}:{{-drug.inventoryDrugFormulation.dozage}}</td>
+    		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dosage}}:{{-drug.dosageUnit.name}}</td>
+    	</tr>
     {{ }); }}
+
     </tbody>
 </table>
 </script>

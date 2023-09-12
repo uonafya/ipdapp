@@ -55,7 +55,7 @@ public class InvestigationsFragmentController {
                 sortedResults.put(resultDescription, resultValue);
             }
         }
-        if (sortedResults.size() == 0) {
+        if (sortedResults.isEmpty()) {
             String nameOfLabEncounterType = Context.getAdministrationService().getGlobalProperty(PatientDashboardConstants.PROPERTY_LAB_ENCOUTNER_TYPE);
             EncounterType labEncounterType = Context.getEncounterService().getEncounterType(nameOfLabEncounterType);
             List<Encounter> labOrdersEncounters = Context.getEncounterService().getEncounters(patient, null, null, null, null, Arrays.asList(labEncounterType), null, null, null, false);
