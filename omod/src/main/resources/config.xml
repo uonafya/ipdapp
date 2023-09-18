@@ -20,9 +20,6 @@
 	<require_modules>
 																											
 		<require_module>org.openmrs.module.uiframework</require_module>
-																											
-		<require_module>org.openmrs.module.uilibrary</require_module>
-
 		<require_module>org.openmrs.module.hospitalcore</require_module>
 		<require_module>org.openmrs.module.ehrcashier</require_module>
 		<require_module>org.openmrs.module.ehrconfigs</require_module>
