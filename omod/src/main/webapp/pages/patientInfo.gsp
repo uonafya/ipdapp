@@ -750,33 +750,6 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
 </div>
 
 <div class="patient-header new-patient-header">
-	<div class="demographics">
-		<h1 class="name">
-			<span id="surname">${patient.familyName},<em>surname</em></span>
-			<span id="othname"> ${patient.middleName?patient.middleName:''}&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<em>other names</em></span>
-
-
-			<span class="gender-age">
-				<span>
-					<% if (patient.gender == "F") { %>
-					Female
-					<% } else { %>
-					Male
-					<% } %>
-				</span>
-				<span id="agename">${patient.age} years (${ui.formatDatePretty(patient.birthdate)}) </span>
-
-			</span>
-		</h1>
-
-		<br/>
-		<div id="stacont" class="status-container">
-			<span class="status active"></span>
-			Visit Status
-		</div>
-		<div class="tag">Admitted</div>
-		<div class="tad">Bed ${patientInformation.bed}</div>
-	</div>
 
     <div class="col16 dashboard">
     	<div class="info-section">
@@ -891,39 +864,39 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
 	<div id="tabs">
 		<ul>
 			<li class="tabs1"><a href="#tabs-1">Vitals</a></li>
-			<li class="tabs2"><a href="#tabs-2">Clinical History</a></li>
-			<li class="tabs3"><a href="#tabs-3">Lab Reports</a></li>
-			<li class="tabs4"><a href="#tabs-4">Cardex</a></li>
-			<li class="tabs5"><a href="#tabs-5">Nursing Care Plan</a></li>
-			<li class="tabs5"><a href="#tabs-6">Charts</a></li>
-			<li class="tabs6"><a href="#tabs-7">Transfer</a></li>
+			<li class="tabs3"><a href="#tabs-3">Clinical History</a></li>
+			<li class="tabs4"><a href="#tabs-4">Lab Reports</a></li>
+			<li class="tabs5"><a href="#tabs-5">Cardex</a></li>
+			<li class="tabs6"><a href="#tabs-6">Nursing Care Plan</a></li>
+			<li class="tabs7"><a href="#tabs-7">Charts</a></li>
+			<li class="tabs8"><a href="#tabs-8">Transfer</a></li>
 		</ul>
 
 		<div id="tabs-1">
 			${ui.includeFragment("ipdapp", "patientInfoDetails")}
 		</div>
 
-		<div id="tabs-2">
-			${ ui.includeFragment("ipdapp", "visitSummary", [patientId: patient.patientId]) }
-		</div>
-
 		<div id="tabs-3">
+        	${ ui.includeFragment("ipdapp", "visitSummary", [patientId: patient.patientId]) }
+        </div>
+
+		<div id="tabs-4">
 			${ ui.includeFragment("ipdapp", "investigations", [patientId: patient.patientId]) }
 		</div>
 
-		<div id="tabs-4">
+		<div id="tabs-5">
             ${ ui.includeFragment("ipdapp", "nursingNotes", [patientId: patient.patientId]) }
         </div>
 
-        <div id="tabs-5">
+        <div id="tabs-6">
             ${ ui.includeFragment("ipdapp", "nursingCarePlan", [patientId: patient.patientId]) }
         </div>
 
-        <div id="tabs-6">
-
+        <div id="tabs-7">
+            ${ ui.includeFragment("ipdapp", "charts", [patientId: patient.patientId]) }
         </div>
 
-        <div id="tabs-7">
+        <div id="tabs-8">
             ${ui.includeFragment("ipdapp", "patientInfoTransfer")}
        </div>
 

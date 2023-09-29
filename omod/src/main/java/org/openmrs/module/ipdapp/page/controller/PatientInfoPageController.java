@@ -28,8 +28,8 @@ import java.util.List;
 public class PatientInfoPageController {
 
 
-    public void get(@RequestParam(value = "search",required = true) String search, PageModel model) {
-        IpdService ipdService = (IpdService) Context.getService(IpdService.class);
+    public void get(@RequestParam(value = "search", required = true) String search, PageModel model) {
+        IpdService ipdService = Context.getService(IpdService.class);
         PatientService patientService = Context.getService(PatientService.class);;
 
         List<Patient> patientList = patientService.getPatients(null,search, null, true,null,null);

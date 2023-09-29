@@ -41,7 +41,10 @@ public class VisitSummaryFragmentController {
         IpdPatientAdmitted admitted = ipdService.getAdmittedByPatientId(patientId);
         Patient patient = Context.getPatientService().getPatient(patientId);
 
-        List<Encounter> encounters = dashboardService.getEncounter(patient, location, admitted.getPatientAdmissionLog().getIpdEncounter().getEncounterType(), null);
+        EncounterType labOPDType = Context.getEncounterService().getEncounterTypeByUuid("ba45c278-f290-11ea-9666-1b3e6e848887");
+
+
+        List<Encounter> encounters = dashboardService.getEncounter(patient, location, labOPDType, null);
 
         List<VisitSummary> visitSummaries = new ArrayList<VisitSummary>();
 
@@ -59,21 +62,12 @@ public class VisitSummaryFragmentController {
                 }
             }
 
-//            VisitDetail visitDetail = VisitDetail.create(enc);
-//
-//            SimpleObject detail = SimpleObject.fromObject(visitDetail, ui, "history","diagnosis", "symptoms", "procedures", "investigations","physicalExamination","visitOutcome","internalReferral","externalReferral");
-//
-//            List<OpdDrugOrder> opdDrugs = Context.getService(PatientDashboardService.class).getOpdDrugOrder(enc);
-//            List<SimpleObject> drugs = SimpleObject.fromCollection(opdDrugs, ui, "inventoryDrug.name",
-//                    "inventoryDrug.unit.name", "inventoryDrugFormulation.name", "inventoryDrugFormulation.dozage","dosage", "dosageUnit.name");
-//
-//            visitSummary.setVisitDetails(SimpleObject.create("notes", detail, "drugs", drugs));
 
             visitSummaries.add(visitSummary);
 
             i++;
 
-            if (i >=20){
+            if (i >=50){
                 break;
             }
         }

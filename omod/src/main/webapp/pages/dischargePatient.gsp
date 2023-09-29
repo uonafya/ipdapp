@@ -192,10 +192,10 @@
 			};
 
 			jq("#dischargeForm").submit(
-					jq.getJSON('${ ui.actionLink("ipdapp", "PatientInfo", "dischargePatient") }',dischargeFormData)
+					jq.getJSON('${ ui.actionLink("ipdapp", "PatientInfo", "dischargePatient") }', dischargeFormData)
 							.success(function(data) {
 								jq().toastmessage('showNoticeToast', "Patient has been discharged");
-								window.location.href = "/openmrs/ipdapp/patientsAdmission.page?ipdWard="+${patientInformation.admittedWard.conceptId};
+								window.location.href = "patientsAdmission.page?ipdWard=${patientInformation.admittedWard}";
 							})
 							.error(function(xhr, status, err) {
 								jq().toastmessage('showErrorToast', "Error:" + err);

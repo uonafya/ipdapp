@@ -1,6 +1,8 @@
 package org.openmrs.module.ipdapp.fragment.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -30,6 +32,7 @@ import org.openmrs.module.hospitalcore.model.OpdPatientQueueLog;
 import org.openmrs.module.hospitalcore.model.OpdTestOrder;
 import org.openmrs.module.hospitalcore.model.PatientSearch;
 import org.openmrs.module.hospitalcore.model.PatientServiceBill;
+import org.openmrs.module.ipdapp.model.ContinuationNote;
 import org.openmrs.module.ipdapp.model.Prescription;
 import org.openmrs.module.ipdapp.model.Procedure;
 import org.openmrs.module.kenyaemr.api.KenyaEmrService;
@@ -40,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -160,19 +164,28 @@ public class PatientInfoFragmentController {
         ipdPatientVitalStatistics.setCreatedOn(new Date());
         ipdService.saveIpdPatientVitalStatistics(ipdPatientVitalStatistics);
     }
-    public void dischargePatient( @RequestParam(value ="dischargeAdmittedID", required = false) Integer dischargeAdmittedID,
-                                  @RequestParam(value ="patientId", required = false) Integer patientId,
-                                  @RequestParam(value ="selectedDiagnosisList", required = false) Integer[] selectedDiagnosisList,
-                                  @RequestParam(value ="selectedProcedureList", required = false) Integer[] selectedDischargeProcedureList,
-                                  @RequestParam(value ="dischargeOutcomes", required = false) Integer dischargeOutcomes,
-                                  @RequestParam(value ="otherDischargeInstructions", required = false) String otherDischargeInstructions
+    public void dischargePatient(
+            @RequestParam(value ="dischargeAdmittedID", required = false) Integer dischargeAdmittedID,
+            @RequestParam(value ="patientId", required = false) Integer patientId,
+            @RequestParam(value ="selectedDiagnosisList", required = false) Integer[] selectedDiagnosisList,
+            @RequestParam(value ="selectedProcedureList", required = false) Integer[] selectedDischargeProcedureList,
+            @RequestParam(value ="dischargeOutcomes", required = false) Integer dischargeOutcomes,
+            @RequestParam(value ="otherDischargeInstructions", required = false) String otherDischargeInstructions
     ){
-
-        HospitalCoreService hospitalCoreService = (HospitalCoreService) Context.getService(HospitalCoreService.class);
+        System.out.println("DischargeAdmittedID: " + dischargeAdmittedID);
+        System.out.println("patientID: " + patientId);
+        HospitalCoreService hospitalCoreService = Context.getService(HospitalCoreService.class);
         PatientQueueService queueService = Context.getService(PatientQueueService.class);
         PatientSearch patientSearch = hospitalCoreService.getPatient(patientId);
         ConceptService conceptService = Context.getConceptService();
-        IpdService ipdService = (IpdService) Context.getService(IpdService.class);
+        IpdService ipdService = Context.getService(IpdService.class);
+        IpdPatientAdmitted admitted = ipdService.getAdmittedByPatientId(patientId);
+        Encounter ipdEncounter = admitted.getPatientAdmissionLog().getIpdEncounter();
+        List<Obs> listObsOfIpdEncounter = new ArrayList<Obs>(ipdEncounter.getAllObs());
+        Location location = Context.getService(KenyaEmrService.class).getDefaultLocation();
+
+        User user = Context.getAuthenticatedUser();
+        Date date = new Date();
 
         if(conceptService.getConcept(dischargeOutcomes).equals(conceptService.getConceptByUuid("9c348c8c-e033-4fc0-ab2a-7e6702b68739"))) {
             Concept causeOfDeath = conceptService.getConceptByUuid("1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
@@ -186,21 +199,29 @@ public class PatientInfoFragmentController {
             patientSearch.setDead(true);
             patientSearch.setAdmitted(false);
             hospitalCoreService.savePatientSearch(patientSearch);
-        }
-        else{
+
+        } else {
             patientSearch.setAdmitted(false);
             hospitalCoreService.savePatientSearch(patientSearch);
+
+            Concept dischargeDateTimeConcept = conceptService.getConceptByUuid("1641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+            Obs dischargeObs = new Obs();
+            dischargeObs.setConcept(dischargeDateTimeConcept);
+            dischargeObs.setValueDate(date);
+            dischargeObs.setCreator(user);
+            dischargeObs.setObsDatetime(date);
+            dischargeObs.setLocation(location);
+            dischargeObs.setDateCreated(date);
+            dischargeObs.setEncounter(ipdEncounter);
+            dischargeObs.setPerson(ipdEncounter.getPatient());
+
+            Context.getObsService().saveObs(dischargeObs, "Patient Discharge Date");
         }
 
         Concept cDiagnosis = conceptService.getConceptByUuid("160249AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         Concept cProcedure = conceptService.getConceptByUuid("1651AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        IpdPatientAdmitted admitted = ipdService.getIpdPatientAdmitted(dischargeAdmittedID);
-        Encounter ipdEncounter = admitted.getPatientAdmissionLog().getIpdEncounter();
-        List<Obs> listObsOfIpdEncounter = new ArrayList<Obs>(ipdEncounter.getAllObs());
-        Location location = Context.getService(KenyaEmrService.class).getDefaultLocation();
 
-        User user = Context.getAuthenticatedUser();
-        Date date = new Date();
         //diagnosis
 
         Set<Obs> obses = new HashSet(ipdEncounter.getAllObs());
@@ -270,7 +291,7 @@ public class PatientInfoFragmentController {
                 obsProcedure.setCreator(user);
                 obsProcedure.setObsDatetime(date);
                 obsProcedure.setLocation(location);
-                obsProcedure.setPerson (ipdEncounter.getPatient ());
+                obsProcedure.setPerson (ipdEncounter.getPatient());
                 obsProcedure.setDateCreated(date);
                 obsProcedure.setEncounter(ipdEncounter);
                 obsProcedure = Context.getObsService().saveObs(obsProcedure, "update obs diagnosis if need");
@@ -284,6 +305,7 @@ public class PatientInfoFragmentController {
         ipdEncounter.setObs(obses);
 
         Context.getEncounterService().saveEncounter(ipdEncounter);
+
 
 
         IpdPatientAdmittedLog ipdPatientAdmittedLog=ipdService.discharge(dischargeAdmittedID, dischargeOutcomes, otherDischargeInstructions );
@@ -304,7 +326,7 @@ public class PatientInfoFragmentController {
 
     //method to convert drugs
     public List<Prescription> getPrescriptions(String json){
-        ObjectMapper mapper = new ObjectMapper();
+        com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
         List<Prescription> list = null;        try {
             list = mapper.readValue(json,
                     TypeFactory.defaultInstance().constructCollectionType(List.class,
@@ -315,15 +337,16 @@ public class PatientInfoFragmentController {
         }        return  list;
     }
 
-    public void treatment(@RequestParam(value ="patientId", required = false) Integer patientId,
-                          @RequestParam(value = "drugOrder", required = false) String drugOrder,
-                          @RequestParam(value = "ipdWard", required = false) String ipdWard,
-                          @RequestParam(value ="selectedProcedureList", required = false) Integer[] selectedProcedureList,
-                          @RequestParam(value ="selectedInvestigationList", required = false) Integer[] selectedInvestigationList,
-                          @RequestParam(value ="otherTreatmentInstructions", required = false) String otherTreatmentInstructions,
-                          @RequestParam(value = "physicalExamination", required = false) String physicalExamination,
-                          @RequestParam(value = "dosage", required = false) Integer dosage,
-                          @RequestParam(value = "dosageUnits", required = false) Integer dosageUnits)
+    public void treatment(
+            @RequestParam(value ="patientId", required = false) Integer patientId,
+            @RequestParam(value = "drugOrder", required = false) String drugOrder,
+            @RequestParam(value = "ipdWard", required = false) String ipdWard,
+            @RequestParam(value ="selectedProcedureList", required = false) Integer[] selectedProcedureList,
+            @RequestParam(value ="selectedInvestigationList", required = false) Integer[] selectedInvestigationList,
+            @RequestParam(value ="otherTreatmentInstructions", required = false) String otherTreatmentInstructions,
+            @RequestParam(value = "physicalExamination", required = false) String physicalExamination,
+            @RequestParam(value = "dosage", required = false) Integer dosage,
+            @RequestParam(value = "dosageUnits", required = false) Integer dosageUnits)
     {
 
 
@@ -341,8 +364,8 @@ public class PatientInfoFragmentController {
         Concept cPhysicalExamination = Context.getConceptService().getConceptByUuid("1391AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
         Obs obsGroup = hcs.getObsGroupCurrentDate(patient.getPersonId());
+
         Encounter encounter = new Encounter();
-        //encounter = admitted.getPatientAdmissionLog().getIpdEncounter();
         encounter.setEncounterType(admitted.getPatientAdmissionLog().getIpdEncounter().getEncounterType());
         Location location = Context.getService(KenyaEmrService.class).getDefaultLocation();
         encounter.setPatient(patient);
@@ -584,6 +607,30 @@ public class PatientInfoFragmentController {
             patientDashboardService.saveOrUpdateOpdDrugOrder(opdDrugOrder);
         }
     }
+
+    public SimpleObject processTreatment(HttpServletRequest request) {
+        String noteJSON = request.getParameter("note");
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            ContinuationNote note = mapper.readValue(noteJSON, ContinuationNote.class);
+            note.saveInvestigations();
+        } catch (JsonParseException e) {
+            log.error("Unable to parse JSON string: {}.\n Error: {}", new Object[] { noteJSON, e.getMessage() });
+            return SimpleObject.create("status", "fail", "message", e.getMessage());
+        } catch (JsonMappingException e) {
+            log.error("Unable to map JSON string: {}, to class Note.java.\n Error: {}", new Object[] { noteJSON, e.getMessage() });
+            return SimpleObject.create("status", "fail", "message", e.getMessage());
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return SimpleObject.create("status", "fail", "message",e.getMessage());
+        } catch (NullPointerException npe) {
+            log.error(npe.getMessage());
+            return SimpleObject.create("status", "fail", "message", npe.getMessage());
+        }
+
+        return SimpleObject.create("status", "success");
+    }
+
 
     private Provider getProvider(User user) {
         Provider provider = null;
