@@ -172,8 +172,7 @@ public class PatientInfoFragmentController {
             @RequestParam(value ="dischargeOutcomes", required = false) Integer dischargeOutcomes,
             @RequestParam(value ="otherDischargeInstructions", required = false) String otherDischargeInstructions
     ){
-        System.out.println("DischargeAdmittedID: " + dischargeAdmittedID);
-        System.out.println("patientID: " + patientId);
+
         HospitalCoreService hospitalCoreService = Context.getService(HospitalCoreService.class);
         PatientQueueService queueService = Context.getService(PatientQueueService.class);
         PatientSearch patientSearch = hospitalCoreService.getPatient(patientId);
@@ -197,27 +196,10 @@ public class PatientInfoFragmentController {
             patient.setCauseOfDeath(causeOfDeath);
             ps.savePatient(patient);
             patientSearch.setDead(true);
-            patientSearch.setAdmitted(false);
-            hospitalCoreService.savePatientSearch(patientSearch);
-
-        } else {
-            patientSearch.setAdmitted(false);
-            hospitalCoreService.savePatientSearch(patientSearch);
-
-            Concept dischargeDateTimeConcept = conceptService.getConceptByUuid("1641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-
-            Obs dischargeObs = new Obs();
-            dischargeObs.setConcept(dischargeDateTimeConcept);
-            dischargeObs.setValueDate(date);
-            dischargeObs.setCreator(user);
-            dischargeObs.setObsDatetime(date);
-            dischargeObs.setLocation(location);
-            dischargeObs.setDateCreated(date);
-            dischargeObs.setEncounter(ipdEncounter);
-            dischargeObs.setPerson(ipdEncounter.getPatient());
-
-            Context.getObsService().saveObs(dischargeObs, "Patient Discharge Date");
         }
+
+        patientSearch.setAdmitted(false);
+        hospitalCoreService.savePatientSearch(patientSearch);
 
         Concept cDiagnosis = conceptService.getConceptByUuid("160249AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         Concept cProcedure = conceptService.getConceptByUuid("1651AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
@@ -302,6 +284,22 @@ public class PatientInfoFragmentController {
 
         }
 
+        Concept dischargeDateTimeConcept = conceptService.getConceptByUuid("1641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+        Obs dischargeObs = new Obs();
+        dischargeObs.setConcept(dischargeDateTimeConcept);
+        dischargeObs.setValueDate(date);
+        dischargeObs.setCreator(user);
+        dischargeObs.setObsDatetime(date);
+        dischargeObs.setLocation(location);
+        dischargeObs.setDateCreated(date);
+        dischargeObs.setEncounter(ipdEncounter);
+        dischargeObs.setPerson(ipdEncounter.getPatient());
+
+        Context.getObsService().saveObs(dischargeObs, "Patient Discharge Date");
+
+        obses.add(dischargeObs);
+
         ipdEncounter.setObs(obses);
 
         Context.getEncounterService().saveEncounter(ipdEncounter);
@@ -315,7 +313,7 @@ public class PatientInfoFragmentController {
             queueService.saveOpdPatientQueueLog(opdPatientQueueLog);
         }
         Encounter encounter=ipdPatientAdmittedLog.getPatientAdmissionLog().getIpdEncounter();
-        BillingService billingService = (BillingService) Context.getService(BillingService.class);
+        BillingService billingService = Context.getService(BillingService.class);
         PatientServiceBill patientServiceBill=billingService.getPatientServiceBillByEncounter(encounter);
         if(patientServiceBill != null) {
             patientServiceBill.setDischargeStatus(1);

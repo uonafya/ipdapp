@@ -5,6 +5,7 @@
 
 	var getDischargedPatients = function(){
 		dischargedPatientsTableObject.find('td.dataTables_empty').html('<span><img class="search-spinner" src="'+ui.resourceLink('uicommons', 'images/spinner.gif')+'" /></span>');
+
 		var requestData = {
 			ipdWard:		'${ipdWard.id}',
 			fromDate:		jq('#outsFrom-field').val(),
@@ -24,14 +25,14 @@
 		dischargedPatientsResultsData = results || [];
 		var dataRows = [];
 		_.each(dischargedPatientsResultsData, function(result){
-			var icons = '<a class="button task dropdown" href="patientInfo.page?search=' + result.patientIdentifier + '&ipdWard='+ result.dischargedWard +'" style="position: static; padding: 5px 12px; float: none; margin: 0px 3px;"><i class="icon-cog"></i>&nbsp; Details &nbsp;<i class="icon-location"></i></a>';
+			var icons = '<a class="button task dropdown" href="patientInfo.page?search=' + result.patientIdentifier + '&ipdWard='+ result.admittedWard +'" style="position: static; padding: 5px 12px; float: none; margin: 0px 3px;"><i class="icon-cog"></i>&nbsp; Details &nbsp;<i class="icon-location"></i></a>';
 			var gender = result.gender;
 			if (gender == "M"){
 				gender = 'Male';
 			}else{
 				gender = 'Female';
 			}
-			dataRows.push([0, moment(result.admissionDate, "DD.MMM.YYYY").format('DD/MM/YYYY'), result.patientIdentifier, result.patientName, gender, icons]);
+			dataRows.push([0, moment(result.dischargeDate, "DD.MMM.YYYY").format('DD/MM/YYYY'), result.patientIdentifier, result.patientName, gender, icons]);
 		});
 
 		dischargedPatients.api().clear();

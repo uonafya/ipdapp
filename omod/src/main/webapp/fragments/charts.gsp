@@ -1,7 +1,7 @@
 <script>
     jq(function(){
         jq("#chart-left-menu").on("click", ".chart-summary", function(){
-            jq("#chart-detail").html('<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i> <span style="float: left; margin-top: 12px;">Loading...</span>');
+            //jq("#chart-detail").html('<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i> <span style="float: left; margin-top: 12px;">Loading...</span>');
 
             var chartSummary = jq(this);
             jq(".chart-summary").removeClass("selected");
@@ -9,23 +9,16 @@
             jq.getJSON('${ ui.actionLink("ipdapp", "charts" ,"getChartDetails") }',
                 { 'patientId' : ${patient.patientId}, 'chart' : jq(chartSummary).find(".chart-id").val() }
             ).success(function (data) {
-                // console.log(data.notes);
 
-
-
-                var cd_html = '<canvas id="myLineChart" width="600" height="300"></canvas>'
-
-                jq("#chart-detail").html(cd_html)
-
-                var ctx = jq("#myLineChart").getContext('2d');
-                    var myLineChart = new Chart(ctx, {
+                var ctx = jq("#myChart");
+                    var myChart = new Chart(ctx, {
                         type: 'line',
                         data: data,
                         options: {
                             responsive: true,
                             scales: {
                                 y: {
-                                    beginAtZero: true
+                                    beginAtZero: false
                                 }
                             }
                         }
@@ -113,7 +106,7 @@
 
         <div id="printSection">
             <div class="info-section info-body" style="display: flex; flex-direction: column;" id="chart-detail">
-
+                <canvas id="myChart" width="600" height="300"></canvas>
             </div>
         </div>
 

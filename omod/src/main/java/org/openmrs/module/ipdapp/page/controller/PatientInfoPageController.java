@@ -30,9 +30,9 @@ public class PatientInfoPageController {
 
     public void get(@RequestParam(value = "search", required = true) String search, PageModel model) {
         IpdService ipdService = Context.getService(IpdService.class);
-        PatientService patientService = Context.getService(PatientService.class);;
+        PatientService patientService = Context.getService(PatientService.class);
 
-        List<Patient> patientList = patientService.getPatients(null,search, null, true,null,null);
+        List<Patient> patientList = patientService.getPatients(null, search, null, true,null,null);
 
         Patient patient = patientList.get(0);
         IpdPatientAdmitted patientInformation = ipdService.getAdmittedByPatientId(patient.getPatientId());
@@ -65,7 +65,7 @@ public class PatientInfoPageController {
         model.addAttribute("dietList", dietConcept);
 
         //Vital statistics
-        List<IpdPatientVitalStatistics> ipdPatientVitalStatistics=ipdService.getIpdPatientVitalStatistics(patient.getPatientId(), patientInformation.getPatientAdmissionLog().getId());
+        List<IpdPatientVitalStatistics> ipdPatientVitalStatistics = ipdService.getIpdPatientVitalStatistics(patient.getPatientId(), patientInformation.getPatientAdmissionLog().getId());
         model.addAttribute("ipdPatientVitalStatistics", ipdPatientVitalStatistics);
 
         //list of discharge outcomes

@@ -7,24 +7,21 @@ import org.openmrs.module.hospitalcore.HospitalCoreService;
 import org.openmrs.module.hospitalcore.IpdService;
 import org.openmrs.module.hospitalcore.PatientDashboardService;
 import org.openmrs.module.hospitalcore.PatientQueueService;
-import org.openmrs.module.hospitalcore.model.IpdPatientAdmission;
-import org.openmrs.module.hospitalcore.model.IpdPatientAdmissionLog;
-import org.openmrs.module.hospitalcore.model.IpdPatientAdmitted;
-import org.openmrs.module.hospitalcore.model.OpdPatientQueueLog;
+import org.openmrs.module.hospitalcore.model.*;
 import org.openmrs.module.hospitalcore.util.HospitalCoreConstants;
 import org.openmrs.module.ipdapp.model.DischargedPatient;
 import org.openmrs.module.ipdapp.utils.IpdConstants;
 import org.openmrs.module.kenyaemr.api.KenyaEmrService;
+import org.openmrs.parameter.EncounterSearchCriteria;
+import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.EncounterRole;
-import org.openmrs.Provider;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * Created by VIC on 1/30/2020.
@@ -115,42 +112,48 @@ public class PatientAdmissionFragmentController {
     }
 
     public List<SimpleObject> listDischargedIpdPatients(
-            @RequestParam("ipdWard") String ipdWard,
+            @RequestParam("ipdWard") Integer ipdWard,
             @RequestParam(value = "fromDate", required = false) String fromDate,
             @RequestParam(value = "toDate", required = false) String toDate,
             UiUtils uiUtils
     ) {
-        PatientDashboardService dashboardService = Context.getService(PatientDashboardService.class);
         IpdService ipdService = Context.getService(IpdService.class);
-        Location location = Context.getService(KenyaEmrService.class).getDefaultLocation();
+
         ConceptService conceptService = Context.getConceptService();
-
-        EncounterType encounterType = Context.getEncounterService().getEncounterTypeByUuid("6e1105ba-f282-11ea-ad42-e7971c094de0");
-
-        List<Encounter> encounters = dashboardService.getEncounter(null, location, encounterType, null);
-
-        List<DischargedPatient> dischargedPatients = new ArrayList<DischargedPatient>();
 
         Concept dischargeDateTimeConcept = conceptService.getConceptByUuid("1641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
+        List<DischargedPatient> dischargedPatients = new ArrayList<>();
 
-        for (Encounter enc : encounters) {
-            for (Obs obs : enc.getAllObs()) {
+        List<IpdPatientAdmittedLog> ipdPatientAdmittedLogs = ipdService.getAllIpdPatientAdmittedLog();
+
+        LinkedHashMap<Integer, DischargedPatient> map = new LinkedHashMap<>();
+
+        for(IpdPatientAdmittedLog ipdPatientAdmittedLog : ipdPatientAdmittedLogs){
+            for (Obs obs : ipdPatientAdmittedLog.getPatientAdmissionLog().getIpdEncounter().getAllObs()) {
                 if (obs.getConcept().equals(dischargeDateTimeConcept)) {
                     DischargedPatient dischargedPatient = new DischargedPatient();
                     dischargedPatient.setStatus("Discharged");
                     dischargedPatient.setDischargeDate(obs.getValueDate());
                     dischargedPatient.setUser(obs.getCreator());
+                    dischargedPatient.setGender(ipdPatientAdmittedLog.getGender());
+                    dischargedPatient.setPatientName(ipdPatientAdmittedLog.getPatientName());
+                    dischargedPatient.setPatientIdentifier(ipdPatientAdmittedLog.getPatientIdentifier());
+                    dischargedPatient.setBed(ipdPatientAdmittedLog.getBed());
+                    dischargedPatient.setAdmittedWard(ipdPatientAdmittedLog.getAdmittedWard());
 
-                    Patient patient = (Patient) obs.getPerson();
-                    IpdPatientAdmitted ipdPatientAdmitted = ipdService.getAdmittedByPatientId(patient.getPatientId());
-                    dischargedPatient.setIpdPatientAdmitted(ipdPatientAdmitted);
+                    dischargedPatient.setIpdPatientAdmittedLog(ipdPatientAdmittedLog);
 
-                    dischargedPatients.add(dischargedPatient);
+                    map.put(ipdPatientAdmittedLog.getPatient().getPatientId(), dischargedPatient);
                 }
             }
         }
 
-        return SimpleObject.fromCollection(dischargedPatients, uiUtils, "id", "dischargeDate", "ipdPatientAdmitted", "user", "status");
+        for (Map.Entry<Integer, DischargedPatient> entry : map.entrySet()){
+            if(entry.getValue().getAdmittedWard().getId().equals(ipdWard))
+                dischargedPatients.add(entry.getValue());
+        }
+
+        return SimpleObject.fromCollection(dischargedPatients, uiUtils, "id", "dischargeDate", "ipdPatientAdmittedLog", "user", "status", "gender", "bed", "admittedWard", "patientName", "patientIdentifier");
     }
 }
