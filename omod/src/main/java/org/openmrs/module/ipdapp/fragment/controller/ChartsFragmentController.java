@@ -74,9 +74,14 @@ public class ChartsFragmentController {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd");
 
             for (Map.Entry<LocalDate, Map<String, Double>> entry : tempData.entrySet()) {
-                labels.add(formatter.format(entry.getKey()));
-                data.add(entry.getValue().get("Morning"));
-                data.add(entry.getValue().get("Evening"));
+                if(entry.getValue().get("Morning") != null){
+                    data.add(entry.getValue().get("Morning"));
+                    labels.add(formatter.format(entry.getKey()));
+                }
+                if(entry.getValue().get("Evening") != null){
+                    data.add(entry.getValue().get("Evening"));
+                    labels.add(formatter.format(entry.getKey()));
+                }
             }
         }
 
