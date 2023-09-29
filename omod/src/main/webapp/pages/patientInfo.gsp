@@ -4,6 +4,7 @@
 	ui.includeJavascript("patientdashboardapp", "jq.print.js")
 	ui.includeJavascript("patientdashboardapp", "jq.slimscroll.js")
 	ui.includeJavascript("ehrconfigs", "emr.js")
+	ui.includeJavascript("ipdapp", "charts.js")
 	ui.includeCss("ehrconfigs", "referenceapplication.css")
 
 %>
