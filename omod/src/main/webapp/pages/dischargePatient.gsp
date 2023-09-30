@@ -195,7 +195,7 @@
 					jq.getJSON('${ ui.actionLink("ipdapp", "PatientInfo", "dischargePatient") }', dischargeFormData)
 							.success(function(data) {
 								jq().toastmessage('showNoticeToast', "Patient has been discharged");
-								window.location.href = "patientsAdmission.page?ipdWard=${patientInformation.admittedWard}";
+								window.location.href = "patientsAdmission.page?ipdWard=${patientInformation.admittedWard.conceptId}";
 							})
 							.error(function(xhr, status, err) {
 								jq().toastmessage('showErrorToast', "Error:" + err);

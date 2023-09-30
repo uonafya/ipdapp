@@ -18,7 +18,9 @@
                             responsive: true,
                             scales: {
                                 y: {
-                                    beginAtZero: false
+                                    beginAtZero: false,
+                                    min: 25,
+                                    max: 45,
                                 }
                             }
                         }

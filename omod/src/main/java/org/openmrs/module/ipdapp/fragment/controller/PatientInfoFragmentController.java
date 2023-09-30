@@ -164,7 +164,7 @@ public class PatientInfoFragmentController {
         ipdPatientVitalStatistics.setCreatedOn(new Date());
         ipdService.saveIpdPatientVitalStatistics(ipdPatientVitalStatistics);
     }
-    public void dischargePatient(
+    public String dischargePatient(
             @RequestParam(value ="dischargeAdmittedID", required = false) Integer dischargeAdmittedID,
             @RequestParam(value ="patientId", required = false) Integer patientId,
             @RequestParam(value ="selectedDiagnosisList", required = false) Integer[] selectedDiagnosisList,
@@ -319,6 +319,8 @@ public class PatientInfoFragmentController {
             patientServiceBill.setDischargeStatus(1);
             billingService.savePatientServiceBill(patientServiceBill);
         }
+
+        return "Successfully Discharged Patient";
 
     }
 
