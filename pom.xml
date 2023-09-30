@@ -41,6 +41,7 @@
 		<hospitalCoreVersion>2.0.3-SNAPSHOT</hospitalCoreVersion>
 		<ehrconfigsVersion>2.0.1-SNAPSHOT</ehrconfigsVersion>
 		<patientDashboardVersion>2.0.1-SNAPSHOT</patientDashboardVersion>
+		<bahmniAppointmentsVersion>1.5.0-SNAPSHOT</bahmniAppointmentsVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -68,18 +69,6 @@
 				<artifactId>uiframework-api</artifactId>
 																								
 				<version>3.3.1</version>
-												
-				<scope>provided</scope>
-				
-			</dependency>
-						
-			<dependency>
-			
-				<groupId>org.openmrs.module</groupId>
-												
-				<artifactId>uilibrary-api</artifactId>
-																								
-				<version>2.0.4</version>
 												
 				<scope>provided</scope>
 				
@@ -152,6 +141,12 @@
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>ehrconfigs-api</artifactId>
 				<version>${ehrconfigsVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.bahmni.module</groupId>
+				<artifactId>appointments-api</artifactId>
+				<version>${bahmniAppointmentsVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 						

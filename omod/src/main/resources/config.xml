@@ -20,15 +20,13 @@
 	<require_modules>
 																											
 		<require_module>org.openmrs.module.uiframework</require_module>
-																											
-		<require_module>org.openmrs.module.uilibrary</require_module>
-
 		<require_module>org.openmrs.module.hospitalcore</require_module>
 		<require_module>org.openmrs.module.patientdashboardapp</require_module>
 		<require_module>org.openmrs.module.ehrcashier</require_module>
 		<require_module>org.openmrs.module.ehrconfigs</require_module>
 		<require_module>org.openmrs.module.kenyaemr</require_module>
 		<require_module>org.openmrs.module.metadatadeploy</require_module>
+		<require_module>org.bahmni.module.appointments</require_module>
 			
 	</require_modules>
 	<!-- / Required Modules -->
