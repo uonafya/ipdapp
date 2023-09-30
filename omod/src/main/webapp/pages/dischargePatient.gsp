@@ -192,7 +192,7 @@
 			};
 
 			jq("#dischargeForm").submit(
-					jq.getJSON('${ ui.actionLink("ipdapp", "PatientInfo", "dischargePatient") }', dischargeFormData)
+					jq.getJSON('${ ui.actionLink("ipdapp", "patientInfo", "dischargePatient") }', dischargeFormData)
 							.success(function(data) {
 								jq().toastmessage('showNoticeToast', "Patient has been discharged");
 								window.location.href = "patientsAdmission.page?ipdWard=${patientInformation.admittedWard}";
