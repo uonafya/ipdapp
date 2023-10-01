@@ -10,6 +10,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
@@ -19,6 +20,7 @@ import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.BillingService;
 import org.openmrs.module.hospitalcore.HospitalCoreService;
+import org.openmrs.module.hospitalcore.IdentifierTypes;
 import org.openmrs.module.hospitalcore.IpdService;
 import org.openmrs.module.hospitalcore.PatientDashboardService;
 import org.openmrs.module.hospitalcore.model.BillableService;
@@ -40,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -329,6 +332,7 @@ public class AdmissionFormPageController {
     }
 
     public boolean accept(Integer admissionId) {
+        HospitalCoreService hospitalCoreService = Context.getService(HospitalCoreService.class);
         int acceptStatus = 1;
         PatientDashboardService patientDashboardService = Context.getService(PatientDashboardService.class);
         IpdService ipdService = Context.getService(IpdService.class);
@@ -353,6 +357,18 @@ public class AdmissionFormPageController {
             encounter = Context.getEncounterService().saveEncounter(encounter);
             admission.setIpdEncounter(encounter);
             ipdService.saveIpdPatientAdmission(admission);
+            //create a IPD number for the Patient to be used
+            List<PatientIdentifier> patientIdentifierList = Context.getPatientService().getPatientIdentifiers(
+                    null,
+                    Arrays.asList(Context.getPatientService().getPatientIdentifierTypeByUuid(
+                            "CCBED3FA-B334-412C-BD4E-9B823C8DB0EF")), null, Arrays.asList(admission.getPatient()), false);
+            String morgueNumber = hospitalCoreService.generateOpdNumber("IPD", IdentifierTypes.IPD);
+            if (patientIdentifierList.isEmpty()) {
+                hospitalCoreService.savePatientOpdNumbers(admission.getPatient(), "IPD", "CCBED3FA-B334-412C-BD4E-9B823C8DB0EF",
+                        IdentifierTypes.IPD);
+
+            }
+
         }
         return true;
 
