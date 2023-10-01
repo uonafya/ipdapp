@@ -47,12 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -625,6 +620,7 @@ public class PatientInfoFragmentController {
             return SimpleObject.create("status", "fail", "message",e.getMessage());
         } catch (NullPointerException npe) {
             log.error(npe.getMessage());
+            System.out.println(Arrays.toString(npe.getStackTrace()));
             return SimpleObject.create("status", "fail", "message", npe.getMessage());
         }
 

@@ -27,7 +27,7 @@
 						</div>
 
 						<div style="margin-top: 10px">
-							<input name="patientID" id="nursingNotesPatientID" value="${patient.patientId}" type="hidden">
+							<input name="nursingNotesPatientID" id="nursingNotesPatientID" value="${patient.patientId}" type="hidden">
 
 							<label></label>
 							<a id="nursingNotesButton" name="nursingNotesButton" class="button confirm">

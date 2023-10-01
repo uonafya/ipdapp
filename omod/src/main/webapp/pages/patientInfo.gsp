@@ -384,7 +384,7 @@
 		jq("#nursingNotesButton").click(function(event){
         	var nursingNotesForm = jq("#nursingNotesForm");
         	var nursingNotesFormData = {
-        		'patientId': jq('#patientID').val(),
+        		'patientId': jq('#nursingNotesPatientID').val(),
         		'details': jq('#nursingNotesDetails').val(),
         	};
             nursingNotesForm.submit(
@@ -402,7 +402,7 @@
         jq("#nursingCarePlanButton").click(function(event){
                 	var nursingCarePlanForm = jq("#nursingCarePlanForm");
                 	var nursingCarePlanFormData = {
-                		'patientId': jq('#patientID').val(),
+                		'patientId': jq('#nursingCarePlanPatientID').val(),
                 		'diagnosis': jq('#nursingCarePlanDiagnosis').val(),
                 		'objectives': jq('#nursingCarePlanObjectives').val(),
                 		'expectedOutcome': jq('#nursingCarePlanExpectedOutcome').val(),

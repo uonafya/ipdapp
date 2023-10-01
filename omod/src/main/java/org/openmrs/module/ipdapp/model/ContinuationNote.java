@@ -30,17 +30,7 @@ import org.openmrs.module.hospitalcore.LabService;
 import org.openmrs.module.hospitalcore.PatientDashboardService;
 import org.openmrs.module.hospitalcore.PatientQueueService;
 import org.openmrs.module.hospitalcore.RadiologyCoreService;
-import org.openmrs.module.hospitalcore.model.BillableService;
-import org.openmrs.module.hospitalcore.model.DepartmentConcept;
-import org.openmrs.module.hospitalcore.model.EhrAppointment;
-import org.openmrs.module.hospitalcore.model.Lab;
-import org.openmrs.module.hospitalcore.model.OpdPatientQueue;
-import org.openmrs.module.hospitalcore.model.OpdPatientQueueLog;
-import org.openmrs.module.hospitalcore.model.OpdTestOrder;
-import org.openmrs.module.hospitalcore.model.Option;
-import org.openmrs.module.hospitalcore.model.RadiologyDepartment;
-import org.openmrs.module.hospitalcore.model.Referral;
-import org.openmrs.module.hospitalcore.model.ReferralReasons;
+import org.openmrs.module.hospitalcore.model.*;
 import org.openmrs.module.kenyaemr.api.KenyaEmrService;
 import org.openmrs.module.patientdashboardapp.model.Outcome;
 import org.openmrs.module.patientdashboardapp.model.Sign;
@@ -109,11 +99,11 @@ public class ContinuationNote {
     private Integer opdId;
     private boolean admitted;
     private Integer opdLogId;
-    private List<Sign> signs = new ArrayList<Sign>() ;
-    private List<Diagnosis> diagnoses = new ArrayList<Diagnosis>();
-    private List<Investigation> investigations = new ArrayList<Investigation>();
-    private List<Procedure> procedures = new ArrayList<Procedure>();
-    private List<Drug> drugs = new ArrayList<Drug>();
+    private List<Sign> signs = new ArrayList<>() ;
+    private List<Diagnosis> diagnoses = new ArrayList<>();
+    private List<Investigation> investigations = new ArrayList<>();
+    private List<Procedure> procedures = new ArrayList<>();
+    private List<Drug> drugs = new ArrayList<>();
     private Option referredTo;
     private Option referralReasons;
     private Outcome outcome;
@@ -309,10 +299,9 @@ public class ContinuationNote {
             //save an encounter with all the other entries
             Context.getEncounterService().saveEncounter(encounter);
             saveNoteDetails(encounter);
-            endEncounter(encounter);
-            updateAppointmentIfAny(patient);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+            System.out.println(Arrays.toString(e.getStackTrace()));
         }
 
         return encounter;
@@ -322,6 +311,7 @@ public class ContinuationNote {
         Encounter encounter = new Encounter();
         KenyaEmrService kenyaEmrService =Context.getService(KenyaEmrService.class);
         User user = Context.getAuthenticatedUser();
+
         EncounterType encounterType = Context.getEncounterService().getEncounterTypeByUuid("ba45c278-f290-11ea-9666-1b3e6e848887");
 
         encounter.setPatient(patient);
@@ -491,62 +481,39 @@ public class ContinuationNote {
     }
 
     private void saveNoteDetails(Encounter encounter) {
+        IpdPatientAdmitted ipdPatientAdmitted = Context.getService(IpdService.class).getAdmittedByPatientId(patientId);
+        String referralWardName = ipdPatientAdmitted.getAdmittedWard().getName().getName();
         for (Drug drug : this.drugs) {
-            String referralWardName = Context.getService(PatientQueueService.class).getOpdPatientQueueById(this.queueId)
-                    .getOpdConceptName();
             drug.save(encounter, referralWardName);
         }
+
         for (Investigation investigation : this.investigations) {
-            String departmentName = Context.getConceptService().getConcept(this.opdId).getName().toString();
             try {
-                saveInvestigations(encounter, departmentName, investigation);
+                saveInvestigations(encounter, referralWardName, investigation);
             } catch (Exception e) {
-                logger.error("Error saving investigation {}({}): {}", new Object[] { investigation.getId(), investigation.getLabel(), e.getMessage() });
+                logger.error("Error saving investigation {}({}): {}", investigation.getId(), investigation.getLabel(), e.getMessage());
             }
         }
+
         for(Procedure procedure : this.procedures) {
-            String departmentName = Context.getConceptService().getConcept(this.opdId).getName().toString();
             try {
-                saveProcedures(encounter, departmentName, procedure);
+                saveProcedures(encounter, referralWardName, procedure);
             }
             catch (Exception e) {
-                logger.error("Error saving procedure {}({}): {}", new Object[] { procedure.getId(), procedure.getLabel(), e.getMessage() });
+                logger.error("Error saving procedure {}({}): {}", procedure.getId(), procedure.getLabel(), e.getMessage());
             }
         }
+
         for(Sign sign: this.signs) {
             sign.save(encounter);
         }
+
         if (this.outcome != null) {
             this.outcome.save(encounter);
         }
     }
 
-    private void endEncounter(Encounter encounter) {
-        PatientQueueService queueService = Context.getService(PatientQueueService.class);
-        if (this.queueId != null) {
-            OpdPatientQueue queue = queueService.getOpdPatientQueueById(this.queueId);
-            OpdPatientQueueLog queueLog = new OpdPatientQueueLog();
-            queueLog.setOpdConcept(queue.getOpdConcept());
-            queueLog.setOpdConceptName(queue.getOpdConceptName());
-            queueLog.setPatient(queue.getPatient());
-            queueLog.setCreatedOn(queue.getCreatedOn());
-            queueLog.setPatientIdentifier(queue.getPatientIdentifier());
-            queueLog.setPatientName(queue.getPatientName());
-            queueLog.setReferralConcept(queue.getReferralConcept());
-            queueLog.setReferralConceptName(queue.getReferralConceptName());
-            queueLog.setSex(queue.getSex());
-            queueLog.setUser(Context.getAuthenticatedUser());
-            queueLog.setStatus("processed");
-            queueLog.setBirthDate(encounter.getPatient().getBirthdate());
-            queueLog.setEncounter(encounter);
-            queueLog.setCategory(queue.getCategory());
-            queueLog.setVisitStatus(queue.getVisitStatus());
-            queueLog.setTriageDataId(queue.getTriageDataId());
 
-            queueService.saveOpdPatientQueueLog(queueLog);
-            queueService.deleteOpdPatientQueue(queue);
-        }
-    }
     private String getPreviousPhysicalExamination(int patientId){
         String previousPhysicalExamination = "";
         Patient patient = Context.getPatientService().getPatient(patientId);
@@ -792,12 +759,12 @@ public class ContinuationNote {
     private void updateAppointmentIfAny(Patient patient){
         EhrAppointmentService ehrAppointmentService = Context.getService(EhrAppointmentService.class);
         AppointmentsService appointmentService = Context.getService(AppointmentsService.class);
-        Appointment ehrAppointment = ehrAppointmentService.getLastEhrAppointment(patient);
-        if(ehrAppointment != null && ehrAppointment.getStatus() != null && (ehrAppointment.getStatus().equals(AppointmentStatus.CheckedIn)
-                || ehrAppointment.getStatus().equals(AppointmentStatus.Rescheduled)
-                || ehrAppointment.getStatus().equals(AppointmentStatus.Scheduled))) {
-            ehrAppointment.setStatus(AppointmentStatus.Completed);
-            appointmentService.validateAndSave(ehrAppointment);
-        }
+//        Appointment ehrAppointment = ehrAppointmentService.getLastEhrAppointment(patient);
+//        if(ehrAppointment != null && ehrAppointment.getStatus() != null && (ehrAppointment.getStatus().equals(AppointmentStatus.CheckedIn)
+//                || ehrAppointment.getStatus().equals(AppointmentStatus.Rescheduled)
+//                || ehrAppointment.getStatus().equals(AppointmentStatus.Scheduled))) {
+//            ehrAppointment.setStatus(AppointmentStatus.Completed);
+//            appointmentService.validateAndSave(ehrAppointment);
+//        }
     }
 }

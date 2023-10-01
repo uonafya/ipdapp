@@ -63,7 +63,7 @@
                         </div>
 
 						<div style="margin-top: 10px">
-							<input name="patientID" id="nursingCarePlanPatientID" value="${patient.patientId}" type="hidden">
+							<input name="nursingCarePlanPatientID" id="nursingCarePlanPatientID" value="${patient.patientId}" type="hidden">
 
 							<label></label>
 							<a id="nursingCarePlanButton" name="nursingCarePlanButton" class="button confirm">

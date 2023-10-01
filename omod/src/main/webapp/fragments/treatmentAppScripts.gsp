@@ -1,5 +1,5 @@
 <%
-	def successUrl = ui.pageLink("ipdapp", "patientInfo", [search: '${patientIdentifier}'])
+	def successUrl = ui.pageLink("ipdapp", "patientInfo", [search: patientInformation.patientIdentifier])
 %>
 
 <script>
@@ -543,7 +543,7 @@
 					jq().toastmessage('removeToast', savingMessage);
 					if (data.status == "success") {
 						jq().toastmessage('showSuccessToast', 'Data Successfully Posted!');
-						window.location.href = '${ui.pageLink("ipdapp", "patientInfo", [search: "${patientIdentifier}"])}';
+						window.location.href = '${ui.pageLink("ipdapp", "patientInfo", [search: patientInformation.patientIdentifier])}';
 					} else if (data.status == "fail") {
 						jq().toastmessage('showErrorToast', data.message);
 					}

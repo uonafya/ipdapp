@@ -24,10 +24,7 @@ import org.openmrs.module.hospitalcore.model.InventoryDrugFormulation;
 import org.openmrs.module.hospitalcore.model.Option;
 import org.openmrs.module.hospitalcore.model.Referral;
 import org.openmrs.module.hospitalcore.model.ReferralReasons;
-import org.openmrs.module.patientdashboardapp.model.Note;
-import org.openmrs.module.patientdashboardapp.model.Outcome;
-import org.openmrs.module.patientdashboardapp.model.Procedure;
-import org.openmrs.module.patientdashboardapp.model.Qualifier;
+import org.openmrs.module.patientdashboardapp.model.*;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageModel;
@@ -64,9 +61,17 @@ public class PatientTreatmentPageController {
         model.addAttribute("internalReferralSources", SimpleObject.fromCollection(Referral.getInternalReferralOptions(), ui, "label", "id"));
         model.addAttribute("externalReferralSources", SimpleObject.fromCollection(Referral.getExternalReferralOptions(), ui, "label", "id"));
         model.addAttribute("referralReasonsSources", SimpleObject.fromCollection(ReferralReasons.getReferralReasonsOptions(), ui, "label", "id"));
-        // note = new Note(patient.getPatientId(), queueId, opdId, opdLogId);
+
         Note note = new Note();
         note.setPatientId(patient.getPatientId());
+        note.setDiagnoses(new ArrayList<>());
+        note.setSigns(new ArrayList<>());
+        note.setPhysicalExamination("");
+        note.setIllnessHistory("");
+        note.setOnSetDate("");
+        note.setInvestigations(new ArrayList<>());
+        note.setInvestigationNotes("");
+
 
         model.addAttribute("note", StringEscapeUtils.escapeJavaScript(SimpleObject.fromObject(note, ui, "signs.id", "signs.label", "diagnoses.id", "diagnoses.label",
                 "investigations", "investigationNotes", "procedures", "patientId", "queueId","specify",
