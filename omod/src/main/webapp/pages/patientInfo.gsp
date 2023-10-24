@@ -769,7 +769,7 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
               <i class="status active zero-em"></i>
               IPD Number :
             </label>
-            <span>${ipdNumber}</span>
+            <span><b>${ipdNumber}</b></span>
             <br />
     				<label>
     					<i class="status active zero-em"></i>
