@@ -421,7 +421,7 @@ fieldset select {
 
 	<div class="identifiers">
 		<em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Patient ID</em>
-		<span>${patient.patientIdentifier}</span>
+		<span>${ipdNumber}</span>
 		<br>
 
 		<div class="catg">

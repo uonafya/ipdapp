@@ -765,6 +765,12 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
     			</div>
 
     			<div class="col13 last">
+    			  <label>
+              <i class="status active zero-em"></i>
+              IPD Number :
+            </label>
+            <span>${ipdNumber}</span>
+            <br />
     				<label>
     					<i class="status active zero-em"></i>
     					Patient :

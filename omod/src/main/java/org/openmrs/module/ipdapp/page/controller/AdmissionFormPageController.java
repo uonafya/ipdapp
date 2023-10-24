@@ -316,7 +316,18 @@ public class AdmissionFormPageController {
         //PersonAttribute contactNumber = admission.getPatient().getAttribute("Phone Number");
 
         //PersonAttribute emailAddress = admission.getPatient().getAttribute("Patient E-mail Address");
+        //create a IPD number for the Patient to be used
+        HospitalCoreService hospitalCoreService = Context.getService(HospitalCoreService.class);
+        List<PatientIdentifier> patientIdentifierList = Context.getPatientService().getPatientIdentifiers(
+                null,
+                Arrays.asList(Context.getPatientService().getPatientIdentifierTypeByUuid(
+                        "CCBED3FA-B334-412C-BD4E-9B823C8DB0EF")), null, Arrays.asList(admission.getPatient()), false);
+        String morgueNumber = hospitalCoreService.generateOpdNumber("IPD", IdentifierTypes.IPD);
+        if (patientIdentifierList.isEmpty()) {
+            hospitalCoreService.savePatientOpdNumbers(admission.getPatient(), "IPD", "CCBED3FA-B334-412C-BD4E-9B823C8DB0EF",
+                    IdentifierTypes.IPD);
 
+        }
 
         /*patient is accepted into the ward*/
         boolean accepted = this.accept(admissionId);
@@ -357,17 +368,6 @@ public class AdmissionFormPageController {
             encounter = Context.getEncounterService().saveEncounter(encounter);
             admission.setIpdEncounter(encounter);
             ipdService.saveIpdPatientAdmission(admission);
-            //create a IPD number for the Patient to be used
-            List<PatientIdentifier> patientIdentifierList = Context.getPatientService().getPatientIdentifiers(
-                    null,
-                    Arrays.asList(Context.getPatientService().getPatientIdentifierTypeByUuid(
-                            "CCBED3FA-B334-412C-BD4E-9B823C8DB0EF")), null, Arrays.asList(admission.getPatient()), false);
-            String morgueNumber = hospitalCoreService.generateOpdNumber("IPD", IdentifierTypes.IPD);
-            if (patientIdentifierList.isEmpty()) {
-                hospitalCoreService.savePatientOpdNumbers(admission.getPatient(), "IPD", "CCBED3FA-B334-412C-BD4E-9B823C8DB0EF",
-                        IdentifierTypes.IPD);
-
-            }
 
         }
         return true;
