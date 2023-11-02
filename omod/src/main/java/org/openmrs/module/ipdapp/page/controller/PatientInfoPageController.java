@@ -67,7 +67,10 @@ public class PatientInfoPageController {
         model.addAttribute("dietList", dietConcept);
 
         //Vital statistics
-        List<IpdPatientVitalStatistics> ipdPatientVitalStatistics = ipdService.getIpdPatientVitalStatistics(patient.getPatientId(), patientInformation.getPatientAdmissionLog().getId());
+        List<IpdPatientVitalStatistics> ipdPatientVitalStatistics = new ArrayList<IpdPatientVitalStatistics>();
+        if(patient.getPatientId() != null && patientInformation != null && patientInformation.getPatientAdmissionLog() != null) {
+            ipdPatientVitalStatistics.addAll(ipdService.getIpdPatientVitalStatistics(patient.getPatientId(), patientInformation.getPatientAdmissionLog().getId()));
+        }
         model.addAttribute("ipdPatientVitalStatistics", ipdPatientVitalStatistics);
 
         //list of discharge outcomes
