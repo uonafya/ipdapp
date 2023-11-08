@@ -72,7 +72,7 @@
 <div class="onerow">
     <div id="div-left-menu" style="padding-top: 15px;" class="col15 clear">
         <ul id="chart-left-menu" class="left-menu">
-            <li class="menu-item chart-summary" style="border-right:1px solid #ccc; margin-right: 15px; width: 168px; height: 18px;">
+            <li class="menu-item chart-summary" style="border-right:1px solid #ccc; margin-right: 15px; width: 218px; height: 18px;">
                 <input type="hidden" class="chart-id" value="morningAndEveningTemperatureChart" >
                 <span class="menu-date">
                     <i class="icon-chart"></i>
@@ -86,7 +86,7 @@
                 <span class="arrow"></span>
             </li>
 
-            <li class="menu-item chart-summary" style="border-right:1px solid #ccc; margin-right: 15px; width: 168px; height: 18px;">
+            <li class="menu-item chart-summary" style="border-right:1px solid #ccc; margin-right: 15px; width: 218px; height: 18px;">
                 <input type="hidden" class="chart-id" value="fourHourTemperatureChart" >
                 <span class="menu-date">
                     <i class="icon-chart"></i>
@@ -100,7 +100,7 @@
                 <span class="arrow"></span>
             </li>
 
-            <li style="height: 30px; margin-right: 15px; width: 168px;" class="menu-item"></li>
+            <li style="height: 30px; margin-right: 15px; width: 218px;" class="menu-item"></li>
         </ul>
     </div>
 

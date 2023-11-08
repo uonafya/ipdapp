@@ -66,11 +66,10 @@ public class Investigation {
         Context.getService(PatientDashboardService.class).saveOrUpdateOpdOrder(opdTestOrder);
     }
     public void addObs(Encounter encounter, Obs obsGroup) {
-        AdministrationService administrationService = Context.getAdministrationService();
-        GlobalProperty investigationConceptName = administrationService.getGlobalPropertyObject(PatientDashboardConstants.PROPERTY_FOR_INVESTIGATION);
+        String investigationConceptName = Context.getAdministrationService().getGlobalProperty(PatientDashboardConstants.PROPERTY_FOR_INVESTIGATION);
         ConceptService conceptService = Context.getConceptService();
 
-        Concept investigationConceptId = conceptService.getConceptByName(investigationConceptName.getPropertyValue());
+        Concept investigationConceptId = conceptService.getConceptByName(investigationConceptName);
 
         Obs obsInvestigation = new Obs();
         obsInvestigation.setObsGroup(obsGroup);

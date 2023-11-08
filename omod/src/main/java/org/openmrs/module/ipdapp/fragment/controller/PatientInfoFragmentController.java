@@ -322,14 +322,17 @@ public class PatientInfoFragmentController {
     //method to convert drugs
     public List<Prescription> getPrescriptions(String json){
         com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-        List<Prescription> list = null;        try {
-            list = mapper.readValue(json,
-                    TypeFactory.defaultInstance().constructCollectionType(List.class,
-                            Prescription.class));
+        List<Prescription> list = null;
+        try {
+            list = mapper.readValue(
+                    json,
+                    TypeFactory.defaultInstance().constructCollectionType(List.class, Prescription.class)
+            );
 
         } catch (IOException e) {
             e.printStackTrace();
-        }        return  list;
+        }
+        return  list;
     }
 
     public void treatment(
