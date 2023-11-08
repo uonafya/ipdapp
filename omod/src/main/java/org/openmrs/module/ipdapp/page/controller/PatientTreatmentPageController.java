@@ -9,6 +9,7 @@ import org.openmrs.module.hospitalcore.InventoryCommonService;
 import org.openmrs.module.hospitalcore.IpdService;
 import org.openmrs.module.hospitalcore.model.IpdPatientAdmitted;
 import org.openmrs.module.ipdapp.utils.IpdConstants;
+import org.openmrs.module.ipdapp.utils.IpdUtils;
 import org.openmrs.module.kenyaui.annotation.AppPage;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.openmrs.Concept;
@@ -55,6 +56,7 @@ public class PatientTreatmentPageController {
         model.addAttribute("category", patient.getAttribute(paymentCategoryPaymentAttribute));
         model.addAttribute("subCategory", patient.getAttribute(paymentCategorySubTypePaymentAttribute));
         model.addAttribute("dosageUnits", getDrugUnit(ui));
+        model.addAttribute("ipdNumber", IpdUtils.getIpdNumber(patient));
 
         model.addAttribute("outcomeOptions", SimpleObject.fromCollection(Outcome.getAvailableOutcomes(), ui, "label", "id"));
         model.addAttribute("listOfWards", SimpleObject.fromCollection(Outcome.getInpatientWards(), ui, "label", "id"));

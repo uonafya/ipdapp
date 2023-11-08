@@ -22,12 +22,15 @@ public class ChooseIpdWardPageController {
         List<ConceptAnswer> ipdWardsList = (ipdConcept != null ? new ArrayList<ConceptAnswer>(ipdConcept.getAnswers()) : null);
         List<WardOverview> wardOverviewList = new ArrayList<WardOverview>();
         IpdService ipdService = Context.getService(IpdService.class);
+        Integer bedCount = null;
+        int patientCount;
         if (CollectionUtils.isNotEmpty(ipdWardsList)) {
             for (ConceptAnswer ward : ipdWardsList) {
-                Integer patientCount = ipdService.searchIpdPatientAdmitted(null, null, null, null, ward.getAnswerConcept().getConceptId().toString(), "").size();
-                Integer bedCount = ipdService.getWardBedStrengthByWardId(ward.getAnswerConcept().getConceptId()).getBedStrength();
-                WardOverview wardOverview = new WardOverview(bedCount, patientCount, ward.getAnswerConcept());
-                wardOverviewList.add(wardOverview);
+                    patientCount = ipdService.searchIpdPatientAdmitted(null, null, null, null, ward.getAnswerConcept().getConceptId().toString(), "").size();
+                if(ipdService.getWardBedStrengthByWardId(ward.getAnswerConcept().getConceptId()).getBedStrength() != null && ipdService.getWardBedStrengthByWardId(ward.getAnswerConcept().getConceptId()).getBedStrength() > 0) {
+                    bedCount = ipdService.getWardBedStrengthByWardId(ward.getAnswerConcept().getConceptId()).getBedStrength();
+                    wardOverviewList.add(new WardOverview(bedCount, patientCount, ward.getAnswerConcept()));
+                }
             }
         }
         model.addAttribute("wardOverviewList", wardOverviewList);

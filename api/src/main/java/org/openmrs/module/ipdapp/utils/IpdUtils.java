@@ -2,6 +2,9 @@ package org.openmrs.module.ipdapp.utils;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
 
@@ -73,5 +76,15 @@ public class IpdUtils {
         }
         list.add(NumberUtils.toInt(ids , 0));
         return list;
+    }
+
+    public static String getIpdNumber(Patient patient) {
+        String ipNumber = "N/A";
+        PatientIdentifier ipdPatientIdentifier = patient.getPatientIdentifier(Context.getPatientService().getPatientIdentifierTypeByUuid("CCBED3FA-B334-412C-BD4E-9B823C8DB0EF"));
+
+        if(ipdPatientIdentifier != null) {
+            ipNumber = ipdPatientIdentifier.getIdentifier();
+        }
+        return ipNumber;
     }
 }

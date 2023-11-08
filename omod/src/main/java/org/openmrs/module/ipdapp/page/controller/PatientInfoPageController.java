@@ -12,6 +12,7 @@ import org.openmrs.module.hospitalcore.util.ConceptAnswerComparator;
 import org.openmrs.module.ipdapp.model.NursingCarePlan;
 import org.openmrs.module.ipdapp.model.NursingNote;
 import org.openmrs.module.ipdapp.utils.IpdConstants;
+import org.openmrs.module.ipdapp.utils.IpdUtils;
 import org.openmrs.module.kenyaemr.api.KenyaEmrService;
 import org.openmrs.module.kenyaui.annotation.AppPage;
 import org.openmrs.ui.framework.page.PageModel;
@@ -44,6 +45,7 @@ public class PatientInfoPageController {
         model.addAttribute("patientInformation", patientInformation);
         model.addAttribute("category", patient.getAttribute(paymentCategoryPaymentAttribute));
         model.addAttribute("subCategory", patient.getAttribute(paymentCategorySubTypePaymentAttribute));
+        model.addAttribute("ipdNumber", IpdUtils.getIpdNumber(patient));
 
         //gets list of doctors
         Concept ipdConcept = Context.getConceptService().getConceptByUuid("5fc29316-0869-4b3b-ae2f-cc37c6014eb7");
@@ -65,7 +67,10 @@ public class PatientInfoPageController {
         model.addAttribute("dietList", dietConcept);
 
         //Vital statistics
-        List<IpdPatientVitalStatistics> ipdPatientVitalStatistics = ipdService.getIpdPatientVitalStatistics(patient.getPatientId(), patientInformation.getPatientAdmissionLog().getId());
+        List<IpdPatientVitalStatistics> ipdPatientVitalStatistics = new ArrayList<IpdPatientVitalStatistics>();
+        if(patient.getPatientId() != null && patientInformation != null && patientInformation.getPatientAdmissionLog() != null) {
+            ipdPatientVitalStatistics.addAll(ipdService.getIpdPatientVitalStatistics(patient.getPatientId(), patientInformation.getPatientAdmissionLog().getId()));
+        }
         model.addAttribute("ipdPatientVitalStatistics", ipdPatientVitalStatistics);
 
         //list of discharge outcomes
