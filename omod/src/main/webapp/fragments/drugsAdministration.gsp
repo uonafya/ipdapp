@@ -10,16 +10,18 @@
             jq("option[class='selectedDrugVal']").remove();
             jq('#selectedDrug').append('<option class="selectedDrugVal" value="' + jq(drugSummary).find(".drug-id").val() + '">' + jq(drugSummary).find(".drug-name").val() + '</option>');
 
+            var drugOrderId = jq(drugSummary).find(".drug-id").val();
+
             jq.getJSON('${ ui.actionLink("ipdapp", "drugsAdministration" ,"getDrugAdministrationDetails") }',
-                { 'patientId' : ${patient.patientId}, 'drugOrderId' : jq(drugSummary).find(".drug-id").val() }
+                { 'patientId' : drugOrderId, 'drugOrderId' :  drugOrderId}
             ).success(function (data) {
-                if (data.drugAdministrations.length > 0) {
+                if (data.length > 0) {
                     var drugsTemplate =  _.template(jq("#drug-template").html());
-                    jq("#drug-administrations-detail").html(drugsTemplate(data.drugAdministrations));
+                    jq("#drug-administrations-detail").html(drugsTemplate(data));
                }
                else {
                     var drugsTemplate =  _.template(jq("#drug-empty-template").html());
-                    jq("#drug-administrations-detail").html(drugsTemplate(data.drugAdministrations));
+                    jq("#drug-administrations-detail").html(drugsTemplate(data));
                 }                
             })
         });
@@ -61,61 +63,32 @@
               }, 500 );
         }
 
-        function checkLength( o, n, min, max ) {
-              if ( o.val().length > max || o.val().length < min ) {
-                o.addClass( "ui-state-error" );
-                updateTips( "Length of " + n + " must be between " +
-                  min + " and " + max + "." );
-                return false;
-              } else {
-                return true;
-              }
-        }
-
-        function checkRegexp( o, regexp, n ) {
-              if ( !( regexp.test( o.val() ) ) ) {
-                o.addClass( "ui-state-error" );
-                updateTips( n );
-                return false;
-              } else {
-                return true;
-              }
-        }
-
 
         function addDrugAdministration() {
-              var valid = true;
-              allFields.removeClass( "ui-state-error" );
+              var formData = {
+                'drugAdministrationId': 0,
+                'drugOrderId': 21,
+                'quantity': 1,
+                'remarks': 'Testing',
+              };
 
-              valid = quantity != '';
-
-              if ( valid ) {
-                var formData = {
-                    'drugAdministrationId': jq('#drugAdministrationId').val(),
-                    'drugOrderId': jq('#selectedDrug').val(),
-                    'quantity': quantity,
-                    'remarks': remarks,
-                };
-
-                jq.getJSON('${ ui.actionLink("ipdapp", "DrugsAdministration", "saveDrugAdministration") }', formData)
-                    .success(function(data) {
-                        kenyaui.notifySuccess("Success! Drug Administration Details have been recorded");
-                        location.reload();
-                    })
+              jq.getJSON('${ ui.actionLink("ipdapp", "DrugsAdministration", "saveDrugAdministration") }', formData)
+                .success(function(data) {
+                    kenyaui.notifySuccess("Success! Drug Administration Details have been recorded");
+                    location.reload();
+                })
                     .error(function(xhr, status, err) {
                         jq().toastmessage('showErrorToast', "Error:" + err);
-                    })
+                   });
 
-                dialog.dialog( "close" );
-              }
-              return valid;
+              dialog.dialog( "close" );
         }
 
 
         var dialog = jq( "#dialog-form" ).dialog({
               autoOpen: false,
               height: 400,
-              width: 350,
+              width: 550,
               modal: true,
               buttons: {
                 "Save": addDrugAdministration,
@@ -130,13 +103,13 @@
             });
 
         var form = dialog.find( "form" ).on( "submit", function( event ) {
-              event.preventDefault();
-              addDrugAdministration();
-            });
+            event.preventDefault();
+            addDrugAdministration();
+        });
 
-            jq( "#create-drug-administration" ).button().on( "click", function() {
-              dialog.dialog( "open" );
-            });
+        jq( "#create-drug-administration" ).button().on( "click", function() {
+            dialog.dialog( "open" );
+        });
     });
 </script>
 
@@ -158,11 +131,9 @@
 
     label, input { display:block; }
     input.text { margin-bottom:12px; width:95%; padding: .4em; }
-    fieldset { padding:0; border:0; margin-top:25px; }
+    input.select { margin-bottom:12px; width:95%; padding: .4em; }
+    fieldset { padding:0; border:0; margin-top:15px; }
     h1 { font-size: 1.2em; margin: .6em 0; }
-    div#users-contain { width: 350px; margin: 20px 0; }
-    div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
-    div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
     .ui-dialog .ui-state-error { padding: .3em; }
     .validateTips { border: 1px solid transparent; padding: 0.3em; }
 </style>
@@ -253,7 +224,7 @@
     </thead>
     <tbody>
 
-    {{ _.each(drugAdministrations, function(drug, index) { }}
+    {{ _.each(data, function(drug, index) { }}
     	<tr style="border: 1px solid #eee;">
     		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{=index+1}}</td>
     		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.drugAdministrationDate}}</td>

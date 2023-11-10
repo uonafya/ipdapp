@@ -85,6 +85,8 @@ public class DrugsAdministrationFragmentController {
         return drugAdministrations.stream()
                 .filter(drugAdministration -> Objects.equals(drugAdministration.getDrugOrderId(), drugOrderId))
                 .collect(Collectors.toList());
+
+        //return hospitalCoreService.retrieveDrugAdministrations(drugOrderId);
     }
 
     public void saveDrugAdministration(
