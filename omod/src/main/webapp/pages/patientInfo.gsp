@@ -823,41 +823,43 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
     		<ul style="min-height: 200px;">
     			<h3>&nbsp; &nbsp;General Actions</h3>
 
-    			<% if (patientInformation.requestForDischargeStatus != 1 && patientInformation.absconded != 1) { %>
-    				<li>
-    					<i class="icon-edit"></i>
-    					<a onclick='requestForDischarge(${patientInformation.id},0)'>Request Discharge</a>
-    				</li>
+    			<% if(patientInformation) { %>
+            <% if (patientInformation.requestForDischargeStatus != 1 && patientInformation.absconded != 1) { %>
+              <li>
+                <i class="icon-edit"></i>
+                <a onclick='requestForDischarge(${patientInformation.id},0)'>Request Discharge</a>
+              </li>
 
-    				<li>
-    					<i class="icon-share"></i>
-    					<a onclick='abscond(${patientInformation.id},1)'>Patient Abscorded</a>
-    				</li>
-    			<% } %>
+              <li>
+                <i class="icon-share"></i>
+                <a onclick='abscond(${patientInformation.id},1)'>Patient Abscorded</a>
+              </li>
+            <% } %>
 
 
-    			<% if (patientInformation.absconded == 1) { %>
-    				<li>
-    					<i class="icon-user-times"></i>
-    					<a href="">Remove Patient</a>
-    				</li>
-    			<% } else if (patientInformation.requestForDischargeStatus == 1) {%>
-    				<li>
-    					<i class="icon-edit"></i>
-    					<a href="dischargePatient.page?patientId=${patient.id}&ipdWard=${patientInformation.admittedWard.id}">Discharge Patient</a>
-    				</li>
-    			<% } %>
+            <% if (patientInformation.absconded == 1) { %>
+              <li>
+                <i class="icon-user-times"></i>
+                <a href="">Remove Patient</a>
+              </li>
+            <% } else if (patientInformation.requestForDischargeStatus == 1 && patientInformation.admittedWard) {%>
+              <li>
+                <i class="icon-edit"></i>
+                <a href="dischargePatient.page?patientId=${patient.id}&ipdWard=${patientInformation.admittedWard.id}">Discharge Patient</a>
+              </li>
+            <% } %>
 
-    			<li>
-    				<i class="icon-print"></i>
-    				<a href="">Print Details</a>
-    			</li>
+            <li>
+              <i class="icon-print"></i>
+              <a href="">Print Details</a>
+            </li>
 
-    			<h3 style="margin-top: 15px;">&nbsp; &nbsp;Inpatient Actions</h3>
-    			<li>
-    				<i class="icon-user-md"></i>
-    				<a href="patientTreatment.page?patientId=${patient.id}">Update Treatment</a>
-    			</li>
+            <h3 style="margin-top: 15px;">&nbsp; &nbsp;Inpatient Actions</h3>
+            <li>
+              <i class="icon-user-md"></i>
+              <a href="patientTreatment.page?patientId=${patient.id}">Update Treatment</a>
+            </li>
+          <%}%>
 
     		</ul>
     	</div>

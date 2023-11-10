@@ -5,10 +5,8 @@
 	ui.includeJavascript("ehrconfigs", "knockout-3.4.0.js")
 	ui.includeJavascript("ehrconfigs", "emr.js")
 	ui.includeCss("ehrconfigs", "jquery-ui-1.9.2.custom.min.css")
-	// toastmessage plugin: https://github.com/akquinet/jquery-toastmessage-plugin/wiki
 	ui.includeJavascript("ehrconfigs", "jquery.toastmessage.js")
 	ui.includeCss("ehrconfigs", "jquery.toastmessage.css")
-	// simplemodal plugin: http://www.ericmmartin.com/projects/simplemodal/
 	ui.includeJavascript("ehrconfigs", "jquery.simplemodal.1.4.4.min.js")
 	ui.includeCss("ehrconfigs", "referenceapplication.css")
 %>
@@ -85,12 +83,12 @@
 		<li>
 			<a href='${ui.pageLink("ipdapp", "patientsAdmission", [ipdWard: it.wardConcept.id ])}'>
 				<div style="display: inline-block">
-					<i class="icon-hospital" style="width: auto;"></i>					
+					<i class="icon-hospital" style="width: auto;"></i>
 				</div>
 				
 				<div class="ward-summary">
 					<i class="icon-bed small"></i>${it.bedCount} Beds</span><br/>
-					<i class="icon-user small"></i>${it.patientCount} Patients				
+					<i class="icon-user small"></i>${it.patientCount} Patients
 				</div>
 				<div class="desc">${it.wardConcept.name}</div>
 			</a>
