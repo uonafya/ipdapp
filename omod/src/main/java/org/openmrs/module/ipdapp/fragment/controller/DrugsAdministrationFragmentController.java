@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DrugsAdministrationFragmentController {
 
@@ -38,7 +39,25 @@ public class DrugsAdministrationFragmentController {
         Patient patient = Context.getPatientService().getPatient(patientId);
         IpdPatientAdmitted patientInformation = ipdService.getAdmittedByPatientId(patient.getPatientId());
 
-        List<OpdDrugOrder> opdDrugOrders = patientDashboardService.getOpdDrugOrder(patientInformation.getPatientAdmissionLog().getIpdEncounter());
+        PatientDashboardService dashboardService = Context.getService(PatientDashboardService.class);
+        Location location = Context.getService(KenyaEmrService.class).getDefaultLocation();
+
+        EncounterType opdEncounterType = Context.getEncounterService().getEncounterTypeByUuid("ba45c278-f290-11ea-9666-1b3e6e848887");
+
+
+        List<Encounter> opdEncounters = dashboardService.getEncounter(patient, location, opdEncounterType, null);
+
+
+        List<OpdDrugOrder> opdDrugOrders = new ArrayList<>();
+
+        for (Encounter enc : opdEncounters){
+            opdDrugOrders.addAll(patientDashboardService.getOpdDrugOrder(enc));
+        }
+
+        opdDrugOrders.addAll(patientDashboardService.getOpdDrugOrder(patientInformation.getPatientAdmissionLog().getIpdEncounter()));
+
+
+
         List<SimpleObject> drugs = SimpleObject.fromCollection(
                 opdDrugOrders,
                 ui,
@@ -55,15 +74,17 @@ public class DrugsAdministrationFragmentController {
         model.addAttribute("patient", patient);
     }
 
-    public SimpleObject getDrugAdministrationDetails(
+    public List<DrugAdministration> getDrugAdministrationDetails(
+            @RequestParam("patientId") Integer patientId,
             @RequestParam("drugOrderId") Integer drugOrderId
     ) {
-
         HospitalCoreService hospitalCoreService = Context.getService(HospitalCoreService.class);
 
-        List<DrugAdministration> drugAdministrations = hospitalCoreService.retrieveDrugAdministrations(drugOrderId);
+        List<DrugAdministration> drugAdministrations = hospitalCoreService.retrieveDrugAdministrations(patientId);
 
-        return SimpleObject.create("drugAdministrations", drugAdministrations);
+        return drugAdministrations.stream()
+                .filter(drugAdministration -> Objects.equals(drugAdministration.getDrugOrderId(), drugOrderId))
+                .collect(Collectors.toList());
     }
 
     public void saveDrugAdministration(

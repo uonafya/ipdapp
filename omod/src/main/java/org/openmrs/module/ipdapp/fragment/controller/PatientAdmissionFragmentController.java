@@ -33,8 +33,11 @@ public class PatientAdmissionFragmentController {
     private EncounterRole EncounterRole;
     private org.openmrs.Provider Provider;
 
-    public void removeOrNoBed(@RequestParam(value = "admissionId", required = false) Integer admissionId, //If that tab is active we will set that tab active when page load.
-                              @RequestParam(value = "action", required = false) Integer action, PageModel model) {
+    public void removeOrNoBed(
+            @RequestParam(value = "admissionId", required = false) Integer admissionId, //If that tab is active we will set that tab active when page load.
+            @RequestParam(value = "action", required = false) Integer action,
+            PageModel model
+    ) {
 
         IpdService ipdService = (IpdService) Context.getService(IpdService.class);
         PatientQueueService queueService = Context.getService(PatientQueueService.class);

@@ -11,7 +11,7 @@
             jq('#selectedDrug').append('<option class="selectedDrugVal" value="' + jq(drugSummary).find(".drug-id").val() + '">' + jq(drugSummary).find(".drug-name").val() + '</option>');
 
             jq.getJSON('${ ui.actionLink("ipdapp", "drugsAdministration" ,"getDrugAdministrationDetails") }',
-                { 'drugOrderId' : jq(drugSummary).find(".drug-id").val() }
+                { 'patientId' : ${patient.patientId}, 'drugOrderId' : jq(drugSummary).find(".drug-id").val() }
             ).success(function (data) {
                 if (data.drugAdministrations.length > 0) {
                     var drugsTemplate =  _.template(jq("#drug-template").html());
@@ -49,6 +49,7 @@
         var quantity = jq( "#drugQuantity" );
         var remarks = jq( "#drugRemarks" );
         var allFields = jq( [] ).add( quantity ).add( remarks );
+
         var tips = jq( ".validateTips" );
 
         function updateTips( t ) {

@@ -38,7 +38,7 @@ public class VisitSummaryFragmentController {
         IpdPatientAdmitted admitted = ipdService.getAdmittedByPatientId(patientId);
         Patient patient = Context.getPatientService().getPatient(patientId);
 
-        EncounterType admissionEncounterType = Context.getEncounterService().getEncounterTypeByUuid("6e1105ba-f282-11ea-ad42-e7971c094de0");
+        //EncounterType admissionEncounterType = Context.getEncounterService().getEncounterTypeByUuid("6e1105ba-f282-11ea-ad42-e7971c094de0");
 
         EncounterType opdEncounterType = Context.getEncounterService().getEncounterTypeByUuid("ba45c278-f290-11ea-9666-1b3e6e848887");
 
@@ -49,30 +49,6 @@ public class VisitSummaryFragmentController {
         int i = 0;
 
         for (Encounter enc : opdEncounters) {
-            VisitSummary visitSummary = new VisitSummary();
-            visitSummary.setVisitDate(enc.getDateCreated());
-            visitSummary.setEncounterId(enc.getEncounterId());
-            String outcomeConceptName = Context.getAdministrationService().getGlobalProperty(PatientDashboardConstants.PROPERTY_VISIT_OUTCOME);
-            Concept outcomeConcept = Context.getConceptService().getConcept(outcomeConceptName);
-            for (Obs obs : enc.getAllObs()) {
-                if (obs.getConcept().equals(outcomeConcept)) {
-                    visitSummary.setOutcome(obs.getValueText());
-                }
-            }
-
-
-            visitSummaries.add(visitSummary);
-
-            i++;
-
-            if (i >=50){
-                break;
-            }
-        }
-
-        List<Encounter> admissionEncounters = dashboardService.getEncounter(patient, location, opdEncounterType, null);
-
-        for (Encounter enc : admissionEncounters) {
             VisitSummary visitSummary = new VisitSummary();
             visitSummary.setVisitDate(enc.getDateCreated());
             visitSummary.setEncounterId(enc.getEncounterId());
