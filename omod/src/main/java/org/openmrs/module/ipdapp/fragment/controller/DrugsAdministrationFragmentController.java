@@ -70,32 +70,33 @@ public class DrugsAdministrationFragmentController {
         model.addAttribute("patient", patient);
     }
 
-    public List<DrugAdministration> getDrugAdministrationDetails(
+    public SimpleObject getDrugAdministrationDetails(
             @RequestParam("patientId") Integer patientId,
-            @RequestParam("drugOrderId") Integer drugOrderId
+            @RequestParam("drugOrderId") Integer drugOrderId,
+            UiUtils ui
     ) {
         HospitalCoreService hospitalCoreService = Context.getService(HospitalCoreService.class);
 
-        List<DrugAdministration> drugAdministrations = hospitalCoreService.retrieveDrugAdministrations(patientId);
-
-        return drugAdministrations.stream()
-                .filter(drugAdministration -> Objects.equals(drugAdministration.getDrugOrderId(), drugOrderId))
+        List<DrugAdministration> drugAdministrations = hospitalCoreService.retrieveDrugAdministrations(patientId).stream().filter(drugAdministration -> Objects.equals(drugAdministration.getDrugOrderId(), drugOrderId))
                 .collect(Collectors.toList());
 
-        //return hospitalCoreService.retrieveDrugAdministrations(drugOrderId);
+
+        return SimpleObject.create("adminDrugs",SimpleObject.fromCollection(drugAdministrations, ui, "drugAdministrationId", "quantity", "status", "drugAdministrationDate", "createdBy", "changedBy"));
+
     }
 
     public void saveDrugAdministration(
             @RequestParam(value ="drugAdministrationId", required = false) Integer drugAdministrationId,
             @RequestParam(value ="drugOrderId", required = false) Integer drugOrderId,
             @RequestParam(value ="quantity", required = false) Double quantity,
-            @RequestParam(value ="remarks", required = false) String remarks
+            @RequestParam(value ="remarks", required = false) String remarks,
+            @RequestParam(value = "drugAdministrationDate", required = false) Date drugAdministrationDate
     ) {
 
         HospitalCoreService hospitalCoreService = Context.getService(HospitalCoreService.class);
 
         User user = Context.getAuthenticatedUser();
-        Date date = new Date();
+        Date date = drugAdministrationDate != null ? drugAdministrationDate : new Date();
 
         DrugAdministration drugAdministration = new DrugAdministration();
         drugAdministration.setDrugAdministrationId(drugAdministrationId);
@@ -104,7 +105,7 @@ public class DrugsAdministrationFragmentController {
         drugAdministration.setQuantity(quantity);
         drugAdministration.setAmount(1d);
         drugAdministration.setChangedBy(user);
-        drugAdministration.setDateModified(date);
+        drugAdministration.setDateModified(new Date());
         drugAdministration.setStatus(remarks);
 
         if(drugAdministrationId > 0){

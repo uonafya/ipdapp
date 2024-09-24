@@ -10,18 +10,19 @@
             jq('#selectedDrug').append('<option class="selectedDrugVal" value="' + jq(drugSummary).find(".drug-id").val() + '">' + jq(drugSummary).find(".drug-name").val() + '</option>');
 
             var drugOrderId = jq(drugSummary).find(".drug-id").val();
-            var patientId = jq(drugSummary).find("#drugAdministrationPatientID").val();
+            var patientId = jq("#nursingCarePlanPatientID").val();
 
             jq.getJSON('${ ui.actionLink("ipdapp", "drugsAdministration" ,"getDrugAdministrationDetails") }',
                 { 'patientId' : patientId, 'drugOrderId' :  drugOrderId}
             ).success(function (data) {
-                if (data.length > 0) {
-                    var drugsTemplate =  _.template(jq("#drug-template").html());
-                    jq("#drug-administrations-detail").html(drugsTemplate(data));
+                if (data.adminDrugs.length > 0) {
+                    console.log(data);
+                    var drugsAdminTemplate =  _.template(jq("#drug-admin-template").html());
+                    jq("#drug-administrations-detail").html(drugsAdminTemplate(data));
                 }
                 else {
-                    var drugsTemplate =  _.template(jq("#drug-empty-template").html());
-                    jq("#drug-administrations-detail").html(drugsTemplate(data));
+                    var drugsAdminTemplate =  _.template(jq("#drug-admin-empty-template").html());
+                    jq("#drug-administrations-detail").html(drugsAdminTemplate(data));
                 }
             })
         });
@@ -202,14 +203,14 @@ h1 { font-size: 1.2em; margin: .6em 0; }
     <div id=""></div>
 </div>
 
-<script id="drug-template" type="text/template">
+<script id="drug-admin-template" type="text/template">
 <div class="info-header">
     <i class="icon-medicine"></i>
     <h3>DRUG ADMINISTRATION SUMMARY</h3>
 </div>
 <input name="drugAdministrationPatientID" id="drugAdministrationPatientID" value="${patient.patientId}" type="hidden">
 
-<table id="drugList">
+<table id="drug-admin-List">
     <thead>
     <tr style="border-bottom: 1px solid #eee;">
         <th>#</th>
@@ -221,12 +222,12 @@ h1 { font-size: 1.2em; margin: .6em 0; }
     </thead>
     <tbody>
 
-    {{ _.each(data, function(drug, index) { }}
+    {{ _.each(adminDrugs, function(drug, index) { }}
     <tr style="border: 1px solid #eee;">
         <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{=index+1}}</td>
         <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.drugAdministrationDate}}</td>
-        <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.amount}}</td>
-        <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.createdBy.username}}</td>
+        <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.quantity}}</td>
+        <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.createdBy}}</td>
         <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.status}}</td>
     </tr>
     {{ }); }}
@@ -235,7 +236,7 @@ h1 { font-size: 1.2em; margin: .6em 0; }
 </table>
 </script>
 
-<script id="drug-empty-template" type="text/template">
+<script id="drug-admin-empty-template" type="text/template">
 <div class="info-header">
     <i class="icon-medicine"></i>
     <h3>DRUG ADMINISTRATION SUMMARY</h3>
@@ -243,7 +244,7 @@ h1 { font-size: 1.2em; margin: .6em 0; }
 
 <div><br/></div>
 
-<table id="drugListEmpty">
+<table id="drug-admin-ListEmpty">
     <thead>
     <tr>
         <th>#</th>
