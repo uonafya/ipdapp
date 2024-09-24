@@ -1,24 +1,27 @@
 package org.openmrs.module.ipdapp.fragment.controller;
 
 import org.openmrs.*;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.HospitalCoreService;
 import org.openmrs.module.hospitalcore.IpdService;
+import org.openmrs.module.hospitalcore.PatientDashboardService;
 import org.openmrs.module.hospitalcore.PatientQueueService;
-import org.openmrs.module.hospitalcore.model.IpdPatientAdmission;
-import org.openmrs.module.hospitalcore.model.IpdPatientAdmissionLog;
-import org.openmrs.module.hospitalcore.model.IpdPatientAdmitted;
-import org.openmrs.module.hospitalcore.model.OpdPatientQueueLog;
+import org.openmrs.module.hospitalcore.model.*;
 import org.openmrs.module.hospitalcore.util.HospitalCoreConstants;
+import org.openmrs.module.ipdapp.model.DischargedPatient;
 import org.openmrs.module.ipdapp.utils.IpdConstants;
+import org.openmrs.module.kenyaemr.api.KenyaEmrService;
+import org.openmrs.parameter.EncounterSearchCriteria;
+import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.EncounterRole;
-import org.openmrs.Provider;
 import org.springframework.web.bind.annotation.RequestParam;
-import java.util.Date;
-import java.util.List;
+
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * Created by VIC on 1/30/2020.
@@ -30,8 +33,11 @@ public class PatientAdmissionFragmentController {
     private EncounterRole EncounterRole;
     private org.openmrs.Provider Provider;
 
-    public void removeOrNoBed(@RequestParam(value = "admissionId", required = false) Integer admissionId, //If that tab is active we will set that tab active when page load.
-                              @RequestParam(value = "action", required = false) Integer action, PageModel model) {
+    public void removeOrNoBed(
+            @RequestParam(value = "admissionId", required = false) Integer admissionId, //If that tab is active we will set that tab active when page load.
+            @RequestParam(value = "action", required = false) Integer action,
+            PageModel model
+    ) {
 
         IpdService ipdService = (IpdService) Context.getService(IpdService.class);
         PatientQueueService queueService = Context.getService(PatientQueueService.class);
@@ -106,5 +112,51 @@ public class PatientAdmissionFragmentController {
                                                       UiUtils uiUtils) {
         List<IpdPatientAdmitted> admittedPatients = ipdService.searchIpdPatientAdmitted(null, null, fromDate, toDate, ipdWard, "");
         return SimpleObject.fromCollection(admittedPatients, uiUtils, "id", "admissionDate", "patient", "patientName", "patientIdentifier", "birthDate", "gender", "admittedWard", "status");
+    }
+
+    public List<SimpleObject> listDischargedIpdPatients(
+            @RequestParam("ipdWard") Integer ipdWard,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate,
+            UiUtils uiUtils
+    ) {
+        IpdService ipdService = Context.getService(IpdService.class);
+
+        ConceptService conceptService = Context.getConceptService();
+
+        Concept dischargeDateTimeConcept = conceptService.getConceptByUuid("1641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+        List<DischargedPatient> dischargedPatients = new ArrayList<>();
+
+        List<IpdPatientAdmittedLog> ipdPatientAdmittedLogs = ipdService.getAllIpdPatientAdmittedLog();
+
+        LinkedHashMap<Integer, DischargedPatient> map = new LinkedHashMap<>();
+
+        for(IpdPatientAdmittedLog ipdPatientAdmittedLog : ipdPatientAdmittedLogs){
+            for (Obs obs : ipdPatientAdmittedLog.getPatientAdmissionLog().getIpdEncounter().getAllObs()) {
+                if (obs.getConcept().equals(dischargeDateTimeConcept)) {
+                    DischargedPatient dischargedPatient = new DischargedPatient();
+                    dischargedPatient.setStatus("Discharged");
+                    dischargedPatient.setDischargeDate(obs.getValueDate());
+                    dischargedPatient.setUser(obs.getCreator());
+                    dischargedPatient.setGender(ipdPatientAdmittedLog.getGender());
+                    dischargedPatient.setPatientName(ipdPatientAdmittedLog.getPatientName());
+                    dischargedPatient.setPatientIdentifier(ipdPatientAdmittedLog.getPatientIdentifier());
+                    dischargedPatient.setBed(ipdPatientAdmittedLog.getBed());
+                    dischargedPatient.setAdmittedWard(ipdPatientAdmittedLog.getAdmittedWard());
+
+                    dischargedPatient.setIpdPatientAdmittedLog(ipdPatientAdmittedLog);
+
+                    map.put(ipdPatientAdmittedLog.getPatient().getPatientId(), dischargedPatient);
+                }
+            }
+        }
+
+        for (Map.Entry<Integer, DischargedPatient> entry : map.entrySet()){
+            if(entry.getValue().getAdmittedWard().getId().equals(ipdWard))
+                dischargedPatients.add(entry.getValue());
+        }
+
+        return SimpleObject.fromCollection(dischargedPatients, uiUtils, "id", "dischargeDate", "ipdPatientAdmittedLog", "user", "status", "gender", "bed", "admittedWard", "patientName", "patientIdentifier");
     }
 }

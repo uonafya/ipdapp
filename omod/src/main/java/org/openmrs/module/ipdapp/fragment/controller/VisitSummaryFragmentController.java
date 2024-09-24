@@ -18,10 +18,7 @@ import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class VisitSummaryFragmentController {
 
@@ -41,13 +38,17 @@ public class VisitSummaryFragmentController {
         IpdPatientAdmitted admitted = ipdService.getAdmittedByPatientId(patientId);
         Patient patient = Context.getPatientService().getPatient(patientId);
 
-        List<Encounter> encounters = dashboardService.getEncounter(patient, location, admitted.getPatientAdmissionLog().getIpdEncounter().getEncounterType(), null);
+        //EncounterType admissionEncounterType = Context.getEncounterService().getEncounterTypeByUuid("6e1105ba-f282-11ea-ad42-e7971c094de0");
+
+        EncounterType opdEncounterType = Context.getEncounterService().getEncounterTypeByUuid("ba45c278-f290-11ea-9666-1b3e6e848887");
+
+        List<Encounter> opdEncounters = dashboardService.getEncounter(patient, location, opdEncounterType, null);
 
         List<VisitSummary> visitSummaries = new ArrayList<VisitSummary>();
 
         int i = 0;
 
-        for (Encounter enc : encounters) {
+        for (Encounter enc : opdEncounters) {
             VisitSummary visitSummary = new VisitSummary();
             visitSummary.setVisitDate(enc.getDateCreated());
             visitSummary.setEncounterId(enc.getEncounterId());
@@ -59,24 +60,17 @@ public class VisitSummaryFragmentController {
                 }
             }
 
-//            VisitDetail visitDetail = VisitDetail.create(enc);
-//
-//            SimpleObject detail = SimpleObject.fromObject(visitDetail, ui, "history","diagnosis", "symptoms", "procedures", "investigations","physicalExamination","visitOutcome","internalReferral","externalReferral");
-//
-//            List<OpdDrugOrder> opdDrugs = Context.getService(PatientDashboardService.class).getOpdDrugOrder(enc);
-//            List<SimpleObject> drugs = SimpleObject.fromCollection(opdDrugs, ui, "inventoryDrug.name",
-//                    "inventoryDrug.unit.name", "inventoryDrugFormulation.name", "inventoryDrugFormulation.dozage","dosage", "dosageUnit.name");
-//
-//            visitSummary.setVisitDetails(SimpleObject.create("notes", detail, "drugs", drugs));
 
             visitSummaries.add(visitSummary);
 
             i++;
 
-            if (i >=20){
+            if (i >=50){
                 break;
             }
         }
+
+        visitSummaries.sort((obj1, obj2) -> obj2.getVisitDate().compareTo(obj1.getVisitDate()));
 
         model.addAttribute("patient", patient);
         model.addAttribute("visitSummaries", visitSummaries);

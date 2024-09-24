@@ -140,6 +140,7 @@
 	<div id="tabs">
 		<ul>
 			<li><a href="#ipd-patients">Admitted</a></li>
+			<li><a href="#ipd-discharge">Discharged</a></li>
 			<li><a href="#ipd-queue">Admission Queue</a></li>
 			<li id="refresher" class="ui-state-default">
 				<a class="button confirm" style="color:#fff">
@@ -151,13 +152,15 @@
 
 		<div id="ipd-patients">
 			${ui.includeFragment("ipdapp", "admittedPatients")}
-
 		</div>
 
 		<div id="ipd-queue">
 			${ui.includeFragment("ipdapp", "admissionQueue")}
-
 		</div>
+
+		<div id="ipd-discharge">
+            ${ui.includeFragment("ipdapp", "dischargedPatients")}
+        </div>
 		
 
 	</div>

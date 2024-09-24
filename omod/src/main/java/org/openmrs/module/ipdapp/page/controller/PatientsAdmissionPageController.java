@@ -28,7 +28,7 @@ public class PatientsAdmissionPageController {
                     Model model) {
         model.addAttribute("ipdWard", ipdWard);
 
-        IpdService ipdService = (IpdService) Context.getService(IpdService.class);
+        IpdService ipdService = Context.getService(IpdService.class);
 
         List<IpdPatientAdmission> listPatientAdmission = ipdService.searchIpdPatientAdmission(null, null, null, null, ipdWard.getId().toString(), "");
         List<IpdPatientAdmitted> listPatientAdmitted = ipdService.searchIpdPatientAdmitted(null, null, null, null, ipdWard.getId().toString(), "");

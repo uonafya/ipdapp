@@ -29,16 +29,22 @@ import java.util.List;
  */
 @AppPage(IpdConstants.APP_IPD_APP)
 public class DischargePatientPageController {
-    public void get(@RequestParam("patientId") Patient patient, PageModel model) {
+    public void get(@RequestParam("patientId") Integer patientId, PageModel model) {
 
-        IpdService ipdService = (IpdService) Context.getService(IpdService.class);
+        System.out.println("PatientID: " + patientId);
+
+        IpdService ipdService = Context.getService(IpdService.class);
+        IpdPatientAdmitted admitted = ipdService.getAdmittedByPatientId(patientId);
+        Patient patient = Context.getPatientService().getPatient(patientId);
         PatientService patientService = Context.getService(PatientService.class);;
 
-        List<Patient> patientList = patientService.getPatients(null, patient.getPatientIdentifier().toString(), null, true, null,null);
-        IpdPatientAdmitted patientInformation = ipdService.getAdmittedByPatientId(patientList.get(0).getPatientId());
+        IpdPatientAdmitted patientInformation = ipdService.getAdmittedByPatientId(patient.getPatientId());
 
         model.addAttribute("patient", patient);
         model.addAttribute("patientInformation",patientInformation);
+
+        System.out.println("PatientID: " + patient.getPatientId());
+        System.out.println("PatientInfo: " + patientInformation.getPatientAdmissionLog().getId());
 
         //gets list of doctors
         Concept ipdConcept = Context.getConceptService().getConceptByUuid("5fc29316-0869-4b3b-ae2f-cc37c6014eb7");
@@ -61,7 +67,7 @@ public class DischargePatientPageController {
         model.addAttribute("dietList", dietConcept);
 
         //existing vital statistics
-        List<IpdPatientVitalStatistics> ipdPatientVitalStatistics=ipdService.getIpdPatientVitalStatistics(patient.getPatientId(), patientInformation.getPatientAdmissionLog().getId());
+        List<IpdPatientVitalStatistics> ipdPatientVitalStatistics = ipdService.getIpdPatientVitalStatistics(patient.getPatientId(), patientInformation.getPatientAdmissionLog().getId());
         model.addAttribute("ipdPatientVitalStatistics", ipdPatientVitalStatistics);
 
         //list of discharge outcomes
@@ -70,18 +76,17 @@ public class DischargePatientPageController {
         model.addAttribute("listOutCome", outComeList.getAnswers());
 
         Collection<ConceptAnswer> answer = outComeList.getAnswers();
+
         model.addAttribute("answer",answer);
 
         //fetch drug frequencies
-        InventoryCommonService inventoryCommonService = Context
-                .getService(InventoryCommonService.class);
-        List<Concept> drugFrequencyConcept = inventoryCommonService
-                .getDrugFrequency();
+        InventoryCommonService inventoryCommonService = Context.getService(InventoryCommonService.class);
+        List<Concept> drugFrequencyConcept = inventoryCommonService.getDrugFrequency();
+
         model.addAttribute("drugFrequencyList", drugFrequencyConcept);
 
         PersonAttributeType paymentCategoryPaymentAttribute = Context.getPersonService().getPersonAttributeTypeByUuid("09cd268a-f0f5-11ea-99a8-b3467ddbf779");
-        PersonAttributeType paymentCategorySubTypePaymentAttribute = Context.getPersonService()
-                .getPersonAttributeTypeByUuid("972a32aa-6159-11eb-bc2d-9785fed39154");
+        PersonAttributeType paymentCategorySubTypePaymentAttribute = Context.getPersonService().getPersonAttributeTypeByUuid("972a32aa-6159-11eb-bc2d-9785fed39154");
 
         model.addAttribute("category", patient.getAttribute(paymentCategoryPaymentAttribute));
         model.addAttribute("subCategory", patient.getAttribute(paymentCategorySubTypePaymentAttribute));
