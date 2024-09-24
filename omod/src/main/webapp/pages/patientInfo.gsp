@@ -878,7 +878,7 @@ form input:focus, form select:focus, form textarea:focus, form ul.select:focus, 
 			<li class="tabs5"><a href="#tabs-5">Cardex</a></li>
 			<li class="tabs6"><a href="#tabs-6">Nursing Care Plan</a></li>
 			<li class="tabs7"><a href="#tabs-7">Charts</a></li>
-			<li class="tabs8"><a href="#tabs-8">Drugs Administration</a></li>
+			<li class="tabs8"><a href="#tabs-8">Drug Administration</a></li>
 			<li class="tabs9"><a href="#tabs-9">Transfer</a></li>
 		</ul>
 

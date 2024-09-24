@@ -26,11 +26,7 @@ import java.util.stream.Collectors;
 
 public class DrugsAdministrationFragmentController {
 
-    public void controller(
-            FragmentConfiguration config,
-            FragmentModel model,
-            UiUtils ui
-    ){
+    public void controller(FragmentConfiguration config, FragmentModel model, UiUtils ui) {
         config.require("patientId");
         Integer patientId = Integer.parseInt(config.get("patientId").toString());
 

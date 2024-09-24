@@ -1,7 +1,6 @@
 <script>
     jq(function(){
         jq("#drug-left-menu").on("click", ".drug-summary", function(){
-            //jq("#drug-detail").html('<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i> <span style="float: left; margin-top: 12px;">Loading...</span>');
             jq("#drug-administrations-detail").html("");
             var drugSummary = jq(this);
             jq(".drug-summary").removeClass("selected");
@@ -18,15 +17,13 @@
                 if (data.length > 0) {
                     var drugsTemplate =  _.template(jq("#drug-template").html());
                     jq("#drug-administrations-detail").html(drugsTemplate(data));
-               }
-               else {
+                }
+                else {
                     var drugsTemplate =  _.template(jq("#drug-empty-template").html());
                     jq("#drug-administrations-detail").html(drugsTemplate(data));
-                }                
+                }
             })
         });
-
-
 
         var drugSummaries = jq(".drug-summary");
 
@@ -47,7 +44,6 @@
         jq('#drug-left-menu').scrollTop(0);
         jq('#slimScrollDiv').scrollTop(0);
 
-
         var quantity = jq( "#drugQuantity" );
         var remarks = jq( "#drugRemarks" );
         var allFields = jq( [] ).add( quantity ).add( remarks );
@@ -55,52 +51,51 @@
         var tips = jq( ".validateTips" );
 
         function updateTips( t ) {
-              tips
+            tips
                 .text( t )
                 .addClass( "ui-state-highlight" );
-              setTimeout(function() {
+            setTimeout(function() {
                 tips.removeClass( "ui-state-highlight", 1500 );
-              }, 500 );
+            }, 500 );
         }
-
 
         function addDrugAdministration() {
-              var formData = {
-                'drugAdministrationId': 0,
-                'drugOrderId': 21,
-                'quantity': 1,
-                'remarks': 'Testing',
-              };
+            var formData = {
+                'drugAdministrationId': jq('#drugAdministrationId').val(),
+                'drugOrderId': jq('#selectedDrug').val(),
+                'quantity': jq('#drugQuantity').val(),
+                'remarks': jq('#drugRemarks').val() ? jq('#drugRemarks').val() : "N/A"
+            };
 
-              jq.getJSON('${ ui.actionLink("ipdapp", "DrugsAdministration", "saveDrugAdministration") }', formData)
+            jq.getJSON('${ ui.actionLink("ipdapp", "DrugsAdministration", "saveDrugAdministration") }', formData)
                 .success(function(data) {
                     kenyaui.notifySuccess("Success! Drug Administration Details have been recorded");
+                    console.log(data)
                     location.reload();
                 })
-                    .error(function(xhr, status, err) {
-                        jq().toastmessage('showErrorToast', "Error:" + err);
-                   });
+                .error(function(xhr, status, err) {
+                    jq().toastmessage('showErrorToast', "Error:" + err);
+                });
 
-              dialog.dialog( "close" );
+            dialog.dialog( "close" );
         }
 
-
         var dialog = jq( "#dialog-form" ).dialog({
-              autoOpen: false,
-              height: 400,
-              width: 550,
-              modal: true,
-              buttons: {
+            autoOpen: false,
+            height: 400,
+            width: 550,
+            modal: true,
+            buttons: {
                 "Save": addDrugAdministration,
                 Cancel: function() {
-                  dialog.dialog( "close" );
+                    dialog.dialog( "close" );
                 }
-              },
-              close: function() {
+            },
+            close: function() {
                 form[ 0 ].reset();
                 allFields.removeClass( "ui-state-error" );
-              }
-            });
+            }
+        });
 
         var form = dialog.find( "form" ).on( "submit", function( event ) {
             event.preventDefault();
@@ -129,13 +124,13 @@
 
 }
 
-    label, input { display:block; }
-    input.text { margin-bottom:12px; width:95%; padding: .4em; }
-    input.select { margin-bottom:12px; width:95%; padding: .4em; }
-    fieldset { padding:0; border:0; margin-top:15px; }
-    h1 { font-size: 1.2em; margin: .6em 0; }
-    .ui-dialog .ui-state-error { padding: .3em; }
-    .validateTips { border: 1px solid transparent; padding: 0.3em; }
+label, input { display:block; }
+input.text { margin-bottom:12px; width:95%; padding: .4em; }
+input.select { margin-bottom:12px; width:95%; padding: .4em; }
+fieldset { padding:0; border:0; margin-top:15px; }
+h1 { font-size: 1.2em; margin: .6em 0; }
+.ui-dialog .ui-state-error { padding: .3em; }
+.validateTips { border: 1px solid transparent; padding: 0.3em; }
 </style>
 
 <div class="onerow">
@@ -143,22 +138,22 @@
         <ul id="drug-left-menu" class="left-menu">
 
             <% drugs.each { drug -> %>
-                <li class="menu-item drug-summary" drugId="${drug.opdDrugOrderId}" style="border-right:1px solid #ccc; margin-right: 15px; width: 218px; height: 18px;">
-                    <input type="hidden" class="drug-id" value="${drug.opdDrugOrderId}" >
-                    <input type="hidden" class="drug-name" value="${drug.inventoryDrug.name}" >
-                    <span class="menu-date">
-                                <i class="icon-time"></i>
-                                <span id="drug-order">
-                                    ${drug.dosage} ${drug.inventoryDrugFormulation.dozage} ${drug.inventoryDrugFormulation.name}
-                                </span>
+            <li class="menu-item drug-summary" drugId="${drug.opdDrugOrderId}" style="border-right:1px solid #ccc; margin-right: 15px; width: 218px; height: 18px;">
+                <input type="hidden" class="drug-id" value="${drug.opdDrugOrderId}" >
+                <input type="hidden" class="drug-name" value="${drug.inventoryDrug.name}" >
+                <span class="menu-date">
+                    <i class="icon-time"></i>
+                    <span id="drug-order">
+                        ${drug.dosage} ${drug.inventoryDrugFormulation.dozage} ${drug.inventoryDrugFormulation.name}
                     </span>
-                    <span class="menu-title">
-                        <i class="icon-stethoscope"></i>
-                        ${ drug.inventoryDrug.name }
-                    </span>
-                    <span class="arrow-border"></span>
-                    <span class="arrow"></span>
-                </li>
+                </span>
+                <span class="menu-title">
+                    <i class="icon-stethoscope"></i>
+                    ${ drug.inventoryDrug.name }
+                </span>
+                <span class="arrow-border"></span>
+                <span class="arrow"></span>
+            </li>
 
             <% } %>
 
@@ -172,30 +167,29 @@
             <div style="float: right; padding-top: 10px; padding-right:5px;">
                 <button id="create-drug-administration">Add Drug Administration</button>
             </div>
-            <div class="info-section info-body" id="drug-administrations-detail"  style="display: flex; flex-direction: column;" id="drug-detail">
-
+            <div class="info-section info-body" id="drug-administrations-detail"  style="display: flex; flex-direction: column;">
             </div>
         </div>
 
         <div id="dialog-form" title="Add Drug Administration Record">
-          <p class="validateTips">All form fields are required.</p>
+            <p class="validateTips">All form fields are required.</p>
 
-          <form>
-            <fieldset>
-              <label for="name">Drug</label>
-              <input type="hidden" id="drugAdministrationId" value="0" >
-              <select required name="selectedDrug" id="selectedDrug">
-                <option class="selectedDrugVal" value=""></option>
-              </select>
-              <label for="quantity">Quantity</label>
-              <input type="text" name="drugQuantity" id="drugQuantity" value="" class="text ui-widget-content ui-corner-all">
-              <label for="remarks">Remarks</label>
-              <input type="text" name="drugRemarks" id="drugRemarks" value="" class="text ui-widget-content ui-corner-all">
+            <form>
+                <fieldset>
+                    <label for="selectedDrug">Drug</label>
+                    <input type="hidden" id="drugAdministrationId" value="0" >
+                    <select required name="selectedDrug" id="selectedDrug">
+                        <option class="selectedDrugVal" value=""></option>
+                    </select>
+                    <label for="drugQuantity">Quantity</label>
+                    <input type="text" name="drugQuantity" id="drugQuantity" value="" class="text ui-widget-content ui-corner-all">
+                    <label for="drugRemarks">Remarks</label>
+                    <input type="text" name="drugRemarks" id="drugRemarks" value="" class="text ui-widget-content ui-corner-all">
 
-              <!-- Allow form submission with keyboard without duplicating the dialog button -->
-              <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
-            </fieldset>
-          </form>
+                    <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                    <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+                </fieldset>
+            </form>
         </div>
 
     </div>
@@ -204,7 +198,6 @@
 <div class="main-content" style="border-top: 1px none #ccc;">
     <div id=""></div>
 </div>
-
 
 <script id="drug-template" type="text/template">
 <div class="info-header">
@@ -225,13 +218,13 @@
     <tbody>
 
     {{ _.each(data, function(drug, index) { }}
-    	<tr style="border: 1px solid #eee;">
-    		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{=index+1}}</td>
-    		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.drugAdministrationDate}}</td>
-    		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.amount}}</td>
-    		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.createdBy.username}}</td>
-    		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.status}}</td>
-    	</tr>
+    <tr style="border: 1px solid #eee;">
+        <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{=index+1}}</td>
+        <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.drugAdministrationDate}}</td>
+        <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.amount}}</td>
+        <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.createdBy.username}}</td>
+        <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.status}}</td>
+    </tr>
     {{ }); }}
 
     </tbody>
@@ -246,7 +239,7 @@
 
 <div><br/></div>
 
-<table id="drugList">
+<table id="drugListEmpty">
     <thead>
     <tr>
         <th>#</th>
@@ -267,4 +260,3 @@
 <div></div>
 <div style="clear: both;"></div>
 <div style="clear: both;"></div>
-
