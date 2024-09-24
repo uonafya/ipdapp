@@ -10,9 +10,10 @@
             jq('#selectedDrug').append('<option class="selectedDrugVal" value="' + jq(drugSummary).find(".drug-id").val() + '">' + jq(drugSummary).find(".drug-name").val() + '</option>');
 
             var drugOrderId = jq(drugSummary).find(".drug-id").val();
+            var patientId = jq(drugSummary).find("#drugAdministrationPatientID").val();
 
             jq.getJSON('${ ui.actionLink("ipdapp", "drugsAdministration" ,"getDrugAdministrationDetails") }',
-                { 'patientId' : drugOrderId, 'drugOrderId' :  drugOrderId}
+                { 'patientId' : patientId, 'drugOrderId' :  drugOrderId}
             ).success(function (data) {
                 if (data.length > 0) {
                     var drugsTemplate =  _.template(jq("#drug-template").html());
@@ -183,6 +184,8 @@ h1 { font-size: 1.2em; margin: .6em 0; }
                     </select>
                     <label for="drugQuantity">Quantity</label>
                     <input type="text" name="drugQuantity" id="drugQuantity" value="" class="text ui-widget-content ui-corner-all">
+                    <label for="timeAdministered">Time Administered</label>
+                    <input type="datetime-local" name="timeAdministered" id="timeAdministered" value="" class="text ui-widget-content ui-corner-all">
                     <label for="drugRemarks">Remarks</label>
                     <input type="text" name="drugRemarks" id="drugRemarks" value="" class="text ui-widget-content ui-corner-all">
 
@@ -204,6 +207,7 @@ h1 { font-size: 1.2em; margin: .6em 0; }
     <i class="icon-medicine"></i>
     <h3>DRUG ADMINISTRATION SUMMARY</h3>
 </div>
+<input name="drugAdministrationPatientID" id="drugAdministrationPatientID" value="${patient.patientId}" type="hidden">
 
 <table id="drugList">
     <thead>
